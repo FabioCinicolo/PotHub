@@ -4,23 +4,24 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
-public class SignupFragment extends CustomFragment {
+public class ResetCRCodeFragment extends CustomFragment {
 
-    private AuthCallbackListener authCallbackListener;
-    private Button button_signup;
-    private Button button_signin;
+    private ResetPwdCallbackListener resetPwdCallbackListener;
+    private Button button_continue;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_signup, container, false);
+        return inflater.inflate(R.layout.fragment_reset_c_r_code, container, false);
     }
 
     @Override
@@ -35,9 +36,8 @@ public class SignupFragment extends CustomFragment {
     @Override
     protected void setupComponents(View view) {
 
-        button_signup = view.findViewById(R.id.fragmentSignup_signupbtn);
-        button_signin = view.findViewById(R.id.fragmentSignup_signinbtn);
-        authCallbackListener = (AuthCallbackListener)getActivity();
+        button_continue = view.findViewById(R.id.fragmentCR2_continue);
+        resetPwdCallbackListener = (ResetPwdCallbackListener) getActivity();
 
         setupAnimations(getContext());
 
@@ -45,33 +45,17 @@ public class SignupFragment extends CustomFragment {
 
     private void customListeners() {
 
-        button_signin.setOnClickListener(new View.OnClickListener() {
+        button_continue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                runButtonAnimation(button_signin);
+                runButtonAnimation(button_continue);
 
                 button_handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
 
-                        authCallbackListener.onSigninPress();
-
-                    }
-                },170);
-
-            }
-        });
-
-        button_signup.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                runButtonAnimation(button_signup);
-
-                button_handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
+                        resetPwdCallbackListener.onContinueAfterPin();
 
                     }
                 },170);

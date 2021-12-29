@@ -5,50 +5,38 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.content.Intent;
 import android.os.Bundle;
 
-public class MainActivity extends AppCompatActivity implements AuthCallbackListener {
-
+public class ResetCredentialsActivity extends AppCompatActivity implements ResetPwdCallbackListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_reset_credentials);
 
-        replaceFragment(new SigninFragment());
-
+        replaceFragment(new ResetCREmailFragment());
     }
 
     private void replaceFragment(Fragment fragment) {
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.activityMain_framelayout, fragment);
+        fragmentTransaction.replace(R.id.activityResetCR_framelayout, fragment);
         fragmentTransaction.commit();
 
     }
 
-
     @Override
-    public void onSigninPress() {
+    public void onContinueAfterEmail() {
 
-        replaceFragment(new SigninFragment());
+        replaceFragment(new ResetCRCodeFragment());
 
     }
 
     @Override
-    public void onSignupPress() {
+    public void onContinueAfterPin() {
 
-        replaceFragment(new SignupFragment());
-
-    }
-
-    @Override
-    public void onResetPassword() {
-
-        Intent intent = new Intent(MainActivity.this, ResetCredentialsActivity.class);
-        startActivity(intent);
+        replaceFragment(new ResetCRPasswordFragment());
 
     }
 }

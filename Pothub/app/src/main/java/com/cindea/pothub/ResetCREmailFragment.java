@@ -2,25 +2,26 @@ package com.cindea.pothub;
 
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
-public class SignupFragment extends CustomFragment {
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
-    private AuthCallbackListener authCallbackListener;
-    private Button button_signup;
-    private Button button_signin;
+public class ResetCREmailFragment extends CustomFragment {
+
+    private ResetPwdCallbackListener resetPwdCallbackListener;
+    private Button button_continue;
+    private TextView text_back;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_signup, container, false);
+        return inflater.inflate(R.layout.fragment_reset_c_r_email, container, false);
     }
 
     @Override
@@ -35,9 +36,9 @@ public class SignupFragment extends CustomFragment {
     @Override
     protected void setupComponents(View view) {
 
-        button_signup = view.findViewById(R.id.fragmentSignup_signupbtn);
-        button_signin = view.findViewById(R.id.fragmentSignup_signinbtn);
-        authCallbackListener = (AuthCallbackListener)getActivity();
+        button_continue = view.findViewById(R.id.fragmentCR1_continue);
+        text_back = view.findViewById(R.id.fragmentCR1_back);
+        resetPwdCallbackListener = (ResetPwdCallbackListener) getActivity();
 
         setupAnimations(getContext());
 
@@ -45,17 +46,17 @@ public class SignupFragment extends CustomFragment {
 
     private void customListeners() {
 
-        button_signin.setOnClickListener(new View.OnClickListener() {
+        button_continue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                runButtonAnimation(button_signin);
+                runButtonAnimation(button_continue);
 
                 button_handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
 
-                        authCallbackListener.onSigninPress();
+                        resetPwdCallbackListener.onContinueAfterEmail();
 
                     }
                 },170);
@@ -63,23 +64,15 @@ public class SignupFragment extends CustomFragment {
             }
         });
 
-        button_signup.setOnClickListener(new View.OnClickListener() {
+        text_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                runButtonAnimation(button_signup);
-
-                button_handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-
-                    }
-                },170);
+                getActivity().finish();
 
             }
         });
 
 
     }
-
 }
