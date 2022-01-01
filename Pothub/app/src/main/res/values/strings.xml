@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Pothub</string>
 
+    <!-- Auth -->
+
     <string name="Auth_signup">Sign up</string>
     <string name="Auth_signin">Sign in</string>
     <string name="Auth_donthaveaccount">Don\'t have an account?</string>
@@ -11,7 +13,9 @@
     <string name="Auth_forgot">Forgot your password?</string>
     <string name="logo_text"><font color="#FD7739">POT</font><font color="#FFFFFF">HUB</font></string>
 
-    <string name="ResetCR_message1">Enter your email address and we will send you instructions to reset your password</string>
+    <!-- Forgot password -->
+
+    <string name="ResetCR_message1">Enter your username and we will send you instructions by email to reset your password</string>
     <string name="ResetCR_continue">Continue</string>
     <string name="ResetCR_backto">Back to sign in</string>
     <string name="ResetCR_title2">Type your code</string>

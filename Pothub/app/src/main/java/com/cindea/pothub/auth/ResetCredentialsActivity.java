@@ -1,4 +1,4 @@
-package com.cindea.pothub;
+package com.cindea.pothub.auth;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -7,6 +7,8 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
 
+import com.cindea.pothub.R;
+
 public class ResetCredentialsActivity extends AppCompatActivity implements ResetPwdCallbackListener {
 
     @Override
@@ -14,7 +16,7 @@ public class ResetCredentialsActivity extends AppCompatActivity implements Reset
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reset_credentials);
 
-        replaceFragment(new ResetCREmailFragment());
+        replaceFragment(new ResetCRUsernameFragment());
     }
 
     private void replaceFragment(Fragment fragment) {
@@ -27,16 +29,25 @@ public class ResetCredentialsActivity extends AppCompatActivity implements Reset
     }
 
     @Override
-    public void onContinueAfterEmail() {
+    public void switchToResetCRPassword() {
+
+        replaceFragment(new ResetCRPasswordFragment());
+
+    }
+
+    @Override
+    public void switchToResetCRCode() {
 
         replaceFragment(new ResetCRCodeFragment());
 
     }
 
     @Override
-    public void onContinueAfterPin() {
+    public void switchToSignin() {
 
-        replaceFragment(new ResetCRPasswordFragment());
+        finish();
 
     }
+
+
 }

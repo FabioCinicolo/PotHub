@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.cindea.pothub">
 
-    <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -11,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Pothub">
         <activity
-            android:name=".ResetCredentialsActivity"
+            android:name=".auth.ResetCredentialsActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

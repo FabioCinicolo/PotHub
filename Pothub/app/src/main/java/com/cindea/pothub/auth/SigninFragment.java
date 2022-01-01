@@ -1,4 +1,4 @@
-package com.cindea.pothub;
+package com.cindea.pothub.auth;
 
 import android.os.Bundle;
 
@@ -10,6 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.cindea.pothub.CustomFragment;
+import com.cindea.pothub.R;
+import com.cindea.pothub.auth.AuthCallbackListener;
 
 public class SigninFragment extends CustomFragment {
 
@@ -51,48 +55,32 @@ public class SigninFragment extends CustomFragment {
 
     private void customListeners() {
 
-        button_signin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        button_signin.setOnClickListener(view -> {
 
-                runButtonAnimation(button_signin);
+            runButtonAnimation(button_signin);
 
-                button_handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
+            button_handler.postDelayed(() -> {
 
-                    }
-                },170);
+            },170);
 
-            }
         });
 
-        button_signup.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        button_signup.setOnClickListener(view -> {
 
-                runButtonAnimation(button_signup);
+            runButtonAnimation(button_signup);
 
-                button_handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
+            button_handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
 
-                        authCallbackListener.onSignupPress();
+                    authCallbackListener.onSignupPress();
 
-                    }
-                },170);
+                }
+            },170);
 
-            }
         });
 
-        text_forgotpwd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                authCallbackListener.onResetPassword();
-
-            }
-        });
+        text_forgotpwd.setOnClickListener(view -> authCallbackListener.onResetPassword());
 
 
     }

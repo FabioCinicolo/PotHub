@@ -8,6 +8,11 @@ import androidx.fragment.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.cindea.pothub.auth.AuthCallbackListener;
+import com.cindea.pothub.auth.ResetCredentialsActivity;
+import com.cindea.pothub.auth.SigninFragment;
+import com.cindea.pothub.auth.SignupFragment;
+
 public class MainActivity extends AppCompatActivity implements AuthCallbackListener {
 
 

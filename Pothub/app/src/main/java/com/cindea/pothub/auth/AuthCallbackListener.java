@@ -1,4 +1,4 @@
-package com.cindea.pothub;
+package com.cindea.pothub.auth;
 
 public interface AuthCallbackListener {
 

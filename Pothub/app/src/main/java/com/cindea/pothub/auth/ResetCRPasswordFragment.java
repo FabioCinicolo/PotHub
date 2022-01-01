@@ -1,16 +1,18 @@
-package com.cindea.pothub;
+package com.cindea.pothub.auth;
 
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.cindea.pothub.CustomFragment;
+import com.cindea.pothub.R;
 
 public class ResetCRPasswordFragment extends CustomFragment {
 
@@ -46,22 +48,12 @@ public class ResetCRPasswordFragment extends CustomFragment {
 
     private void customListeners() {
 
-        button_continue.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        button_continue.setOnClickListener(view -> {
 
-                runButtonAnimation(button_continue);
+            runButtonAnimation(button_continue);
 
-                button_handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
+            button_handler.postDelayed(() -> resetPwdCallbackListener.switchToResetCRCode(),170);
 
-                        // Ciao
-
-                    }
-                },170);
-
-            }
         });
 
 
