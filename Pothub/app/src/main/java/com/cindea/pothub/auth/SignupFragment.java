@@ -1,5 +1,6 @@
 package com.cindea.pothub.auth;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,7 @@ public class SignupFragment extends CustomFragment {
     private AuthCallbackListener authCallbackListener;
     private Button button_signup;
     private Button button_signin;
+    private Intent intent_confirm;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -42,6 +44,8 @@ public class SignupFragment extends CustomFragment {
         button_signup = view.findViewById(R.id.fragmentSignup_signupbtn);
         button_signin = view.findViewById(R.id.fragmentSignup_signinbtn);
         authCallbackListener = (AuthCallbackListener)getActivity();
+        intent_confirm = new Intent(getActivity(), ConfirmSignupActivity.class);
+        intent_confirm.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         setupAnimations(getContext());
 
@@ -69,6 +73,8 @@ public class SignupFragment extends CustomFragment {
             runButtonAnimation(button_signup);
 
             button_handler.postDelayed(() -> {
+
+                startActivity(intent_confirm);
 
             },170);
 

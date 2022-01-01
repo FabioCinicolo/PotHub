@@ -12,6 +12,7 @@
     <string name="Auth_password">Password</string>
     <string name="Auth_forgot">Forgot your password?</string>
     <string name="logo_text"><font color="#FD7739">POT</font><font color="#FFFFFF">HUB</font></string>
+    <string name="Auth_confirmsignup">Enter the code that was sent by email to confirm your account</string>
 
     <!-- Forgot password -->
 
