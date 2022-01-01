@@ -2,8 +2,8 @@ package com.cindea.pothub.auth;
 
 public interface ResetPwdCallbackListener {
 
-    void switchToResetCRPassword();
-    void switchToResetCRCode();
-    void switchToSignin();
+    void switchToResetCRPassword(String username);
+    void switchToResetCRCode(String password);
+    void switchToSignin(String confirmation_code);
 
 }

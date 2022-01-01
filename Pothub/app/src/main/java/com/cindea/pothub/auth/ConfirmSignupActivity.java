@@ -11,14 +11,19 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.chaos.view.PinView;
 import com.cindea.pothub.R;
+import com.cindea.pothub.auth_util.AWSCognitoAuthentication;
 
 public class ConfirmSignupActivity extends AppCompatActivity {
 
     private Animation anim_scale_up;
     private Animation anim_scale_down;
     private Button button_confirm;
+    private PinView pin_view;
+    private String username;
 //    private long mLastClickTime = 0;
 
 
@@ -29,6 +34,8 @@ public class ConfirmSignupActivity extends AppCompatActivity {
 
         setupAnimations(getApplicationContext());
         button_confirm = findViewById(R.id.activityConfirmSignup_continue);
+        pin_view = findViewById(R.id.activityConfirmSignup_code);
+        username = getIntent().getStringExtra("username");
         customListeners();
 
     }
@@ -42,6 +49,12 @@ public class ConfirmSignupActivity extends AppCompatActivity {
             }
             mLastClickTime = SystemClock.elapsedRealtime();*/
             runButtonAnimation(button_confirm);
+            String confirmation_code = pin_view.getText().toString();
+            AWSCognitoAuthentication auth = new AWSCognitoAuthentication(this);
+            auth.initiateConfirmSignUp(username, confirmation_code);
+            auth.handleAuthentication(() -> {
+                Toast.makeText(getApplicationContext(), "Confirmed", Toast.LENGTH_SHORT).show();
+            });
 
         });
 

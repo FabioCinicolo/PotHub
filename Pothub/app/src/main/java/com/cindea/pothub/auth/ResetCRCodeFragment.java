@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.chaos.view.PinView;
 import com.cindea.pothub.CustomFragment;
 import com.cindea.pothub.R;
 
@@ -17,6 +18,7 @@ public class ResetCRCodeFragment extends CustomFragment {
 
     private ResetPwdCallbackListener resetPwdCallbackListener;
     private Button button_continue;
+    private PinView pin_view;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -39,6 +41,7 @@ public class ResetCRCodeFragment extends CustomFragment {
 
         button_continue = view.findViewById(R.id.fragmentCR2_continue);
         resetPwdCallbackListener = (ResetPwdCallbackListener) getActivity();
+        pin_view = view.findViewById(R.id.fragmentCR2_code);
 
         setupAnimations(getContext());
 
@@ -50,7 +53,7 @@ public class ResetCRCodeFragment extends CustomFragment {
 
             runButtonAnimation(button_continue);
 
-            button_handler.postDelayed(() -> resetPwdCallbackListener.switchToSignin(),170);
+            button_handler.postDelayed(() -> resetPwdCallbackListener.switchToSignin(pin_view.getText().toString()),170);
 
         });
 

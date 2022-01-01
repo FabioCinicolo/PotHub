@@ -9,11 +9,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.cindea.pothub.CustomFragment;
 import com.cindea.pothub.R;
 import com.cindea.pothub.auth.AuthCallbackListener;
+import com.cindea.pothub.auth_util.AWSCognitoAuthentication;
 
 public class SigninFragment extends CustomFragment {
 
@@ -21,6 +24,8 @@ public class SigninFragment extends CustomFragment {
     private Button button_signup;
     private Button button_signin;
     private TextView text_forgotpwd;
+    private EditText edit_user;
+    private EditText edit_password;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -46,6 +51,8 @@ public class SigninFragment extends CustomFragment {
         button_signup = view.findViewById(R.id.fragmentSignin_signupbtn);
         button_signin = view.findViewById(R.id.fragmentSignin_signinbtn);
         text_forgotpwd = view.findViewById(R.id.fragmentSignin_forgotpassword);
+        edit_user = view.findViewById(R.id.fragmentSignin_username);
+        edit_password = view.findViewById(R.id.fragmentSignin_password);
 
         authCallbackListener = (AuthCallbackListener)getActivity();
 
@@ -57,11 +64,19 @@ public class SigninFragment extends CustomFragment {
 
         button_signin.setOnClickListener(view -> {
 
+
             runButtonAnimation(button_signin);
 
-            button_handler.postDelayed(() -> {
+            String username = edit_user.getText().toString();
+            String password = edit_password.getText().toString();
 
-            },170);
+//            home_intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+
+            AWSCognitoAuthentication auth = new AWSCognitoAuthentication(getActivity());
+            auth.initiateSignin(username, password);
+            auth.handleAuthentication(() -> {
+                Toast.makeText(getContext(), "Fatto", Toast.LENGTH_SHORT).show();
+            });
 
         });
 

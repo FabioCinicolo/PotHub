@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.cindea.pothub.CustomFragment;
@@ -19,6 +20,7 @@ public class ResetCRPasswordFragment extends CustomFragment {
     private ResetPwdCallbackListener resetPwdCallbackListener;
     private Button button_continue;
     private TextView text_back;
+    private EditText et_password;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -41,6 +43,7 @@ public class ResetCRPasswordFragment extends CustomFragment {
 
         button_continue = view.findViewById(R.id.fragmentCR3_continue);
         resetPwdCallbackListener = (ResetPwdCallbackListener) getActivity();
+        et_password = view.findViewById(R.id.fragmentCR3_password);
 
         setupAnimations(getContext());
 
@@ -52,7 +55,7 @@ public class ResetCRPasswordFragment extends CustomFragment {
 
             runButtonAnimation(button_continue);
 
-            button_handler.postDelayed(() -> resetPwdCallbackListener.switchToResetCRCode(),170);
+            button_handler.postDelayed(() -> resetPwdCallbackListener.switchToResetCRCode(et_password.getText().toString()),170);
 
         });
 

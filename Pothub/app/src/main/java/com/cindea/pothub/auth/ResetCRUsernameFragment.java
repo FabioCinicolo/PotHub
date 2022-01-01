@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,7 @@ public class ResetCRUsernameFragment extends CustomFragment {
 
     private ResetPwdCallbackListener resetPwdCallbackListener;
     private Button button_continue;
+    private EditText et_username;
     private TextView text_back;
 
     @Override
@@ -42,6 +44,7 @@ public class ResetCRUsernameFragment extends CustomFragment {
         button_continue = view.findViewById(R.id.fragmentCR1_continue);
         text_back = view.findViewById(R.id.fragmentCR1_back);
         resetPwdCallbackListener = (ResetPwdCallbackListener) getActivity();
+        et_username = view.findViewById(R.id.fragmentCR1_username);
 
         setupAnimations(getContext());
 
@@ -53,7 +56,7 @@ public class ResetCRUsernameFragment extends CustomFragment {
 
             runButtonAnimation(button_continue);
 
-            button_handler.postDelayed(() -> resetPwdCallbackListener.switchToResetCRPassword(),170);
+            button_handler.postDelayed(() -> resetPwdCallbackListener.switchToResetCRPassword(et_username.getText().toString()),170);
 
         });
 

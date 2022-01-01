@@ -1,6 +1,7 @@
 package com.cindea.pothub;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -34,5 +35,23 @@ public abstract class CustomFragment extends Fragment {
     }
 
     protected abstract void setupComponents(View view);
+
+    protected void runHandledIntent(Intent intent) {
+
+        button_handler.postDelayed(() -> startActivity(intent),170);
+
+    }
+
+
+    protected void runHandledIntent(Intent intent, int enter_animation, int exit_animation) {
+
+        button_handler.postDelayed(() -> {
+
+            startActivity(intent);
+            getActivity().overridePendingTransition(enter_animation, exit_animation);
+
+        },170);
+
+    }
 
 }

@@ -8,13 +8,21 @@ import androidx.fragment.app.FragmentTransaction;
 import android.os.Bundle;
 
 import com.cindea.pothub.R;
+import com.cindea.pothub.auth_util.AWSCognitoAuthentication;
 
 public class ResetCredentialsActivity extends AppCompatActivity implements ResetPwdCallbackListener {
+
+    private AWSCognitoAuthentication auth;
+    private String username;
+    private String password;
+    private String confirmation_code;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reset_credentials);
+
+        auth = new AWSCognitoAuthentication(this);
 
         replaceFragment(new ResetCRUsernameFragment());
     }
@@ -29,24 +37,32 @@ public class ResetCredentialsActivity extends AppCompatActivity implements Reset
     }
 
     @Override
-    public void switchToResetCRPassword() {
+    public void switchToResetCRPassword(String username) {
 
-        replaceFragment(new ResetCRPasswordFragment());
+        this.username = username;
+        auth.initiateForgotPassword(username);
+        auth.handleAuthentication(() -> {
+            replaceFragment(new ResetCRPasswordFragment());
+        });
 
     }
 
     @Override
-    public void switchToResetCRCode() {
+    public void switchToResetCRCode(String password) {
 
+        this.password = password;
         replaceFragment(new ResetCRCodeFragment());
 
     }
 
     @Override
-    public void switchToSignin() {
+    public void switchToSignin(String confirmation_code) {
 
-        finish();
-
+        this.confirmation_code = confirmation_code;
+        auth.initiateResetPassword(username, password, confirmation_code);
+        auth.handleAuthentication(() -> {
+            finish();
+        });
     }
 
 
