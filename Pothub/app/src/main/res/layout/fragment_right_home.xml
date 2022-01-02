@@ -56,7 +56,7 @@
             <android.widget.Button
                 android:id="@+id/fragmentRightHome_100mt"
                 android:layout_width="wrap_content"
-                android:layout_height="32dp"
+                android:layout_height="40dp"
                 android:background="@drawable/custom_edit_text"
                 android:backgroundTint="#3F3F3F"
                 android:fontFamily="sans-serif"
@@ -64,12 +64,12 @@
                 android:stateListAnimator="@null"
                 android:textAllCaps="false"
                 android:textColor="@color/edit_text_orange"
-                android:textSize="14sp" />
+                android:textSize="16sp" />
 
             <android.widget.Button
                 android:id="@+id/fragmentRightHome_250mt"
                 android:layout_width="wrap_content"
-                android:layout_height="32dp"
+                android:layout_height="40dp"
                 android:layout_marginStart="16dp"
                 android:background="@drawable/custom_edit_text"
                 android:backgroundTint="#3F3F3F"
@@ -78,12 +78,12 @@
                 android:stateListAnimator="@null"
                 android:textAllCaps="false"
                 android:textColor="@color/text_in_edit"
-                android:textSize="14sp" />
+                android:textSize="16sp" />
 
             <android.widget.Button
                 android:id="@+id/fragmentRightHome_500mt"
                 android:layout_width="wrap_content"
-                android:layout_height="32dp"
+                android:layout_height="40dp"
                 android:layout_marginStart="16dp"
                 android:background="@drawable/custom_edit_text"
                 android:backgroundTint="#3F3F3F"
@@ -92,12 +92,12 @@
                 android:stateListAnimator="@null"
                 android:textAllCaps="false"
                 android:textColor="@color/text_in_edit"
-                android:textSize="14sp" />
+                android:textSize="16sp" />
 
             <android.widget.Button
                 android:id="@+id/fragmentRightHome_1km"
                 android:layout_width="wrap_content"
-                android:layout_height="32dp"
+                android:layout_height="40dp"
                 android:layout_marginStart="16dp"
                 android:background="@drawable/custom_edit_text"
                 android:backgroundTint="#3F3F3F"
@@ -106,12 +106,12 @@
                 android:stateListAnimator="@null"
                 android:textAllCaps="false"
                 android:textColor="@color/text_in_edit"
-                android:textSize="14sp" />
+                android:textSize="16sp" />
 
             <android.widget.Button
                 android:id="@+id/fragmentRightHome_5km"
                 android:layout_width="wrap_content"
-                android:layout_height="32dp"
+                android:layout_height="40dp"
                 android:layout_marginStart="16dp"
                 android:background="@drawable/custom_edit_text"
                 android:backgroundTint="#3F3F3F"
@@ -120,7 +120,7 @@
                 android:stateListAnimator="@null"
                 android:textAllCaps="false"
                 android:textColor="@color/text_in_edit"
-                android:textSize="14sp" />
+                android:textSize="16sp" />
 
         </LinearLayout>
 

@@ -17,8 +17,8 @@ import com.cindea.pothub.R;
 
 public class RightHomeFragment extends Fragment {
 
-    Button[] buttons = new Button[5];
-    int filter_position = 0;
+    Button button_100mt, button_250mt, button_500mt, button_1km, button_5km;
+    Button position_button;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -37,83 +37,83 @@ public class RightHomeFragment extends Fragment {
 
     private void setupComponents(View view) {
 
-        buttons[0] = view.findViewById(R.id.fragmentRightHome_100mt);
-        buttons[1] = view.findViewById(R.id.fragmentRightHome_250mt);
-        buttons[2] = view.findViewById(R.id.fragmentRightHome_500mt);
-        buttons[3] = view.findViewById(R.id.fragmentRightHome_1km);
-        buttons[4] = view.findViewById(R.id.fragmentRightHome_5km);
+        button_100mt = view.findViewById(R.id.fragmentRightHome_100mt);
+        position_button = button_100mt;
+        button_250mt  = view.findViewById(R.id.fragmentRightHome_250mt);
+        button_500mt  = view.findViewById(R.id.fragmentRightHome_500mt);
+        button_1km = view.findViewById(R.id.fragmentRightHome_1km);
+        button_5km = view.findViewById(R.id.fragmentRightHome_5km);
 
     }
 
     private void customListeners() {
 
-        buttons[0].setOnClickListener(view -> {
+        button_100mt.setOnClickListener(view -> {
 
-            if(!checkIfSamePosition(0)) {
+            if(!checkIfSamePosition(button_100mt)) {
 
-                buttons[0].setTextColor(getContext().getResources().getColor(R.color.edit_text_orange));
-                filter_position = 0;
-                buttons[filter_position].setTextColor(Color.parseColor("#979797"));
-
-            }
-
-        });
-
-        buttons[1].setOnClickListener(view -> {
-
-            if(!checkIfSamePosition(1)) {
-
-                buttons[1].setTextColor(getContext().getResources().getColor(R.color.edit_text_orange));
-                filter_position = 1;
-                buttons[filter_position].setTextColor(Color.parseColor("#979797"));
+                button_100mt.setTextColor(getResources().getColor(R.color.edit_text_orange));
+                position_button.setTextColor(getResources().getColor(R.color.text_in_edit));
+                position_button = button_100mt;
 
             }
 
         });
 
-        buttons[2].setOnClickListener(view -> {
+        button_250mt.setOnClickListener(view -> {
 
-            if(!checkIfSamePosition(2)) {
+            if(!checkIfSamePosition(button_250mt)) {
 
-                Log.e("ERROR", "In if");
-
-                buttons[2].setTextColor(getContext().getResources().getColor(R.color.edit_text_orange));
-                filter_position = 2;
-                buttons[filter_position].setTextColor(Color.parseColor("#979797"));
+                button_250mt.setTextColor(getResources().getColor(R.color.edit_text_orange));
+                position_button.setTextColor(getResources().getColor(R.color.text_in_edit));
+                position_button = button_250mt;
 
             }
 
         });
 
-        buttons[3].setOnClickListener(view -> {
+        button_500mt.setOnClickListener(view -> {
 
-            if(!checkIfSamePosition(3)) {
+            if(!checkIfSamePosition(button_500mt)) {
 
-                buttons[3].setTextColor(Color.parseColor("#FD7739"));
-                filter_position = 3;
-                buttons[filter_position].setTextColor(Color.parseColor("#979797"));
+                button_500mt.setTextColor(getResources().getColor(R.color.edit_text_orange));
+                position_button.setTextColor(getResources().getColor(R.color.text_in_edit));
+                position_button = button_500mt;
+
+            }
+
+        });
+
+        button_1km.setOnClickListener(view -> {
+
+            if(!checkIfSamePosition(button_1km)) {
+
+                button_1km.setTextColor(getResources().getColor(R.color.edit_text_orange));
+                position_button.setTextColor(getResources().getColor(R.color.text_in_edit));
+                position_button = button_1km;
 
             }
 
         });
 
-        buttons[4].setOnClickListener(view -> {
+        button_5km.setOnClickListener(view -> {
 
-            if(!checkIfSamePosition(4)) {
+            if(!checkIfSamePosition(button_5km)) {
 
-                buttons[4].setTextColor(Color.parseColor("#FD7739"));
-                filter_position = 4;
-                buttons[filter_position].setTextColor(Color.parseColor("#979797"));
+                button_5km.setTextColor(getResources().getColor(R.color.edit_text_orange));
+                position_button.setTextColor(getResources().getColor(R.color.text_in_edit));
+                position_button = button_5km;
 
             }
 
         });
+
 
     }
 
-    private boolean checkIfSamePosition(int position) {
+    private boolean checkIfSamePosition(Button button) {
 
-        return position == filter_position;
+        return (position_button.getCurrentTextColor() == button.getCurrentTextColor()) ? true : false;
 
     }
 }
