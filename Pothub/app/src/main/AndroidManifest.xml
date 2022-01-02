@@ -12,17 +12,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Pothub">
         <activity
-            android:name=".auth.ConfirmSignupActivity"
+            android:name=".home.HomeActivity"
             android:launchMode="singleTask"
             android:exported="false" />
+        <activity
+            android:name=".auth.ConfirmSignupActivity"
+            android:exported="false"
+            android:launchMode="singleTask" />
         <activity
             android:name=".auth.ResetCredentialsActivity"
-            android:launchMode="singleTask"
-            android:exported="false" />
+            android:exported="false"
+            android:launchMode="singleTask" />
         <activity
             android:name=".MainActivity"
-            android:launchMode="singleTask"
-            android:exported="true">
+            android:exported="true"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

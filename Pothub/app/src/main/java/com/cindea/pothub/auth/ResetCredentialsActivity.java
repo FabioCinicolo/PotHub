@@ -15,7 +15,6 @@ public class ResetCredentialsActivity extends AppCompatActivity implements Reset
     private AWSCognitoAuthentication auth;
     private String username;
     private String password;
-    private String confirmation_code;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +57,6 @@ public class ResetCredentialsActivity extends AppCompatActivity implements Reset
     @Override
     public void switchToSignin(String confirmation_code) {
 
-        this.confirmation_code = confirmation_code;
         auth.initiateResetPassword(username, password, confirmation_code);
         auth.handleAuthentication(() -> {
             finish();

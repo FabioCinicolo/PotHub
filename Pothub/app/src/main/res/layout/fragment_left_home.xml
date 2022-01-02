@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#00000000"
+    tools:context=".home.LeftHomeFragment">
+
+    <LinearLayout
+        android:id="@+id/fragmentLeftHome_linearlayout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="32dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hello,"
+            android:textSize="20sp"
+            android:fontFamily="sans-serif"
+            android:textColor="@color/text_in_edit"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Auth_username"
+            android:textSize="24sp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="@color/edit_text_orange"/>
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/fragmentLeftHome_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center"
+        android:layout_below="@id/fragmentLeftHome_linearlayout1"
+        android:background="@drawable/divider_bar"/>
+
+    <LinearLayout
+        android:id="@+id/fragmentLeftHome_linearlayout2"
+        android:layout_width="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_below="@id/fragmentLeftHome_divider"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Stats"
+            android:textSize="20sp"
+            android:fontFamily="sans-serif"
+            android:textColor="@color/edit_text_orange"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total hours: "
+            android:layout_marginTop="8dp"
+            android:textSize="18sp"
+            android:fontFamily="sans-serif"
+            android:textColor="@color/text_in_edit"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total reported potholes: "
+            android:textSize="18sp"
+            android:fontFamily="sans-serif"
+            android:textColor="@color/text_in_edit"/>
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/fragmentLeftHome_divider2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center"
+        android:layout_below="@id/fragmentLeftHome_linearlayout2"
+        android:background="@drawable/divider_bar"/>
+
+    <LinearLayout
+        android:id="@+id/fragmentLeftHome_linearlayout3"
+        android:layout_width="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_below="@id/fragmentLeftHome_divider2"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Last 7 days reported potholes"
+            android:textSize="20sp"
+            android:fontFamily="sans-serif"
+            android:textColor="@color/edit_text_orange"/>
+
+    </LinearLayout>
+
+
+</RelativeLayout>

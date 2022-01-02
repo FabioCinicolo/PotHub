@@ -1,5 +1,6 @@
 package com.cindea.pothub.auth;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,8 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cindea.pothub.CustomFragment;
+import com.cindea.pothub.home.HomeActivity;
 import com.cindea.pothub.R;
-import com.cindea.pothub.auth.AuthCallbackListener;
 import com.cindea.pothub.auth_util.AWSCognitoAuthentication;
 
 public class SigninFragment extends CustomFragment {
@@ -70,19 +71,30 @@ public class SigninFragment extends CustomFragment {
             String username = edit_user.getText().toString();
             String password = edit_password.getText().toString();
 
+            button_handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+
+                    startActivity(new Intent(getActivity(), HomeActivity.class));
+
+                }
+            },170);
+
+
 //            home_intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 
-            AWSCognitoAuthentication auth = new AWSCognitoAuthentication(getActivity());
+/*            AWSCognitoAuthentication auth = new AWSCognitoAuthentication(getActivity());
             auth.initiateSignin(username, password);
             auth.handleAuthentication(() -> {
                 Toast.makeText(getContext(), "Fatto", Toast.LENGTH_SHORT).show();
-            });
+            });*/
 
         });
 
         button_signup.setOnClickListener(view -> {
 
             runButtonAnimation(button_signup);
+
 
             button_handler.postDelayed(new Runnable() {
                 @Override

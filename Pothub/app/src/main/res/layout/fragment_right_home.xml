@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#00000000"
+    tools:context=".home.RightHomeFragment">
+
+    <LinearLayout
+        android:id="@+id/fragmentRightHome_linearlayout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="32dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="There are all your nearby potholes,"
+            android:textSize="20sp"
+            android:fontFamily="sans-serif"
+            android:textColor="@color/text_in_edit"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Watch out!"
+            android:textSize="24sp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="@color/edit_text_orange"/>
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/fragmentRightHome_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center"
+        android:layout_below="@id/fragmentRightHome_linearlayout1"
+        android:background="@drawable/divider_bar"/>
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:paddingHorizontal="8dp"
+        android:layout_below="@id/fragmentRightHome_divider"
+        android:scrollbarThumbHorizontal="@null"
+        android:overScrollMode="never">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.widget.Button
+                android:id="@+id/fragmentRightHome_100mt"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:background="@drawable/custom_edit_text"
+                android:backgroundTint="#3F3F3F"
+                android:fontFamily="sans-serif"
+                android:text="100 mt"
+                android:stateListAnimator="@null"
+                android:textAllCaps="false"
+                android:textColor="@color/edit_text_orange"
+                android:textSize="14sp" />
+
+            <android.widget.Button
+                android:id="@+id/fragmentRightHome_250mt"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginStart="16dp"
+                android:background="@drawable/custom_edit_text"
+                android:backgroundTint="#3F3F3F"
+                android:fontFamily="sans-serif"
+                android:text="250 mt"
+                android:stateListAnimator="@null"
+                android:textAllCaps="false"
+                android:textColor="@color/text_in_edit"
+                android:textSize="14sp" />
+
+            <android.widget.Button
+                android:id="@+id/fragmentRightHome_500mt"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginStart="16dp"
+                android:background="@drawable/custom_edit_text"
+                android:backgroundTint="#3F3F3F"
+                android:fontFamily="sans-serif"
+                android:text="500 mt"
+                android:stateListAnimator="@null"
+                android:textAllCaps="false"
+                android:textColor="@color/text_in_edit"
+                android:textSize="14sp" />
+
+            <android.widget.Button
+                android:id="@+id/fragmentRightHome_1km"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginStart="16dp"
+                android:background="@drawable/custom_edit_text"
+                android:backgroundTint="#3F3F3F"
+                android:fontFamily="sans-serif"
+                android:text="1 km"
+                android:stateListAnimator="@null"
+                android:textAllCaps="false"
+                android:textColor="@color/text_in_edit"
+                android:textSize="14sp" />
+
+            <android.widget.Button
+                android:id="@+id/fragmentRightHome_5km"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginStart="16dp"
+                android:background="@drawable/custom_edit_text"
+                android:backgroundTint="#3F3F3F"
+                android:fontFamily="sans-serif"
+                android:text="5 km"
+                android:stateListAnimator="@null"
+                android:textAllCaps="false"
+                android:textColor="@color/text_in_edit"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+    </HorizontalScrollView>
+
+</RelativeLayout>
