@@ -1,41 +1,36 @@
 package com.cindea.pothub.home;
 
-import android.graphics.Color;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import androidx.fragment.app.Fragment;
+
 import com.cindea.pothub.R;
 
 public class RightHomeFragment extends Fragment {
 
-    Button button_100mt, button_250mt, button_500mt, button_1km, button_5km;
-    Button position_button;
+    private View view;
+    private Button button_100mt, button_250mt, button_500mt, button_1km, button_5km;
+    private Button position_button;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_right_home, container, false);
+
+        view = inflater.inflate(R.layout.fragment_right_home, container, false);
+
+        setupComponents();
+        listeners();
+        filterListeners();
+
+        return view;
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
 
-        setupComponents(view);
-        customListeners();
-    }
-
-    private void setupComponents(View view) {
+    private void setupComponents() {
 
         button_100mt = view.findViewById(R.id.fragmentRightHome_100mt);
         position_button = button_100mt;
@@ -46,7 +41,19 @@ public class RightHomeFragment extends Fragment {
 
     }
 
-    private void customListeners() {
+    private void listeners() {
+
+
+
+    }
+
+    private boolean checkIfSamePosition(Button button) {
+
+        return (position_button.getCurrentTextColor() == button.getCurrentTextColor()) ? true : false;
+
+    }
+
+    private void filterListeners() {
 
         button_100mt.setOnClickListener(view -> {
 
@@ -108,12 +115,6 @@ public class RightHomeFragment extends Fragment {
 
         });
 
-
     }
 
-    private boolean checkIfSamePosition(Button button) {
-
-        return (position_button.getCurrentTextColor() == button.getCurrentTextColor()) ? true : false;
-
-    }
 }

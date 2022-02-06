@@ -1,30 +1,21 @@
-package com.cindea.pothub.auth;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
+package com.cindea.pothub.auth.activities;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.SystemClock;
-import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.chaos.view.PinView;
 import com.cindea.pothub.R;
-import com.cindea.pothub.auth_util.AWSCognitoAuthentication;
 
 public class ConfirmSignupActivity extends AppCompatActivity {
 
     private Animation anim_scale_up;
     private Animation anim_scale_down;
     private Button button_confirm;
-    private PinView pin_view;
-    private String username;
-//    private long mLastClickTime = 0;
 
 
     @Override
@@ -32,11 +23,15 @@ public class ConfirmSignupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirm_signup);
 
+        setupComponents();
+        customListeners();
+
+    }
+
+    private void setupComponents() {
+
         setupAnimations(getApplicationContext());
         button_confirm = findViewById(R.id.activityConfirmSignup_continue);
-        pin_view = findViewById(R.id.activityConfirmSignup_code);
-        username = getIntent().getStringExtra("username");
-        customListeners();
 
     }
 
@@ -44,17 +39,10 @@ public class ConfirmSignupActivity extends AppCompatActivity {
 
         button_confirm.setOnClickListener(view -> {
 
-/*            if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
-                return;
-            }
-            mLastClickTime = SystemClock.elapsedRealtime();*/
             runButtonAnimation(button_confirm);
-            String confirmation_code = pin_view.getText().toString();
-            AWSCognitoAuthentication auth = new AWSCognitoAuthentication(this);
-            auth.initiateConfirmSignUp(username, confirmation_code);
-            auth.handleAuthentication(() -> {
-                Toast.makeText(getApplicationContext(), "Confirmed", Toast.LENGTH_SHORT).show();
-            });
+            String confirmation_code = ((PinView)findViewById(R.id.activityConfirmSignup_code)).getText().toString();
+
+            // getIntent().getStringExtra("username");
 
         });
 

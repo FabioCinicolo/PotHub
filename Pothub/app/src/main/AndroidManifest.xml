@@ -16,11 +16,11 @@
             android:launchMode="singleTask"
             android:exported="false" />
         <activity
-            android:name=".auth.ConfirmSignupActivity"
+            android:name=".auth.activities.ConfirmSignupActivity"
             android:exported="false"
             android:launchMode="singleTask" />
         <activity
-            android:name=".auth.ResetCredentialsActivity"
+            android:name=".auth.activities.ResetCredentialsActivity"
             android:exported="false"
             android:launchMode="singleTask" />
         <activity

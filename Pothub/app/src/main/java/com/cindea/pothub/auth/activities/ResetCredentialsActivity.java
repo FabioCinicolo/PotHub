@@ -1,18 +1,19 @@
-package com.cindea.pothub.auth;
+package com.cindea.pothub.auth.activities;
+
+import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.os.Bundle;
-
 import com.cindea.pothub.R;
-import com.cindea.pothub.auth_util.AWSCognitoAuthentication;
+import com.cindea.pothub.auth.ResetPwdCallbackListener;
+import com.cindea.pothub.auth.fragments.ResetCRCodeFragment;
+import com.cindea.pothub.auth.fragments.ResetCRUsernameFragment;
 
 public class ResetCredentialsActivity extends AppCompatActivity implements ResetPwdCallbackListener {
 
-    private AWSCognitoAuthentication auth;
     private String username;
     private String password;
 
@@ -20,8 +21,6 @@ public class ResetCredentialsActivity extends AppCompatActivity implements Reset
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reset_credentials);
-
-        auth = new AWSCognitoAuthentication(this);
 
         replaceFragment(new ResetCRUsernameFragment());
     }
@@ -39,10 +38,9 @@ public class ResetCredentialsActivity extends AppCompatActivity implements Reset
     public void switchToResetCRPassword(String username) {
 
         this.username = username;
-        auth.initiateForgotPassword(username);
-        auth.handleAuthentication(() -> {
-            replaceFragment(new ResetCRPasswordFragment());
-        });
+        /*TODO: Inizio richiesta di reset password (Deve poi essere spostato nel fragment di
+         * TODO: modifica password
+         */
 
     }
 
@@ -57,10 +55,8 @@ public class ResetCredentialsActivity extends AppCompatActivity implements Reset
     @Override
     public void switchToSignin(String confirmation_code) {
 
-        auth.initiateResetPassword(username, password, confirmation_code);
-        auth.handleAuthentication(() -> {
-            finish();
-        });
+        //TODO: Terminazione reset password (Viene riportato al signin)
+
     }
 
 

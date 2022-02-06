@@ -1,16 +1,16 @@
 package com.cindea.pothub.home;
 
+import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
-
-import android.os.Bundle;
 
 import com.cindea.pothub.R;
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator;
 
 public class HomeActivity extends AppCompatActivity {
 
-    ViewPager2 pager2;
+    private ViewPager2 viewPager2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,19 +18,19 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         setupComponents();
-        pager2.setCurrentItem(1, false);
+        viewPager2.setCurrentItem(1, false);
 
 
     }
 
     private void setupComponents() {
 
-        pager2 = findViewById(R.id.activityHome_viewpager2);
+        viewPager2 = findViewById(R.id.activityHome_viewpager2);
         HomeFragmentAdapter homeFragmentAdapter = new HomeFragmentAdapter(this);
 
-        pager2.setAdapter(homeFragmentAdapter);
+        viewPager2.setAdapter(homeFragmentAdapter);
         DotsIndicator dotsIndicator = findViewById(R.id.activityHome_dotsindicators);
-        dotsIndicator.setViewPager2(pager2);
+        dotsIndicator.setViewPager2(viewPager2);
 
     }
 
