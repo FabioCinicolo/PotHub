@@ -1,8 +1,11 @@
-package com.cindea.pothub.callbacks.auth;
+package com.cindea.pothub.utilities.http.callbacks.auth;
 
 import android.app.Activity;
+import android.content.Intent;
 
-import com.cindea.pothub.callbacks.HTTPCallback;
+import com.cindea.pothub.MainActivity;
+import com.cindea.pothub.auth.activities.ConfirmSignupActivity;
+import com.cindea.pothub.utilities.http.callbacks.HTTPCallback;
 
 public class ConfirmSignupCallback implements HTTPCallback {
 
@@ -16,6 +19,13 @@ public class ConfirmSignupCallback implements HTTPCallback {
     @Override
     public void handleStatus200(String response) {
 
+        activity.runOnUiThread(() -> {
+
+            Intent intent = new Intent(activity, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            activity.startActivity(intent);
+
+        });
 
     }
 

@@ -23,7 +23,7 @@ public final class TokenSharedPreferences {
         gson = new Gson();
     }
 
-    public final void insertTokens(String response){
+    public final void insertTokens(String response, String username){
 
         tokens = gson.fromJson(removeQuotesAndUnescape(response), Tokens.class);
 
@@ -32,8 +32,10 @@ public final class TokenSharedPreferences {
         editor.putString("id_token", tokens.getId_token());
         editor.putString("refresh_token", tokens.getRefresh_token());
         editor.putString("access_token", tokens.getAccess_token());
+        editor.putString("username", username);
 
         editor.commit();
+
     }
 
     public final void insertIdAndAccessToken(String response){
@@ -61,9 +63,23 @@ public final class TokenSharedPreferences {
 
     }
 
-    public final void clear() {
+    public final String getRefreshToken() {
 
+        return user_details.getString("refresh_token",null);
+
+    }
+
+    public String getUsername() {
+        return user_details.getString("username", null);
+    }
+
+    public final void clear() {
         user_details.edit().clear().commit();
+    }
+
+    public final boolean isEmpty() {
+
+        return (user_details.getString("id_token", null)==null) ? true : false;
 
     }
 

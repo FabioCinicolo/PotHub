@@ -1,19 +1,12 @@
-package com.cindea.pothub.callbacks.auth;
+package com.cindea.pothub.utilities.http.callbacks.auth;
 
-import android.app.Activity;
+import com.cindea.pothub.utilities.http.callbacks.HTTPCallback;
 
-import com.cindea.pothub.callbacks.HTTPCallback;
-
-public class ChangePasswordCallback implements HTTPCallback {
-
-    Activity activity;
-
-    public ChangePasswordCallback(Activity activity) {
-        this.activity = activity;
-    }
+public class GetCodeForPasswordResetCallback implements HTTPCallback {
 
     @Override
     public void handleStatus200(String response) {
+
 
     }
 
@@ -36,6 +29,4 @@ public class ChangePasswordCallback implements HTTPCallback {
     public void handleRequestException(String message) {
 
     }
-
-
 }

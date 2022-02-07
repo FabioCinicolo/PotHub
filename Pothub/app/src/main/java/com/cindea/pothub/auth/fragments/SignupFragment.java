@@ -1,6 +1,5 @@
 package com.cindea.pothub.auth.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +9,8 @@ import android.widget.EditText;
 
 import com.cindea.pothub.R;
 import com.cindea.pothub.auth.AuthCallbackListener;
-import com.cindea.pothub.auth.activities.ConfirmSignupActivity;
+import com.cindea.pothub.utilities.http.callbacks.auth.SignupCallback;
+import com.cindea.pothub.utilities.http.AuthenticationHTTP;
 
 public class SignupFragment extends CustomAuthFragment {
 
@@ -60,18 +60,14 @@ public class SignupFragment extends CustomAuthFragment {
 
         button_signup.setOnClickListener(view -> {
 
-            Intent intent = new Intent(getActivity(), ConfirmSignupActivity.class);
-
             String username = ((EditText)fragmentView.findViewById(R.id.fragmentSignup_username)).getText().toString();
             String email = ((EditText)fragmentView.findViewById(R.id.fragmentSignup_mail)).getText().toString();
             String password = ((EditText)fragmentView.findViewById(R.id.fragmentSignup_password)).getText().toString();
 
             runButtonAnimation(button_signup);
 
-            intent.putExtra("username", username);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-
             //TODO: Signup
+            new AuthenticationHTTP().signUp(username, email, password, new SignupCallback(getActivity(), username));
 
         });
 

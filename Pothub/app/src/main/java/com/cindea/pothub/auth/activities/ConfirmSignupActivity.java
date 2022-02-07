@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.chaos.view.PinView;
 import com.cindea.pothub.R;
+import com.cindea.pothub.utilities.http.AuthenticationHTTP;
+import com.cindea.pothub.utilities.http.callbacks.auth.ConfirmSignupCallback;
 
 public class ConfirmSignupActivity extends AppCompatActivity {
 
@@ -42,7 +44,9 @@ public class ConfirmSignupActivity extends AppCompatActivity {
             runButtonAnimation(button_confirm);
             String confirmation_code = ((PinView)findViewById(R.id.activityConfirmSignup_code)).getText().toString();
 
-            // getIntent().getStringExtra("username");
+            String username = getIntent().getStringExtra("username");
+
+            new AuthenticationHTTP().confirmSignUp(username, confirmation_code, new ConfirmSignupCallback(this));
 
         });
 

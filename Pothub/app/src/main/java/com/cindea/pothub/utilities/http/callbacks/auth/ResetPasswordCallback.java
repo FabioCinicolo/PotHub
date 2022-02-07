@@ -1,19 +1,11 @@
-package com.cindea.pothub.callbacks.auth;
+package com.cindea.pothub.utilities.http.callbacks.auth;
 
-import android.app.Activity;
+import com.cindea.pothub.utilities.http.callbacks.HTTPCallback;
 
-import com.cindea.pothub.callbacks.HTTPCallback;
+public class ResetPasswordCallback implements HTTPCallback {
 
-public class TokenLoginCallback implements HTTPCallback {
-
-    private Activity activity;
-
-    public TokenLoginCallback(Activity activity){
-        this.activity = activity;
-    }
     @Override
     public void handleStatus200(String response) {
-
     }
 
     @Override
@@ -35,5 +27,6 @@ public class TokenLoginCallback implements HTTPCallback {
     public void handleRequestException(String message) {
 
     }
+
 
 }

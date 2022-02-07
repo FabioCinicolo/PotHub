@@ -1,8 +1,16 @@
-package com.cindea.pothub.callbacks.auth;
+package com.cindea.pothub.utilities.http.callbacks.auth;
 
-import com.cindea.pothub.callbacks.HTTPCallback;
+import android.app.Activity;
 
-public class SignupCallback implements HTTPCallback {
+import com.cindea.pothub.utilities.http.callbacks.HTTPCallback;
+
+public class ChangePasswordCallback implements HTTPCallback {
+
+    Activity activity;
+
+    public ChangePasswordCallback(Activity activity) {
+        this.activity = activity;
+    }
 
     @Override
     public void handleStatus200(String response) {
@@ -16,14 +24,18 @@ public class SignupCallback implements HTTPCallback {
 
     @Override
     public void handleStatus401(String response) {
+
     }
 
     @Override
     public void handleStatus500(String response) {
+
     }
 
     @Override
     public void handleRequestException(String message) {
+
     }
+
 
 }

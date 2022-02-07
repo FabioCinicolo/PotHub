@@ -1,4 +1,4 @@
-package com.cindea.pothub.callbacks;
+package com.cindea.pothub.utilities.http.callbacks;
 
 public interface HTTPCallback {
 

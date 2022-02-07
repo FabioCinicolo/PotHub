@@ -6,11 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.cindea.pothub.R;
 import com.cindea.pothub.auth.AuthCallbackListener;
 import com.cindea.pothub.home.HomeActivity;
+import com.cindea.pothub.utilities.http.AuthenticationHTTP;
+import com.cindea.pothub.utilities.http.callbacks.auth.GetTokensCallback;
 
 public final class SigninFragment extends CustomAuthFragment {
 
@@ -47,17 +50,11 @@ public final class SigninFragment extends CustomAuthFragment {
 
             runButtonAnimation(button_signin);
 
-            button_handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
+            String username = ((EditText)fragmentView.findViewById(R.id.fragmentSignin_username)).getText().toString();
+            String password = ((EditText)fragmentView.findViewById(R.id.fragmentSignin_password)).getText().toString();
 
-                    startActivity(new Intent(getActivity(), HomeActivity.class));
 
-                }
-            },170);
-
-            //TODO: Signin
-//            home_intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            new AuthenticationHTTP().getIdNRefreshTokens(username, password, new GetTokensCallback(getActivity(), username));
 
         });
 

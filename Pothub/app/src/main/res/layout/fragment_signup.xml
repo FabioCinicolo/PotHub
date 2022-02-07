@@ -9,19 +9,19 @@
 
     <EditText
         android:id="@+id/fragmentSignup_mail"
-        android:paddingEnd="16dp"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginHorizontal="32dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/custom_edit_text"
+        android:backgroundTint="@color/edit_text_grey"
         android:drawableStart="@drawable/ic_mail"
         android:drawablePadding="16dp"
-        android:backgroundTint="@color/edit_text_grey"
         android:hint="@string/Auth_mail"
         android:inputType="textEmailAddress"
         android:minHeight="48dp"
         android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:textColor="@color/text_in_edit"
         android:textColorHint="@color/text_in_edit"
         tools:ignore="TextContrastCheck" />
