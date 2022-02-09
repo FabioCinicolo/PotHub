@@ -6,12 +6,15 @@ import org.pothub.exceptions.CognitoException;
 import org.pothub.idps.Cognito;
 
 public class Function implements RequestHandler<Event, String> {
+
+    //Object declared outside of handleRequest are reused
+    Cognito cognito = new Cognito();
+
     @Override
     public String handleRequest(Event event, Context context) {
 
-        Cognito cognito = new Cognito();
-        String action = event.getAction();
 
+        String action = event.getAction();
         switch (action) {
 
             //Pure Cognito User Registration
@@ -20,7 +23,7 @@ public class Function implements RequestHandler<Event, String> {
 
                     cognito.signUpUser(event.getUser());
 
-                    return "User signed in successfully";
+                    return "A confirmation code has been sent to your email address";
 
                 } catch (CognitoException e) {
 
@@ -32,7 +35,7 @@ public class Function implements RequestHandler<Event, String> {
                 try {
                     cognito.confirmUser(event.getUser().getUsername(), event.getConfirmation_code());
 
-                    return "User confirmed";
+                    return "Successfully signed up";
 
                 } catch (CognitoException e) {
                     throw new RuntimeException(e.getMessage());

@@ -23,9 +23,9 @@ import java.util.Map;
 
 public class Cognito {
 
-    private final String CLIENT_ID = "6olvke1khbj589h6sjdcovfaa9";
-    private final String CLIENT_SECRET = "9cfnld2u0nou4otkbqlil2nrmcpuv83c8onrcoe8aia2or5ahll";
-    private final String POOL_ID = "eu-central-1_omsSo0qxM";
+    private final String CLIENT_ID = "7krigpkagkcuph3r4li6f8qkk2";
+    private final String CLIENT_SECRET = "10lt8rrlbauglu4cuc2magjp4tpe62ufek7m8bkl98pce09ca5dk";
+    private final String POOL_ID = "eu-central-1_1QYsCdYWB";
 
     private CognitoIdentityProviderClient cognito_client;
 
