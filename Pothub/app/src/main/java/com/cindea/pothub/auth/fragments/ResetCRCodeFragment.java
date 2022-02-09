@@ -41,11 +41,11 @@ public class ResetCRCodeFragment extends CustomAuthFragment {
 
     private void listeners() {
 
-        buttonContinue.setOnClickListener(view -> {
+        buttonContinue.setOnClickListener(view1 -> {
 
             runButtonAnimation(buttonContinue);
 
-            button_handler.postDelayed(() -> resetPwdCallbackListener.switchToSignin(pinView.getText().toString()),170);
+            button_handler.postDelayed(() -> resetPwdCallbackListener.switchToSignin(pinView.getText().toString()), 170);
 
         });
 

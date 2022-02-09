@@ -24,7 +24,16 @@
     <string name="ResetCR_message2">Enter the code that was sent by email to reset your account</string>
     <string name="ResetCR_message3">Set your new password so you can login and access Pothub</string>
     <string name="ResetCR_title3">Create new password</string>
-    <!-- TODO: Remove or change this placeholder text -->
+
+    <!-- Change password -->
+    <string name="ChangeCR_title">Change password</string>
+    <string name="ChangeCR_message">Fill in the fields to change your password</string>
+    <string name="ChangeCR_codemessage">Enter the code that was sent by email to change your password</string>
+    <string name="ChangeCR_oldpassword">Old password</string>
+    <string name="ChangeCR_newpassword">New password</string>
+    <string name="ChangeCR_continue">Continue</string>
+    <string name="ChangeCR_changepassword">Change password</string>
+<!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

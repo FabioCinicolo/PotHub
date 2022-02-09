@@ -4,6 +4,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.cindea.pothub.entities.Tokens;
 import com.google.gson.Gson;
@@ -60,6 +61,13 @@ public final class TokenSharedPreferences {
     public final String getIdToken() {
 
        return user_details.getString("id_token",null);
+
+    }
+
+    public final String getAccessToken() {
+
+        Log.e("Token access", user_details.getString("access_token",null));
+        return user_details.getString("access_token",null);
 
     }
 

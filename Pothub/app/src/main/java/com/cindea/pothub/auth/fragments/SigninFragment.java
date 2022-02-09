@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.cindea.pothub.R;
 import com.cindea.pothub.auth.AuthCallbackListener;
+import com.cindea.pothub.auth.activities.ResetCredentialsActivity;
 import com.cindea.pothub.home.HomeActivity;
 import com.cindea.pothub.utilities.http.AuthenticationHTTP;
 import com.cindea.pothub.utilities.http.callbacks.auth.GetTokensCallback;
@@ -65,9 +66,11 @@ public final class SigninFragment extends CustomAuthFragment {
 
         });
 
-        ((TextView)fragmentView.findViewById(R.id.fragmentSignin_forgotpassword)).setOnClickListener(
-                view -> authCallbackListener.onResetPassword()
-        );
+        ((TextView)fragmentView.findViewById(R.id.fragmentSignin_forgotpassword)).setOnClickListener(view -> {
+
+            getActivity().startActivity(new Intent(getActivity(), ResetCredentialsActivity.class));
+
+        });
 
     }
 

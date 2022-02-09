@@ -12,9 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Pothub">
         <activity
-            android:name=".home.HomeActivity"
-            android:launchMode="singleTask"
+            android:name=".changepassword.activities.ChangePasswordActivity"
             android:exported="false" />
+        <activity
+            android:name=".home.HomeActivity"
+            android:exported="false"
+            android:launchMode="singleTask" />
         <activity
             android:name=".auth.activities.ConfirmSignupActivity"
             android:exported="false"

@@ -36,13 +36,16 @@ public class OkHTTPRequest {
         return headers != null ? new Request.Builder().delete().url(url).headers(headers).build() : new Request.Builder().delete().url(url).build();
     }
 
-    public static Request getPutRequest(String url, String request_body) {
+    public static Request getPutRequest(String url, String request_body, Headers headers) {
 
         RequestBody body = RequestBody.create(request_body, MediaType.parse("application/json"));
 
-        return new Request.Builder()
+        return headers != null ? new Request.Builder()
                 .url(url)
-                .put(body)
+                .put(body).headers(headers)
+                .build() : new Request.Builder()
+                .url(url)
+                .post(body)
                 .build();
 
     }

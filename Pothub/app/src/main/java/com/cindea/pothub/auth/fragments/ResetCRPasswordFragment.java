@@ -44,7 +44,14 @@ public class ResetCRPasswordFragment extends CustomAuthFragment {
 
             runButtonAnimation(buttonContinue);
 
-            button_handler.postDelayed(() -> resetPwdCallbackListener.switchToResetCRCode(etPassword.getText().toString()),170);
+            button_handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+
+                    resetPwdCallbackListener.switchToResetCRCode(etPassword.getText().toString());
+
+                }
+            }, 170);
 
         });
 

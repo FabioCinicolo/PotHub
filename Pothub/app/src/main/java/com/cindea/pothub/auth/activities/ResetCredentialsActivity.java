@@ -11,6 +11,9 @@ import com.cindea.pothub.R;
 import com.cindea.pothub.auth.ResetPwdCallbackListener;
 import com.cindea.pothub.auth.fragments.ResetCRCodeFragment;
 import com.cindea.pothub.auth.fragments.ResetCRUsernameFragment;
+import com.cindea.pothub.utilities.http.AuthenticationHTTP;
+import com.cindea.pothub.utilities.http.callbacks.auth.GetCodeForPasswordResetCallback;
+import com.cindea.pothub.utilities.http.callbacks.auth.ResetPasswordCallback;
 
 public class ResetCredentialsActivity extends AppCompatActivity implements ResetPwdCallbackListener {
 
@@ -25,7 +28,7 @@ public class ResetCredentialsActivity extends AppCompatActivity implements Reset
         replaceFragment(new ResetCRUsernameFragment());
     }
 
-    private void replaceFragment(Fragment fragment) {
+    public void replaceFragment(Fragment fragment) {
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -38,9 +41,7 @@ public class ResetCredentialsActivity extends AppCompatActivity implements Reset
     public void switchToResetCRPassword(String username) {
 
         this.username = username;
-        /*TODO: Inizio richiesta di reset password (Deve poi essere spostato nel fragment di
-         * TODO: modifica password
-         */
+        new AuthenticationHTTP().getCodeForPasswordReset(username, new GetCodeForPasswordResetCallback(this, username));
 
     }
 
@@ -55,7 +56,7 @@ public class ResetCredentialsActivity extends AppCompatActivity implements Reset
     @Override
     public void switchToSignin(String confirmation_code) {
 
-        //TODO: Terminazione reset password (Viene riportato al signin)
+        new AuthenticationHTTP().resetPassword(username, password, confirmation_code, new ResetPasswordCallback(this));
 
     }
 
