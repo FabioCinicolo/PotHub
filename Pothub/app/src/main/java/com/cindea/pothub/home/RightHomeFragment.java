@@ -1,22 +1,31 @@
 package com.cindea.pothub.home;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.cindea.pothub.R;
 import com.cindea.pothub.changepassword.activities.ChangePasswordActivity;
+import com.cindea.pothub.map.VisualizePotholesInMapActivity;
 
 public class RightHomeFragment extends Fragment {
 
     private View view;
     private Button button_100mt, button_250mt, button_500mt, button_1km, button_5km;
     private Button position_button;
+    private Button button_visualize_in_map;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -40,12 +49,18 @@ public class RightHomeFragment extends Fragment {
         button_500mt  = view.findViewById(R.id.fragmentRightHome_500mt);
         button_1km = view.findViewById(R.id.fragmentRightHome_1km);
         button_5km = view.findViewById(R.id.fragmentRightHome_5km);
+        button_visualize_in_map = view.findViewById(R.id.fragmentRightHome_VisualizeInMap);
 
     }
 
     private void listeners() {
 
+        button_visualize_in_map.setOnClickListener(v -> {
 
+            getActivity().startActivity(
+                    new Intent(getActivity(), VisualizePotholesInMapActivity.class));
+
+        });
 
     }
 

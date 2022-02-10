@@ -12,18 +12,20 @@
         <entry key="..\:/Users/Umby/AndroidStudioProjects/Pothub/app/src/main/res/layout/activity_home.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Umby/AndroidStudioProjects/Pothub/app/src/main/res/layout/activity_main.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Umby/AndroidStudioProjects/Pothub/app/src/main/res/layout/activity_reset_credentials.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Umby/AndroidStudioProjects/Pothub/app/src/main/res/layout/activity_visualize_potholes_in_map.xml" value="0.2" />
         <entry key="..\:/Users/Umby/AndroidStudioProjects/Pothub/app/src/main/res/layout/fragment_blank.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Umby/AndroidStudioProjects/Pothub/app/src/main/res/layout/fragment_change_password_code.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Umby/AndroidStudioProjects/Pothub/app/src/main/res/layout/fragment_change_password_form.xml" value="0.264" />
         <entry key="..\:/Users/Umby/AndroidStudioProjects/Pothub/app/src/main/res/layout/fragment_custom.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Umby/AndroidStudioProjects/Pothub/app/src/main/res/layout/fragment_left_home.xml" value="0.264" />
+        <entry key="..\:/Users/Umby/AndroidStudioProjects/Pothub/app/src/main/res/layout/fragment_map.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Umby/AndroidStudioProjects/Pothub/app/src/main/res/layout/fragment_middle_home.xml" value="0.2101851851851852" />
         <entry key="..\:/Users/Umby/AndroidStudioProjects/Pothub/app/src/main/res/layout/fragment_reset_c_r_code.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Umby/AndroidStudioProjects/Pothub/app/src/main/res/layout/fragment_reset_c_r_email.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Umby/AndroidStudioProjects/Pothub/app/src/main/res/layout/fragment_reset_c_r_password.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Umby/AndroidStudioProjects/Pothub/app/src/main/res/layout/fragment_reset_c_r_username.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Umby/AndroidStudioProjects/Pothub/app/src/main/res/layout/fragment_reset_password.xml" value="0.25416666666666665" />
-        <entry key="..\:/Users/Umby/AndroidStudioProjects/Pothub/app/src/main/res/layout/fragment_right_home.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Umby/AndroidStudioProjects/Pothub/app/src/main/res/layout/fragment_right_home.xml" value="0.2" />
         <entry key="..\:/Users/Umby/AndroidStudioProjects/Pothub/app/src/main/res/layout/fragment_signin.xml" value="0.264" />
         <entry key="..\:/Users/Umby/AndroidStudioProjects/Pothub/app/src/main/res/layout/fragment_signup.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Umby/AndroidStudioProjects/Pothub/app/src/main/res/layout/fragment_test.xml" value="0.25416666666666665" />

@@ -1,7 +1,12 @@
 package com.cindea.pothub.home;
 
+import android.Manifest;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -20,8 +25,11 @@ public class HomeActivity extends AppCompatActivity {
         setupComponents();
         viewPager2.setCurrentItem(1, false);
 
+        requestLocation();
 
     }
+
+
 
     private void setupComponents() {
 
@@ -31,6 +39,33 @@ public class HomeActivity extends AppCompatActivity {
         viewPager2.setAdapter(homeFragmentAdapter);
         DotsIndicator dotsIndicator = findViewById(R.id.activityHome_dotsindicators);
         dotsIndicator.setViewPager2(viewPager2);
+
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void requestLocation() {
+
+        ActivityResultLauncher<String[]> locationPermissionRequest =
+                registerForActivityResult(new ActivityResultContracts
+                                .RequestMultiplePermissions(), result -> {
+                            Boolean fineLocationGranted = result.getOrDefault(
+                                    Manifest.permission.ACCESS_FINE_LOCATION, false);
+                            Boolean coarseLocationGranted = result.getOrDefault(
+                                    Manifest.permission.ACCESS_COARSE_LOCATION,false);
+                            if (fineLocationGranted != null && fineLocationGranted) {
+                                // Precise location access granted.
+                            } else if (coarseLocationGranted != null && coarseLocationGranted) {
+                                // Only approximate location access granted.
+                            } else {
+                                // No location access granted.
+                            }
+                        }
+                );
+
+        locationPermissionRequest.launch(new String[] {
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+        });
 
     }
 
