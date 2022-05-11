@@ -10,8 +10,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.chaos.view.PinView;
 import com.cindea.pothub.R;
-import com.cindea.pothub.utilities.http.AuthenticationHTTP;
-import com.cindea.pothub.utilities.http.callbacks.auth.ConfirmSignupCallback;
 
 public class ConfirmSignupActivity extends AppCompatActivity {
 

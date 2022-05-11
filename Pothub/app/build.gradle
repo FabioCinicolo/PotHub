@@ -47,9 +47,10 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     implementation 'io.github.chaosleung:pinview:1.4.4'
     implementation 'com.tbuonomo:dotsindicator:4.2'
-    // https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk
-    implementation group: 'com.amazonaws', name: 'aws-java-sdk', version: '1.2.1'
 
+    // AWS Dependencies
+    implementation 'com.amazonaws:aws-android-sdk-core:2.7.4'
+    implementation 'com.amazonaws:aws-android-sdk-cognitoidentityprovider:2.7.0'
 
     implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'

@@ -11,9 +11,7 @@ import com.cindea.pothub.R;
 import com.cindea.pothub.auth.ResetPwdCallbackListener;
 import com.cindea.pothub.auth.fragments.ResetCRCodeFragment;
 import com.cindea.pothub.auth.fragments.ResetCRUsernameFragment;
-import com.cindea.pothub.utilities.http.AuthenticationHTTP;
-import com.cindea.pothub.utilities.http.callbacks.auth.GetCodeForPasswordResetCallback;
-import com.cindea.pothub.utilities.http.callbacks.auth.ResetPasswordCallback;
+
 
 public class ResetCredentialsActivity extends AppCompatActivity implements ResetPwdCallbackListener {
 

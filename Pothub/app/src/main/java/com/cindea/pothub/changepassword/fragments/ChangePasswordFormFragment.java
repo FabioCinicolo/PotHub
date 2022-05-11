@@ -9,9 +9,7 @@ import android.widget.EditText;
 
 import com.cindea.pothub.R;
 import com.cindea.pothub.auth.fragments.CustomAuthFragment;
-import com.cindea.pothub.utilities.http.AuthenticationHTTP;
-import com.cindea.pothub.utilities.http.callbacks.auth.ChangePasswordCallback;
-import com.cindea.pothub.utilities.sharedpreferences.TokenSharedPreferences;
+
 
 public class ChangePasswordFormFragment extends CustomAuthFragment {
 

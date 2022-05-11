@@ -1,11 +1,6 @@
 package com.cindea.pothub.cognito;
 
 import android.content.Context;
-
-public class Cognito {
-
-
-import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -143,36 +138,4 @@ import static android.content.ContentValues.TAG;
             }
         };
 
-        public String getPoolID() {
-            return poolID;
-        }
-
-        public void setPoolID(String poolID) {
-            this.poolID = poolID;
-        }
-
-        public String getClientID() {
-            return clientID;
-        }
-
-        public void setClientID(String clientID) {
-            this.clientID = clientID;
-        }
-
-        public String getClientSecret() {
-            return clientSecret;
-        }
-
-        public void setClientSecret(String clientSecret) {
-            this.clientSecret = clientSecret;
-        }
-
-        public Regions getAwsRegion() {
-            return awsRegion;
-        }
-
-        public void setAwsRegion(Regions awsRegion) {
-            this.awsRegion = awsRegion;
-        }
-    }
 }

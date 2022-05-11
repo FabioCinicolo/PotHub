@@ -9,8 +9,6 @@ import android.widget.EditText;
 
 import com.cindea.pothub.R;
 import com.cindea.pothub.auth.AuthCallbackListener;
-import com.cindea.pothub.utilities.http.callbacks.auth.SignupCallback;
-import com.cindea.pothub.utilities.http.AuthenticationHTTP;
 
 public class SignupFragment extends CustomAuthFragment {
 

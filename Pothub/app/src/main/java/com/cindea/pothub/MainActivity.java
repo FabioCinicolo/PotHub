@@ -12,9 +12,6 @@ import com.cindea.pothub.auth.AuthCallbackListener;
 import com.cindea.pothub.auth.activities.ResetCredentialsActivity;
 import com.cindea.pothub.auth.fragments.SigninFragment;
 import com.cindea.pothub.auth.fragments.SignupFragment;
-import com.cindea.pothub.utilities.http.AuthenticationHTTP;
-import com.cindea.pothub.utilities.http.callbacks.auth.TokenLoginCallback;
-import com.cindea.pothub.utilities.sharedpreferences.TokenSharedPreferences;
 
 public class MainActivity extends AppCompatActivity implements AuthCallbackListener {
 
