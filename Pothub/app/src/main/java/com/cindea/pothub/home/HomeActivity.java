@@ -17,6 +17,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private ViewPager2 viewPager2;
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

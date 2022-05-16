@@ -1,4 +1,4 @@
-package com.cindea.pothub.auth.fragments;
+package com.cindea.pothub.authentication.views.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,11 +8,9 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.cindea.pothub.R;
-import com.cindea.pothub.auth.ResetPwdCallbackListener;
 
 public class ResetCRPasswordFragment extends CustomAuthFragment {
 
-    private ResetPwdCallbackListener resetPwdCallbackListener;
     private Button buttonContinue;
     private EditText etPassword;
 
@@ -31,7 +29,6 @@ public class ResetCRPasswordFragment extends CustomAuthFragment {
     protected void setupComponents() {
 
         buttonContinue = fragmentView.findViewById(R.id.fragmentCR3_continue);
-        resetPwdCallbackListener = (ResetPwdCallbackListener) getActivity();
         etPassword = fragmentView.findViewById(R.id.fragmentCR3_password);
 
         setupAnimations(getContext());
@@ -48,7 +45,7 @@ public class ResetCRPasswordFragment extends CustomAuthFragment {
                 @Override
                 public void run() {
 
-                    resetPwdCallbackListener.switchToResetCRCode(etPassword.getText().toString());
+/*                    resetPwdCallbackListener.switchToResetCRCode(etPassword.getText().toString());*/
 
                 }
             }, 170);

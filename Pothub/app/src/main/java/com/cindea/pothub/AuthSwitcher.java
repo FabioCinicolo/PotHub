@@ -1,6 +1,6 @@
-package com.cindea.pothub.auth;
+package com.cindea.pothub;
 
-public interface AuthCallbackListener {
+public interface AuthSwitcher {
 
     void onSignupPress();
     void onSigninPress();

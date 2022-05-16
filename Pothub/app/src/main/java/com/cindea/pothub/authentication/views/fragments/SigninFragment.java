@@ -1,4 +1,4 @@
-package com.cindea.pothub.auth.fragments;
+package com.cindea.pothub.authentication.views.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,18 +9,19 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.cindea.pothub.AuthSwitcher;
 import com.cindea.pothub.R;
-import com.cindea.pothub.auth.AuthCallbackListener;
-import com.cindea.pothub.auth.activities.ResetCredentialsActivity;
-import com.cindea.pothub.home.HomeActivity;
-import com.cindea.pothub.utilities.http.AuthenticationHTTP;
-import com.cindea.pothub.utilities.http.callbacks.auth.GetTokensCallback;
+import com.cindea.pothub.authentication.SigninContract;
+import com.cindea.pothub.authentication.models.SigninModel;
+import com.cindea.pothub.authentication.presenters.SigninPresenter;
+import com.cindea.pothub.authentication.views.ResetCredentialsActivity;
 
-public final class SigninFragment extends CustomAuthFragment {
+public final class SigninFragment extends CustomAuthFragment implements SigninContract.View {
 
-    private AuthCallbackListener authCallbackListener;
     private Button button_signup;
     private Button button_signin;
+    private SigninContract.Presenter presenter;
+    private AuthSwitcher authSwitcher;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -40,7 +41,8 @@ public final class SigninFragment extends CustomAuthFragment {
         button_signin = fragmentView.findViewById(R.id.fragmentSignin_signinbtn);
         button_signup = fragmentView.findViewById(R.id.fragmentSignin_signupbtn);
 
-        authCallbackListener = (AuthCallbackListener)getActivity();
+        presenter = new SigninPresenter(this, new SigninModel());
+        authSwitcher = (AuthSwitcher) getActivity();
         setupAnimations(getContext());
 
     }
@@ -54,15 +56,12 @@ public final class SigninFragment extends CustomAuthFragment {
             String username = ((EditText)fragmentView.findViewById(R.id.fragmentSignin_username)).getText().toString();
             String password = ((EditText)fragmentView.findViewById(R.id.fragmentSignin_password)).getText().toString();
 
-
-            new AuthenticationHTTP().getIdNRefreshTokens(username, password, new GetTokensCallback(getActivity(), username));
-
         });
 
         button_signup.setOnClickListener(view -> {
 
             runButtonAnimation(button_signup);
-            button_handler.postDelayed(() -> authCallbackListener.onSignupPress(),170);
+            button_handler.postDelayed(() -> authSwitcher.onSignupPress(),170);
 
         });
 
@@ -75,4 +74,13 @@ public final class SigninFragment extends CustomAuthFragment {
     }
 
 
+    @Override
+    public void signInCompleted() {
+
+    }
+
+    @Override
+    public void displayError(String message) {
+
+    }
 }

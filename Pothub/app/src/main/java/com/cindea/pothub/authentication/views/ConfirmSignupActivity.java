@@ -1,4 +1,4 @@
-package com.cindea.pothub.auth.activities;
+package com.cindea.pothub.authentication.views;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -10,10 +10,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.chaos.view.PinView;
 import com.cindea.pothub.R;
+import com.cindea.pothub.authentication.ConfirmSignupContract;
+import com.cindea.pothub.authentication.models.ConfirmSignupModel;
+import com.cindea.pothub.authentication.presenters.ConfirmSignupPresenter;
 
-public class ConfirmSignupActivity extends AppCompatActivity {
+public class ConfirmSignupActivity extends AppCompatActivity implements ConfirmSignupContract.View{
 
     private Animation anim_scale_up;
+    private ConfirmSignupContract.Presenter presenter;
     private Animation anim_scale_down;
     private Button button_confirm;
 
@@ -31,6 +35,7 @@ public class ConfirmSignupActivity extends AppCompatActivity {
     private void setupComponents() {
 
         setupAnimations(getApplicationContext());
+        presenter = new ConfirmSignupPresenter(this, new ConfirmSignupModel());
         button_confirm = findViewById(R.id.activityConfirmSignup_continue);
 
     }
@@ -43,8 +48,6 @@ public class ConfirmSignupActivity extends AppCompatActivity {
             String confirmation_code = ((PinView)findViewById(R.id.activityConfirmSignup_code)).getText().toString();
 
             String username = getIntent().getStringExtra("username");
-
-            new AuthenticationHTTP().confirmSignUp(username, confirmation_code, new ConfirmSignupCallback(this));
 
         });
 
@@ -64,4 +67,13 @@ public class ConfirmSignupActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void successSignUp() {
+
+    }
+
+    @Override
+    public void displayError(String message) {
+
+    }
 }

@@ -1,23 +1,15 @@
 package com.cindea.pothub.home;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.RequiresApi;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.cindea.pothub.R;
-import com.cindea.pothub.changepassword.activities.ChangePasswordActivity;
 import com.cindea.pothub.map.VisualizePotholesInMapActivity;
 
 public class RightHomeFragment extends Fragment {
@@ -91,7 +83,6 @@ public class RightHomeFragment extends Fragment {
                 button_250mt.setTextColor(getResources().getColor(R.color.edit_text_orange));
                 position_button.setTextColor(getResources().getColor(R.color.text_in_edit));
                 position_button = button_250mt;
-                startActivity(new Intent(getActivity(), ChangePasswordActivity.class));
 
             }
 

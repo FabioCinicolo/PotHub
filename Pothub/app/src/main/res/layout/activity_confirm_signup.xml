@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/background"
-        tools:context=".auth.activities.ConfirmSignupActivity">
+        tools:context=".authentication.views.ConfirmSignupActivity">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/activityConfirmSignup_layout"

@@ -1,4 +1,4 @@
-package com.cindea.pothub.auth.fragments;
+package com.cindea.pothub.authentication.views.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -7,14 +7,18 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.cindea.pothub.AuthSwitcher;
 import com.cindea.pothub.R;
-import com.cindea.pothub.auth.AuthCallbackListener;
+import com.cindea.pothub.authentication.SignupContract;
+import com.cindea.pothub.authentication.models.SignupModel;
+import com.cindea.pothub.authentication.presenters.SignupPresenter;
 
-public class SignupFragment extends CustomAuthFragment {
+public class SignupFragment extends CustomAuthFragment implements SignupContract.View  {
 
-    private AuthCallbackListener authCallbackListener;
     private Button button_signup;
     private Button button_signin;
+    private SignupContract.Presenter presenter;
+    private AuthSwitcher authSwitcher;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -34,7 +38,8 @@ public class SignupFragment extends CustomAuthFragment {
         button_signup = fragmentView.findViewById(R.id.fragmentSignup_signupbtn);
         button_signin = fragmentView.findViewById(R.id.fragmentSignup_signinbtn);
 
-        authCallbackListener = (AuthCallbackListener)getActivity();
+        presenter = new SignupPresenter(this, new SignupModel());
+        authSwitcher = (AuthSwitcher) getActivity();
         setupAnimations(getContext());
 
     }
@@ -49,8 +54,7 @@ public class SignupFragment extends CustomAuthFragment {
                 @Override
                 public void run() {
 
-                    authCallbackListener.onSigninPress();
-
+                    button_handler.postDelayed(() -> authSwitcher.onSignupPress(),170);
                 }
             },170);
 
@@ -65,11 +69,20 @@ public class SignupFragment extends CustomAuthFragment {
             runButtonAnimation(button_signup);
 
             //TODO: Signup
-            new AuthenticationHTTP().signUp(username, email, password, new SignupCallback(getActivity(), username));
+//            new AuthenticationHTTP().signUp(username, email, password, new SignupCallback(getActivity(), username));
 
         });
 
 
     }
 
+    @Override
+    public void signUpSuccess() {
+
+    }
+
+    @Override
+    public void displayError(String message) {
+
+    }
 }

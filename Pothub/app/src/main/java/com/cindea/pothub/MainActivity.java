@@ -8,12 +8,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.cindea.pothub.auth.AuthCallbackListener;
-import com.cindea.pothub.auth.activities.ResetCredentialsActivity;
-import com.cindea.pothub.auth.fragments.SigninFragment;
-import com.cindea.pothub.auth.fragments.SignupFragment;
+import com.cindea.pothub.authentication.views.ResetCredentialsActivity;
+import com.cindea.pothub.authentication.views.fragments.SigninFragment;
+import com.cindea.pothub.authentication.views.fragments.SignupFragment;
 
-public class MainActivity extends AppCompatActivity implements AuthCallbackListener {
+public class MainActivity extends AppCompatActivity implements AuthSwitcher {
 
     Fragment signinFragment = new SigninFragment();
     Fragment signupFragment = new SignupFragment();
@@ -30,11 +29,6 @@ public class MainActivity extends AppCompatActivity implements AuthCallbackListe
     @Override
     protected void onResume() {
         super.onResume();
-
-        TokenSharedPreferences tokenSharedPreferences = new TokenSharedPreferences(this);
-
-        if(!tokenSharedPreferences.isEmpty())
-            new AuthenticationHTTP().tokenLogin(tokenSharedPreferences.getIdToken(), new TokenLoginCallback(this));
 
     }
 

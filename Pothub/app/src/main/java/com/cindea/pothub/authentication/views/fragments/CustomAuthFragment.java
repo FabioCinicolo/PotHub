@@ -1,4 +1,4 @@
-package com.cindea.pothub.auth.fragments;
+package com.cindea.pothub.authentication.views.fragments;
 
 import android.content.Context;
 import android.content.Intent;

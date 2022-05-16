@@ -1,5 +1,7 @@
 package com.cindea.pothub.cognito;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
@@ -18,8 +20,6 @@ import com.amazonaws.mobileconnectors.cognitoidentityprovider.handlers.Authentic
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.handlers.GenericHandler;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.handlers.SignUpHandler;
 import com.amazonaws.regions.Regions;
-
-import static android.content.ContentValues.TAG;
 
     public class Cognito {
         // ############################################################# Information about Cognito Pool

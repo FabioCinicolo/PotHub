@@ -1,4 +1,4 @@
-package com.cindea.pothub.auth.fragments;
+package com.cindea.pothub.authentication.views.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,11 +8,9 @@ import android.widget.Button;
 
 import com.chaos.view.PinView;
 import com.cindea.pothub.R;
-import com.cindea.pothub.auth.ResetPwdCallbackListener;
 
 public class ResetCRCodeFragment extends CustomAuthFragment {
 
-    private ResetPwdCallbackListener resetPwdCallbackListener;
     private Button buttonContinue;
     private PinView pinView;
 
@@ -32,7 +30,6 @@ public class ResetCRCodeFragment extends CustomAuthFragment {
     protected void setupComponents() {
 
         buttonContinue = fragmentView.findViewById(R.id.fragmentCR2_continue);
-        resetPwdCallbackListener = (ResetPwdCallbackListener) getActivity();
         pinView = fragmentView.findViewById(R.id.fragmentCR2_code);
 
         setupAnimations(getContext());
@@ -45,7 +42,7 @@ public class ResetCRCodeFragment extends CustomAuthFragment {
 
             runButtonAnimation(buttonContinue);
 
-            button_handler.postDelayed(() -> resetPwdCallbackListener.switchToSignin(pinView.getText().toString()), 170);
+/*            button_handler.postDelayed(() -> resetPwdCallbackListener.switchToSignin(pinView.getText().toString()), 170);*/
 
         });
 
