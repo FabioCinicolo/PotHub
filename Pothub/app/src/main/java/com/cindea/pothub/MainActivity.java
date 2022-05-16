@@ -11,16 +11,19 @@ import androidx.fragment.app.FragmentTransaction;
 import com.cindea.pothub.authentication.views.ResetCredentialsActivity;
 import com.cindea.pothub.authentication.views.fragments.SigninFragment;
 import com.cindea.pothub.authentication.views.fragments.SignupFragment;
+import com.cindea.pothub.cognito.Cognito;
 
 public class MainActivity extends AppCompatActivity implements AuthSwitcher {
 
     Fragment signinFragment = new SigninFragment();
     Fragment signupFragment = new SignupFragment();
+    private static Cognito cognito;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        cognito = new Cognito(this);
 
         replaceFragment(signinFragment);
 
@@ -62,5 +65,9 @@ public class MainActivity extends AppCompatActivity implements AuthSwitcher {
         Intent intent = new Intent(MainActivity.this, ResetCredentialsActivity.class);
         startActivity(intent);
 
+    }
+
+    public static Cognito getCognito() {
+        return cognito;
     }
 }

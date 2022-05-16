@@ -1,5 +1,6 @@
 package com.cindea.pothub.authentication;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 
 public interface SigninContract {
@@ -13,7 +14,7 @@ public interface SigninContract {
 
 
     interface Presenter {
-        void cognitoSignInButtonClicked(String username, String password, SharedPreferences cognito_preferences);
+        void cognitoSignInButtonClicked(String username, String password);
     }
 
     interface Model {
@@ -25,7 +26,7 @@ public interface SigninContract {
             void onError(String message);
         }
 
-        void cognitoSignIn(String username, String password, SharedPreferences cognito_preferences, OnFinishListener listener);
+        void cognitoSignIn(String username, String password, OnFinishListener listener);
 
     }
 

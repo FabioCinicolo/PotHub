@@ -1,5 +1,6 @@
 package com.cindea.pothub.authentication.presenters;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.cindea.pothub.authentication.SigninContract;
@@ -16,17 +17,17 @@ public class SigninPresenter implements SigninContract.Presenter, SigninContract
     }
 
     @Override
-    public void cognitoSignInButtonClicked(String username, String password, SharedPreferences cognito_preferences) {
-
+    public void cognitoSignInButtonClicked(String username, String password) {
+        model.cognitoSignIn(username, password, this);
     }
 
     @Override
     public void onSuccess() {
-
+        view.signInCompleted();
     }
 
     @Override
     public void onError(String message) {
-
+        view.displayError(message);
     }
 }

@@ -1,6 +1,8 @@
 package com.cindea.pothub.authentication.views.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,13 +52,7 @@ public class SignupFragment extends CustomAuthFragment implements SignupContract
 
             runButtonAnimation(button_signin);
 
-            button_handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-
-                    button_handler.postDelayed(() -> authSwitcher.onSignupPress(),170);
-                }
-            },170);
+            button_handler.postDelayed(() -> authSwitcher.onSigninPress(),170);
 
         });
 
@@ -68,8 +64,7 @@ public class SignupFragment extends CustomAuthFragment implements SignupContract
 
             runButtonAnimation(button_signup);
 
-            //TODO: Signup
-//            new AuthenticationHTTP().signUp(username, email, password, new SignupCallback(getActivity(), username));
+            presenter.signUpButtonPressed(username, email, password);
 
         });
 
@@ -78,11 +73,11 @@ public class SignupFragment extends CustomAuthFragment implements SignupContract
 
     @Override
     public void signUpSuccess() {
-
+        button_handler.postDelayed(() -> authSwitcher.onSigninPress(),170);
     }
 
     @Override
     public void displayError(String message) {
-
+        Log.e("SignUp", message);
     }
 }

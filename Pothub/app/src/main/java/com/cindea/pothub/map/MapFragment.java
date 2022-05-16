@@ -1,11 +1,5 @@
 package com.cindea.pothub.map;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -16,10 +10,14 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 
 import com.cindea.pothub.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -29,13 +27,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 
 public class MapFragment extends Fragment implements LocationListener {
 
@@ -46,7 +39,7 @@ public class MapFragment extends Fragment implements LocationListener {
 
     private LocationManager locationManager;
 
-    private OnMapReadyCallback callback = new OnMapReadyCallback() {
+    private final OnMapReadyCallback callback = new OnMapReadyCallback() {
 
         @Override
         public void onMapReady(GoogleMap googleMap) {
@@ -80,13 +73,14 @@ public class MapFragment extends Fragment implements LocationListener {
 
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
-        if(locationPermissionsEnabled()) {
+        if (locationPermissionsEnabled()) {
 
             if (!gpsIsEnabled())
                 showGPSDisabledDialog();
 
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 400,
                     1000, this);
+
         }
 
     }
@@ -139,14 +133,10 @@ public class MapFragment extends Fragment implements LocationListener {
 
     private boolean locationPermissionsEnabled() {
 
-        if (ContextCompat.checkSelfPermission(
+        return ContextCompat.checkSelfPermission(
                 getContext(), Manifest.permission.ACCESS_FINE_LOCATION) ==
                 PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
                 getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) ==
-                PackageManager.PERMISSION_GRANTED)
-            return true;
-
-            return false;
-
+                PackageManager.PERMISSION_GRANTED;
     }
 }

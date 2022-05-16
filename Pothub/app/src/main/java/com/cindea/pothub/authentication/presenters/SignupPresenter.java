@@ -14,16 +14,16 @@ public class SignupPresenter implements SignupContract.Presenter, SignupContract
 
     @Override
     public void signUpButtonPressed(String username, String email, String password) {
-
+        model.signUp(username, email, password, this);
     }
 
     @Override
     public void onSuccess(String message) {
-
+        view.signUpSuccess();
     }
 
     @Override
     public void onError(String message) {
-
+        view.displayError(message);
     }
 }

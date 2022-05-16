@@ -2,6 +2,7 @@ package com.cindea.pothub.authentication.views.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import com.cindea.pothub.authentication.SigninContract;
 import com.cindea.pothub.authentication.models.SigninModel;
 import com.cindea.pothub.authentication.presenters.SigninPresenter;
 import com.cindea.pothub.authentication.views.ResetCredentialsActivity;
+import com.cindea.pothub.home.HomeActivity;
 
 public final class SigninFragment extends CustomAuthFragment implements SigninContract.View {
 
@@ -56,6 +58,8 @@ public final class SigninFragment extends CustomAuthFragment implements SigninCo
             String username = ((EditText)fragmentView.findViewById(R.id.fragmentSignin_username)).getText().toString();
             String password = ((EditText)fragmentView.findViewById(R.id.fragmentSignin_password)).getText().toString();
 
+            presenter.cognitoSignInButtonClicked(username, password);
+
         });
 
         button_signup.setOnClickListener(view -> {
@@ -76,11 +80,11 @@ public final class SigninFragment extends CustomAuthFragment implements SigninCo
 
     @Override
     public void signInCompleted() {
-
+        startActivity(new Intent(getActivity(), HomeActivity.class));
     }
 
     @Override
     public void displayError(String message) {
-
+        Log.e("SIGNIN", message);
     }
 }
