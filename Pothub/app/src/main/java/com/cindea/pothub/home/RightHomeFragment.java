@@ -10,6 +10,7 @@ import android.widget.Button;
 import androidx.fragment.app.Fragment;
 
 import com.cindea.pothub.R;
+import com.cindea.pothub.map.LiveMapActivity;
 import com.cindea.pothub.map.VisualizePotholesInMapActivity;
 
 public class RightHomeFragment extends Fragment {
@@ -50,7 +51,7 @@ public class RightHomeFragment extends Fragment {
         button_visualize_in_map.setOnClickListener(v -> {
 
             getActivity().startActivity(
-                    new Intent(getActivity(), VisualizePotholesInMapActivity.class));
+                    new Intent(getActivity(), LiveMapActivity.class));
 
         });
 

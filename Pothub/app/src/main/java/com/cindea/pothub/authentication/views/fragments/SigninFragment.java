@@ -58,7 +58,8 @@ public final class SigninFragment extends CustomAuthFragment implements SigninCo
             String username = ((EditText)fragmentView.findViewById(R.id.fragmentSignin_username)).getText().toString();
             String password = ((EditText)fragmentView.findViewById(R.id.fragmentSignin_password)).getText().toString();
 
-            presenter.cognitoSignInButtonClicked(username, password);
+            startActivity(new Intent(getActivity(), HomeActivity.class));
+            //presenter.cognitoSignInButtonClicked(username, password);
 
         });
 
