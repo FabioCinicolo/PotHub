@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment;
 
 import com.cindea.pothub.R;
 import com.cindea.pothub.map.LiveMapActivity;
-import com.cindea.pothub.map.VisualizePotholesInMapActivity;
 
 public class RightHomeFragment extends Fragment {
 
