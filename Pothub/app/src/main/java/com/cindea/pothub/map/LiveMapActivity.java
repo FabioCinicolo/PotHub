@@ -1,9 +1,12 @@
 package com.cindea.pothub.map;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -14,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.cindea.pothub.R;
 import com.cindea.pothub.databinding.ActivityLiveMapBinding;
@@ -26,12 +30,16 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap map;
     private ActivityLiveMapBinding binding;
+    private double latitude;
+    private double longitude;
+    private BroadcastReceiver mMessageReceiver;
 
     private static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
 
@@ -54,12 +62,48 @@ public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallb
         }
         else startLocationService();
 
+        mMessageReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                // Get extra data included in the Intent
+                latitude = intent.getDoubleExtra("latitude", 0);
+                longitude = intent.getDoubleExtra("longitude", 0);
+                if(latitude!=0 && longitude!=0) {
+
+                    Log.e("ACTIVITY", latitude + " " + longitude);
+                    LatLng latlng = new LatLng(latitude, longitude);
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(
+                            latlng, 17f);
+                    map.animateCamera(cameraUpdate);
+
+                }
+
+            }
+        };
+
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopLocationService();
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                mMessageReceiver, new IntentFilter("GPSLocationUpdates"));
+    }
+
+    @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
+        map.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style));
+        map.setMyLocationEnabled(true);
+
     }
 
     @Override

@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.Looper;
@@ -14,6 +15,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.cindea.pothub.R;
 import com.google.android.gms.location.LocationCallback;
@@ -31,6 +33,8 @@ public class LocationService extends Service {
 
                 double latitude = locationResult.getLastLocation().getLatitude();
                 double longitude = locationResult.getLastLocation().getLongitude();
+
+                sendMessageToActivity(latitude,longitude);
 
                 Log.d("TAG", latitude + " " + longitude);
 
@@ -82,7 +86,10 @@ public class LocationService extends Service {
                 .requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
         startForeground(Constants.LOCATION_SERVICE_ID, builder.build());
 
+        //TODO:THREAD
+
     }
+
 
     private void stopLocationService() {
 
@@ -110,4 +117,13 @@ public class LocationService extends Service {
 
         return super.onStartCommand(intent, flags, startId);
     }
+
+    private void sendMessageToActivity(double latitude, double longitude) {
+        Intent intent = new Intent("GPSLocationUpdates");
+        // You can also include some extra data.
+        intent.putExtra("latitude", latitude);
+        intent.putExtra("longitude", longitude);
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+    }
+
 }
