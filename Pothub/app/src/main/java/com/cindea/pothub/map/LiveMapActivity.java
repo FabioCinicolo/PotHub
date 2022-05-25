@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -37,6 +38,7 @@ public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallb
 
     private GoogleMap map;
     private ActivityLiveMapBinding binding;
+    private Button button_exit;
     private double latitude;
     private double longitude;
     private BroadcastReceiver mMessageReceiver;
@@ -81,6 +83,15 @@ public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallb
             }
         };
 
+        button_exit = findViewById(R.id.liveMap_exit);
+        listeners();
+
+    }
+
+    private void listeners() {
+
+        button_exit.setOnClickListener(v -> {finish();});
+
     }
 
     @Override
@@ -103,6 +114,8 @@ public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallb
         map = googleMap;
         map.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style));
         map.setMyLocationEnabled(true);
+        map.getUiSettings().setCompassEnabled(false);
+        map.getUiSettings().setMyLocationButtonEnabled(false);
 
     }
 

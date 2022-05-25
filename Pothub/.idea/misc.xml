@@ -29,9 +29,16 @@
         <entry key="..\:/Users/Umby/AndroidStudioProjects/Pothub/app/src/main/res/layout/fragment_signin.xml" value="0.264" />
         <entry key="..\:/Users/Umby/AndroidStudioProjects/Pothub/app/src/main/res/layout/fragment_signup.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Umby/AndroidStudioProjects/Pothub/app/src/main/res/layout/fragment_test.xml" value="0.25416666666666665" />
-        <entry key="..\:/Users/corel/AndroidStudioProjects/Pothub/app/src/main/res/layout/activity_live_map.xml" value="0.18697916666666667" />
+        <entry key="..\:/Users/corel/AndroidStudioProjects/Pothub/app/src/main/res/drawable/divider_bar.xml" value="0.2205" />
+        <entry key="..\:/Users/corel/AndroidStudioProjects/Pothub/app/src/main/res/drawable/ic_cancel.xml" value="0.2205" />
+        <entry key="..\:/Users/corel/AndroidStudioProjects/Pothub/app/src/main/res/drawable/round_button.xml" value="0.2205" />
+        <entry key="..\:/Users/corel/AndroidStudioProjects/Pothub/app/src/main/res/layout/activity_change_password.xml" value="0.2234375" />
+        <entry key="..\:/Users/corel/AndroidStudioProjects/Pothub/app/src/main/res/layout/activity_confirm_signup.xml" value="0.2234375" />
+        <entry key="..\:/Users/corel/AndroidStudioProjects/Pothub/app/src/main/res/layout/activity_home.xml" value="0.2234375" />
+        <entry key="..\:/Users/corel/AndroidStudioProjects/Pothub/app/src/main/res/layout/activity_live_map.xml" value="0.22" />
         <entry key="..\:/Users/corel/AndroidStudioProjects/Pothub/app/src/main/res/layout/activity_maps_activitytw.xml" value="0.18697916666666667" />
         <entry key="..\:/Users/corel/AndroidStudioProjects/Pothub/app/src/main/res/layout/activity_reset_credentials.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/corel/AndroidStudioProjects/Pothub/app/src/main/res/layout/fragment_left_home.xml" value="0.2234375" />
         <entry key="..\:/Users/corel/AndroidStudioProjects/Pothub/app/src/main/res/layout/fragment_live_map.xml" value="0.35260416666666666" />
         <entry key="..\:/Users/corel/AndroidStudioProjects/Pothub/app/src/main/res/layout/fragment_map.xml" value="0.18697916666666667" />
         <entry key="..\:/Users/corel/AndroidStudioProjects/Pothub/app/src/main/res/layout/fragment_middle_home.xml" value="0.22" />
