@@ -1,5 +1,6 @@
 package com.cindea.pothub.map;
 
+import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -14,7 +15,6 @@ import android.os.Build;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,24 +26,35 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.SphericalUtil;
+
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class LocationService extends Service implements SensorEventListener {
 
     double previous_acceleration = -99999999;
-    double threshold = 0;
+    double previous_latitude, previous_longitude;
+    double threshold = 10;
     private SensorManager sensor_manager;
+    double latitude, longitude;
+    boolean is_first_pothole = true;
 
     private LocationCallback locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(@NonNull LocationResult locationResult) {
             super.onLocationResult(locationResult);
             if(locationResult!=null && locationResult.getLastLocation()!=null) {
-                double latitude = locationResult.getLastLocation().getLatitude();
-                double longitude = locationResult.getLastLocation().getLongitude();
+                latitude = locationResult.getLastLocation().getLatitude();
+                longitude = locationResult.getLastLocation().getLongitude();
 
                 sendMessageToActivity(latitude,longitude);
-
-                Log.d("TAG", latitude + " " + longitude);
 
             }
         }
@@ -59,7 +70,7 @@ public class LocationService extends Service implements SensorEventListener {
 
     private void startService() {
 
-        String channelId= "location_notiication_channel";
+        String channelId= "location_notification_channel";
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         Intent resultIntent = new Intent();
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -90,7 +101,7 @@ public class LocationService extends Service implements SensorEventListener {
     }
 
 
-    private void stopLocationService() {
+    private void stopService() {
 
         LocationServices.getFusedLocationProviderClient(this)
                 .removeLocationUpdates(locationCallback);
@@ -98,6 +109,7 @@ public class LocationService extends Service implements SensorEventListener {
         stopSelf();
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
@@ -120,9 +132,10 @@ public class LocationService extends Service implements SensorEventListener {
                     sensor_manager = (SensorManager) getSystemService(SENSOR_SERVICE);
                     sensor_manager.registerListener(this, sensor_manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
                             SensorManager.SENSOR_DELAY_NORMAL);
+                    connect();
 
                 }
-                else if(action.equals(Constants.ACTION_STP_LOCATION_SERVICE)) stopLocationService();
+                else if(action.equals(Constants.ACTION_STP_LOCATION_SERVICE)) stopService();
 
             }
 
@@ -144,30 +157,69 @@ public class LocationService extends Service implements SensorEventListener {
 
         double acceleration_x, acceleration_y, acceleration_z;
         double current_acceleration;
+        double current_latitude = latitude, current_longitude = longitude;
+        double distance;
 
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             acceleration_x = event.values[0];
             acceleration_y = event.values[1];
             acceleration_z = event.values[2];
-            current_acceleration = Math.sqrt(acceleration_x*acceleration_x + acceleration_y*acceleration_y + acceleration_z*acceleration_z);
+            current_acceleration = Math.sqrt(acceleration_x * acceleration_x + acceleration_y * acceleration_y + acceleration_z * acceleration_z);
 
-            if(current_acceleration - previous_acceleration >= threshold)
-            {
-                Toast toast = Toast.makeText(getApplicationContext(),
-                        "Current acceleration is: "+current_acceleration+" Previous acceleration is: "+previous_acceleration,
-                        Toast.LENGTH_SHORT);
+            //SE PRENDO UNA BUCA
+            if (current_acceleration - previous_acceleration >= threshold) {
 
-                toast.show();
+                if(!is_first_pothole)
+                {
+                    //Se la distanza tra l ultima buca e la recente è abbastanza grande allora la segnaliamo
+                    distance = SphericalUtil.computeDistanceBetween(new LatLng(previous_latitude, previous_longitude), new LatLng(current_latitude, current_longitude));
+                    if(distance > 75)
+                        reportPotHole();
+                }
+                else{
+                    reportPotHole();
+                    is_first_pothole = false;
+                }
+                previous_latitude = current_latitude;
+                previous_longitude = current_longitude;
             }
 
             previous_acceleration = current_acceleration;
 
         }
+
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
+    }
+
+    public void reportPotHole(){
+
+    }
+
+    public void connect(){
+        Log.e("ciao","ciao");
+        Thread t1 = new Thread(() -> {
+            Log.e("ciao1","ciao1");
+            try {
+                InetAddress server_address = InetAddress.getByName("20.126.123.213");
+                Socket socket = new Socket(server_address,12345);
+
+                PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+
+                out.println("Ciao come stai?");
+                out.close();
+
+            } catch (UnknownHostException e) {
+                Log.e("diocane",e.getMessage());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+        t1.run();
     }
 
 }

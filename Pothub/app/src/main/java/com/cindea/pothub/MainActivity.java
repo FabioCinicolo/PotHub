@@ -2,6 +2,8 @@ package com.cindea.pothub;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -12,6 +14,15 @@ import com.cindea.pothub.authentication.views.ResetCredentialsActivity;
 import com.cindea.pothub.authentication.views.fragments.SigninFragment;
 import com.cindea.pothub.authentication.views.fragments.SignupFragment;
 import com.cindea.pothub.cognito.Cognito;
+
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class MainActivity extends AppCompatActivity implements AuthSwitcher {
 
@@ -25,8 +36,12 @@ public class MainActivity extends AppCompatActivity implements AuthSwitcher {
         setContentView(R.layout.activity_main);
         cognito = new Cognito(this);
 
-        replaceFragment(signinFragment);
+        if (android.os.Build.VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
 
+        replaceFragment(signinFragment);
     }
 
     @Override
@@ -47,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements AuthSwitcher {
 
     @Override
     public void onSigninPress() {
+
 
         replaceFragment(signinFragment);
 
@@ -70,4 +86,5 @@ public class MainActivity extends AppCompatActivity implements AuthSwitcher {
     public static Cognito getCognito() {
         return cognito;
     }
+
 }
