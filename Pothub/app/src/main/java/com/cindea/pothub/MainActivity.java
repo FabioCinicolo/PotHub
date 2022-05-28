@@ -5,27 +5,24 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
 
 import com.cindea.pothub.authentication.views.ResetCredentialsActivity;
 import com.cindea.pothub.authentication.views.fragments.SigninFragment;
 import com.cindea.pothub.authentication.views.fragments.SignupFragment;
 import com.cindea.pothub.cognito.Cognito;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
 
-public class MainActivity extends AppCompatActivity implements AuthSwitcher {
+public class MainActivity extends AppCompatActivity implements AuthSwitcher, LoaderManager.LoaderCallbacks<String> {
 
+    private static final String TAG = "";
     Fragment signinFragment = new SigninFragment();
     Fragment signupFragment = new SignupFragment();
     private static Cognito cognito;
@@ -36,10 +33,9 @@ public class MainActivity extends AppCompatActivity implements AuthSwitcher {
         setContentView(R.layout.activity_main);
         cognito = new Cognito(this);
 
-        if (android.os.Build.VERSION.SDK_INT > 9) {
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy(policy);
-        }
+        getSupportLoaderManager().initLoader(10, null, this);
+
+
 
         replaceFragment(signinFragment);
     }
@@ -87,4 +83,18 @@ public class MainActivity extends AppCompatActivity implements AuthSwitcher {
         return cognito;
     }
 
+    @NonNull
+    @Override
+    public Loader<String> onCreateLoader(int id, @Nullable Bundle args) {
+        return new AsyncTaskLoaderProva(this);
+    }
+
+    @Override
+    public void onLoadFinished(@NonNull Loader<String> loader, String data) {
+        Log.e("RESULT",data);
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader<String> loader) {
+    }
 }

@@ -210,7 +210,9 @@ public class LocationService extends Service implements SensorEventListener {
                 PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
 
                 out.println("Ciao come stai?");
+                out.flush();
                 out.close();
+                socket.close();
 
             } catch (UnknownHostException e) {
                 Log.e("diocane",e.getMessage());
@@ -221,6 +223,5 @@ public class LocationService extends Service implements SensorEventListener {
 
         t1.run();
     }
-
 }
 
