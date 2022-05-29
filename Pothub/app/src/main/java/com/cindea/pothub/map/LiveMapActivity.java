@@ -3,48 +3,33 @@ package com.cindea.pothub.map;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
 
 import com.cindea.pothub.R;
 import com.cindea.pothub.databinding.ActivityLiveMapBinding;
-import com.cindea.pothub.services.GPSCheck;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
-import com.google.android.gms.maps.model.MarkerOptions;
 
-public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallback {
+public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallback, LoaderManager.LoaderCallbacks<String> {
 
     private GoogleMap map;
     private ActivityLiveMapBinding binding;
     private Button button_exit;
-    private double latitude;
-    private double longitude;
-    private BroadcastReceiver mMessageReceiver;
-    private GPSCheck GPSReceiver;
 
     private static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
 
@@ -65,29 +50,13 @@ public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallb
             ActivityCompat.requestPermissions(LiveMapActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE_LOCATION_PERMISSION);
 
         }
-        else startLocationService();
+        else {
+            startLocationService();
 
-        mMessageReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                latitude = intent.getDoubleExtra("latitude", 0);
-                longitude = intent.getDoubleExtra("longitude", 0);
-                if(latitude!=0 && longitude!=0) {
-
-                    Log.e("ACTIVITY", latitude + " " + longitude);
-                    LatLng latlng = new LatLng(latitude, longitude);
-                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(
-                            latlng, 17f);
-                    map.animateCamera(cameraUpdate);
-
-                }
-
-            }
-        };
+        }
 
         button_exit = findViewById(R.id.liveMap_exit);
         listeners();
-        checkGPS();
 
     }
 
@@ -97,30 +66,15 @@ public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallb
 
     }
 
-    private void checkGPS() {
-
-        registerReceiver(GPSReceiver = new GPSCheck(new GPSCheck.LocationCallBack() {
-            @Override
-            public void turnedOff() {
-                finish();
-            }
-        }), new IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION));
-
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
         stopLocationService();
-        unregisterReceiver(GPSReceiver);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
-        LocalBroadcastManager.getInstance(this).registerReceiver(
-                mMessageReceiver, new IntentFilter("GPSLocationUpdates"));
     }
 
     @SuppressLint("MissingPermission")
@@ -194,4 +148,19 @@ public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallb
 
     }
 
+    @NonNull
+    @Override
+    public Loader<String> onCreateLoader(int id, @Nullable Bundle args) {
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(@NonNull Loader<String> loader, String data) {
+
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader<String> loader) {
+
+    }
 }

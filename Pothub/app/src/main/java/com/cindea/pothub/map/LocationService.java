@@ -1,5 +1,9 @@
 package com.cindea.pothub.map;
 
+import static com.cindea.pothub.map.Constants.CLOSE_CONNECTION_WITH_SERVER;
+import static com.cindea.pothub.map.Constants.OPEN_CONNECTION_WITH_SERVER;
+import static com.cindea.pothub.map.Constants.REPORT_POTHOLE;
+
 import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -12,16 +16,18 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
-import android.util.Log;
+import android.os.Message;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.cindea.pothub.CustomThread;
 import com.cindea.pothub.R;
+import com.cindea.pothub.entities.Pothole;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
@@ -29,13 +35,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
+
 
 public class LocationService extends Service implements SensorEventListener {
 
@@ -46,6 +46,10 @@ public class LocationService extends Service implements SensorEventListener {
     double latitude, longitude;
     boolean is_first_pothole = true;
 
+    private CustomThread thread;
+    private Handler handler;
+
+
     private LocationCallback locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(@NonNull LocationResult locationResult) {
@@ -53,9 +57,6 @@ public class LocationService extends Service implements SensorEventListener {
             if(locationResult!=null && locationResult.getLastLocation()!=null) {
                 latitude = locationResult.getLastLocation().getLatitude();
                 longitude = locationResult.getLastLocation().getLongitude();
-
-                sendMessageToActivity(latitude,longitude);
-
             }
         }
     };
@@ -64,9 +65,17 @@ public class LocationService extends Service implements SensorEventListener {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        throw new UnsupportedOperationException("not yet implemented");
+        return null;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //Inserisco in coda la task per chiudere la connessione con il server
+        handler.sendEmptyMessage(CLOSE_CONNECTION_WITH_SERVER);
+        //Chiudo il thread
+        thread.quitSafely();
+    }
 
     private void startService() {
 
@@ -96,8 +105,7 @@ public class LocationService extends Service implements SensorEventListener {
 
         }
         startForeground(Constants.LOCATION_SERVICE_ID, builder.build());
-
-
+        startBackgroundThread();
     }
 
 
@@ -119,9 +127,7 @@ public class LocationService extends Service implements SensorEventListener {
             if (action != null) {
 
                 if(action.equals(Constants.ACTION_START_LOCATION_SERVICE)) {
-                    startService();
                     //Get Location Updates
-
                     LocationRequest locationRequest = new LocationRequest();
                     locationRequest.setInterval(4000);
                     locationRequest.setFastestInterval(2000);
@@ -133,6 +139,7 @@ public class LocationService extends Service implements SensorEventListener {
                     sensor_manager.registerListener(this, sensor_manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
                             SensorManager.SENSOR_DELAY_NORMAL);
 
+                    startService();
                 }
                 else if(action.equals(Constants.ACTION_STP_LOCATION_SERVICE)) stopService();
 
@@ -141,14 +148,6 @@ public class LocationService extends Service implements SensorEventListener {
         }
 
         return super.onStartCommand(intent, flags, startId);
-    }
-
-    private void sendMessageToActivity(double latitude, double longitude) {
-        Intent intent = new Intent("GPSLocationUpdates");
-        // You can also include some extra data.
-        intent.putExtra("latitude", latitude);
-        intent.putExtra("longitude", longitude);
-        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
     }
 
     @Override
@@ -172,11 +171,14 @@ public class LocationService extends Service implements SensorEventListener {
                 {
                     //Se la distanza tra l ultima buca e la recente è abbastanza grande allora la segnaliamo
                     distance = SphericalUtil.computeDistanceBetween(new LatLng(previous_latitude, previous_longitude), new LatLng(current_latitude, current_longitude));
-                    if(distance > 75)
-                        reportPotHole();
+                    if(distance > 75){
+                        Pothole pothole = new Pothole(current_latitude, current_longitude, null, null, 2);
+                        reportPotHole(pothole);
+                    }
                 }
                 else{
-                    reportPotHole();
+                    Pothole pothole = new Pothole(current_latitude, current_longitude, null, null, 2);
+                    reportPotHole(pothole);
                     is_first_pothole = false;
                 }
                 previous_latitude = current_latitude;
@@ -194,9 +196,34 @@ public class LocationService extends Service implements SensorEventListener {
 
     }
 
-    public void reportPotHole(){
-
+    public void reportPotHole(Pothole pothole){
+        Message message;
+        message = Message.obtain();
+        message.obj = pothole;
+        message.what = REPORT_POTHOLE;
+        handler.sendMessage(message);
     }
 
+    public void startBackgroundThread(){
+        thread = new CustomThread();
+
+        thread.start();
+
+        try{
+            synchronized (this){
+                wait(2000);
+            }
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        handler = thread.getHandler();
+
+        handler.sendEmptyMessage(OPEN_CONNECTION_WITH_SERVER);
+    }
+
+
 }
+
 

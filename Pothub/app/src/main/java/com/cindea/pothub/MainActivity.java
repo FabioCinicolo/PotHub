@@ -18,14 +18,15 @@ import com.cindea.pothub.authentication.views.ResetCredentialsActivity;
 import com.cindea.pothub.authentication.views.fragments.SigninFragment;
 import com.cindea.pothub.authentication.views.fragments.SignupFragment;
 import com.cindea.pothub.cognito.Cognito;
+import com.cindea.pothub.map.LocationService;
 
 
-public class MainActivity extends AppCompatActivity implements AuthSwitcher, LoaderManager.LoaderCallbacks<String> {
+public class MainActivity extends AppCompatActivity implements AuthSwitcher {
 
-    private static final String TAG = "";
     Fragment signinFragment = new SigninFragment();
     Fragment signupFragment = new SignupFragment();
     private static Cognito cognito;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,18 +34,16 @@ public class MainActivity extends AppCompatActivity implements AuthSwitcher, Loa
         setContentView(R.layout.activity_main);
         cognito = new Cognito(this);
 
-        getSupportLoaderManager().initLoader(10, null, this);
-
-
-
         replaceFragment(signinFragment);
     }
+
 
     @Override
     protected void onResume() {
         super.onResume();
 
     }
+
 
     private void replaceFragment(Fragment fragment) {
 
@@ -83,18 +82,4 @@ public class MainActivity extends AppCompatActivity implements AuthSwitcher, Loa
         return cognito;
     }
 
-    @NonNull
-    @Override
-    public Loader<String> onCreateLoader(int id, @Nullable Bundle args) {
-        return new AsyncTaskLoaderProva(this);
-    }
-
-    @Override
-    public void onLoadFinished(@NonNull Loader<String> loader, String data) {
-        Log.e("RESULT",data);
-    }
-
-    @Override
-    public void onLoaderReset(@NonNull Loader<String> loader) {
-    }
 }
