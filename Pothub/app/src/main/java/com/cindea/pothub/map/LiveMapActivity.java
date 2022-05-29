@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -22,6 +23,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.cindea.pothub.R;
 import com.cindea.pothub.databinding.ActivityLiveMapBinding;
+import com.cindea.pothub.services.GPSCheck;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
@@ -42,6 +44,7 @@ public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallb
     private double latitude;
     private double longitude;
     private BroadcastReceiver mMessageReceiver;
+    private GPSCheck GPSReceiver;
 
     private static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
 
@@ -67,7 +70,6 @@ public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallb
         mMessageReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                // Get extra data included in the Intent
                 latitude = intent.getDoubleExtra("latitude", 0);
                 longitude = intent.getDoubleExtra("longitude", 0);
                 if(latitude!=0 && longitude!=0) {
@@ -85,6 +87,7 @@ public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallb
 
         button_exit = findViewById(R.id.liveMap_exit);
         listeners();
+        checkGPS();
 
     }
 
@@ -94,10 +97,22 @@ public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallb
 
     }
 
+    private void checkGPS() {
+
+        registerReceiver(GPSReceiver = new GPSCheck(new GPSCheck.LocationCallBack() {
+            @Override
+            public void turnedOff() {
+                finish();
+            }
+        }), new IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION));
+
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         stopLocationService();
+        unregisterReceiver(GPSReceiver);
     }
 
     @Override

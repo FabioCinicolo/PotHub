@@ -132,7 +132,6 @@ public class LocationService extends Service implements SensorEventListener {
                     sensor_manager = (SensorManager) getSystemService(SENSOR_SERVICE);
                     sensor_manager.registerListener(this, sensor_manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
                             SensorManager.SENSOR_DELAY_NORMAL);
-                    connect();
 
                 }
                 else if(action.equals(Constants.ACTION_STP_LOCATION_SERVICE)) stopService();
@@ -199,29 +198,5 @@ public class LocationService extends Service implements SensorEventListener {
 
     }
 
-    public void connect(){
-        Log.e("ciao","ciao");
-        Thread t1 = new Thread(() -> {
-            Log.e("ciao1","ciao1");
-            try {
-                InetAddress server_address = InetAddress.getByName("20.126.123.213");
-                Socket socket = new Socket(server_address,12345);
-
-                PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
-
-                out.println("Ciao come stai?");
-                out.flush();
-                out.close();
-                socket.close();
-
-            } catch (UnknownHostException e) {
-                Log.e("diocane",e.getMessage());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-
-        t1.run();
-    }
 }
 
