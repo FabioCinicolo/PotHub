@@ -32,6 +32,7 @@ public final class SigninFragment extends CustomAuthFragment implements SigninCo
     private Button button_signin;
     private SigninContract.Presenter presenter;
     private AuthSwitcher authSwitcher;
+    public static String username;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -63,7 +64,7 @@ public final class SigninFragment extends CustomAuthFragment implements SigninCo
 
             runButtonAnimation(button_signin);
 
-            String username = ((EditText)fragmentView.findViewById(R.id.fragmentSignin_username)).getText().toString();
+            username = ((EditText)fragmentView.findViewById(R.id.fragmentSignin_username)).getText().toString();
             String password = ((EditText)fragmentView.findViewById(R.id.fragmentSignin_password)).getText().toString();
 
             startActivity(new Intent(getActivity(), HomeActivity.class));

@@ -1,6 +1,5 @@
 package com.cindea.pothub;
 
-import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Process;

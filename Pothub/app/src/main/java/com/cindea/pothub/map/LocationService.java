@@ -15,18 +15,23 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.cindea.pothub.CustomThread;
 import com.cindea.pothub.R;
+import com.cindea.pothub.authentication.views.fragments.SigninFragment;
 import com.cindea.pothub.entities.Pothole;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -35,6 +40,9 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 
 public class LocationService extends Service implements SensorEventListener {
@@ -49,6 +57,9 @@ public class LocationService extends Service implements SensorEventListener {
     private CustomThread thread;
     private Handler handler;
 
+    private Geocoder geocoder;
+    List<Address> addresses;
+
 
     private LocationCallback locationCallback = new LocationCallback() {
         @Override
@@ -57,6 +68,7 @@ public class LocationService extends Service implements SensorEventListener {
             if(locationResult!=null && locationResult.getLastLocation()!=null) {
                 latitude = locationResult.getLastLocation().getLatitude();
                 longitude = locationResult.getLastLocation().getLongitude();
+                sendMessageToActivity(latitude,longitude);
             }
         }
     };
@@ -105,6 +117,9 @@ public class LocationService extends Service implements SensorEventListener {
 
         }
         startForeground(Constants.LOCATION_SERVICE_ID, builder.build());
+
+        geocoder = new Geocoder(this, Locale.getDefault());
+
         startBackgroundThread();
     }
 
@@ -172,13 +187,27 @@ public class LocationService extends Service implements SensorEventListener {
                     //Se la distanza tra l ultima buca e la recente è abbastanza grande allora la segnaliamo
                     distance = SphericalUtil.computeDistanceBetween(new LatLng(previous_latitude, previous_longitude), new LatLng(current_latitude, current_longitude));
                     if(distance > 75){
-                        Pothole pothole = new Pothole(current_latitude, current_longitude, null, null, 2);
-                        reportPotHole(pothole);
+                        //INSERT GEOCODING + CALCULATE INTENSITY
+                        try {
+                            //TODO: Prendere indirizzo (Come stringa separata da virgola <Pozzuoli#IT>)
+                            addresses = geocoder.getFromLocation(latitude, longitude, 1);
+                            Pothole pothole = new Pothole(current_latitude, current_longitude, null, SigninFragment.username, 2, null);
+                            reportPotHole(pothole);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
-                else{
-                    Pothole pothole = new Pothole(current_latitude, current_longitude, null, null, 2);
-                    reportPotHole(pothole);
+                else if(current_latitude!=0){
+                    //INSERT GEOCODING + CALCULATE INTENSITY
+                    //TODO: Prendere indirizzo (Come stringa separata da virgola <Pozzuoli#IT>)
+                    try {
+                        addresses = geocoder.getFromLocation(latitude, longitude, 1);
+                        Pothole pothole = new Pothole(current_latitude, current_longitude, null, SigninFragment.username, 2, null);
+                        reportPotHole(pothole);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     is_first_pothole = false;
                 }
                 previous_latitude = current_latitude;
@@ -221,8 +250,16 @@ public class LocationService extends Service implements SensorEventListener {
         handler = thread.getHandler();
 
         handler.sendEmptyMessage(OPEN_CONNECTION_WITH_SERVER);
+
     }
 
+    private void sendMessageToActivity(double latitude, double longitude) {
+        Intent intent = new Intent("GPSLocationUpdates");
+        // You can also include some extra data.
+        intent.putExtra("latitude", latitude);
+        intent.putExtra("longitude", longitude);
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+    }
 
 }
 

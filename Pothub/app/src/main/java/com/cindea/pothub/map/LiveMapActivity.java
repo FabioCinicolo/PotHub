@@ -3,9 +3,12 @@ package com.cindea.pothub.map;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.Toast;
@@ -17,19 +20,27 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.cindea.pothub.GPSCheck;
 import com.cindea.pothub.R;
 import com.cindea.pothub.databinding.ActivityLiveMapBinding;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 
-public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallback, LoaderManager.LoaderCallbacks<String> {
+public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap map;
     private ActivityLiveMapBinding binding;
     private Button button_exit;
+    private GPSCheck gps_receiver;
+    private BroadcastReceiver mMessageReceiver;
+    double latitude, longitude;
 
     private static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
 
@@ -55,10 +66,26 @@ public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallb
 
         }
 
+        mMessageReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                latitude = intent.getDoubleExtra("latitude", 0);
+                longitude = intent.getDoubleExtra("longitude", 0);
+                if(latitude!=0 && longitude!=0) {
+                    LatLng latlng = new LatLng(latitude, longitude);
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(
+                            latlng, 17f);
+                    map.animateCamera(cameraUpdate);
+                }
+
+            }
+        };
         button_exit = findViewById(R.id.liveMap_exit);
         listeners();
-
+        checkGPS();
     }
+
+
 
     private void listeners() {
 
@@ -69,12 +96,16 @@ public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallb
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        unregisterReceiver(gps_receiver);
         stopLocationService();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                mMessageReceiver, new IntentFilter("GPSLocationUpdates"));
     }
 
     @SuppressLint("MissingPermission")
@@ -148,19 +179,9 @@ public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallb
 
     }
 
-    @NonNull
-    @Override
-    public Loader<String> onCreateLoader(int id, @Nullable Bundle args) {
-        return null;
-    }
+    private void checkGPS() {
 
-    @Override
-    public void onLoadFinished(@NonNull Loader<String> loader, String data) {
-
-    }
-
-    @Override
-    public void onLoaderReset(@NonNull Loader<String> loader) {
+        registerReceiver(gps_receiver = new GPSCheck(() -> finish()), new IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION));
 
     }
 }

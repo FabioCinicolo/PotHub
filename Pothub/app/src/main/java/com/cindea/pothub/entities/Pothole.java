@@ -6,14 +6,16 @@ public class Pothole {
     private double longitude;
     private String address;
     private String user;
+    private String timestamp;
     private int intensity;
 
-    public Pothole(double latitude, double longitude, String address, String user, int intensity) {
+    public Pothole(double latitude, double longitude, String address, String user, int intensity, String timestamp) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.address = address;
         this.user = user;
         this.intensity = intensity;
+        this.timestamp = timestamp;
     }
 
     public double getLatitude() {
@@ -54,6 +56,14 @@ public class Pothole {
 
     public void setIntensity(int intensity) {
         this.intensity = intensity;
+    }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
     }
 
     @Override

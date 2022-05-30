@@ -1,8 +1,5 @@
 package com.cindea.pothub;
 
-
-
-
 import static com.cindea.pothub.map.Constants.CLOSE_CONNECTION_WITH_SERVER;
 import static com.cindea.pothub.map.Constants.OPEN_CONNECTION_WITH_SERVER;
 import static com.cindea.pothub.map.Constants.REPORT_POTHOLE;
