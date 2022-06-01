@@ -22,6 +22,7 @@
             android:textColor="@color/text_in_edit"/>
 
         <TextView
+            android:id="@+id/leftHome_username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/Auth_username"
@@ -60,8 +61,17 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Total hours: "
+            android:text="Reported potholes last 14 days"
             android:layout_marginTop="8dp"
+            android:textSize="18sp"
+            android:fontFamily="sans-serif"
+            android:textColor="@color/text_in_edit"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reported potholes last month"
+
             android:textSize="18sp"
             android:fontFamily="sans-serif"
             android:textColor="@color/text_in_edit"/>
@@ -87,22 +97,32 @@
 
     <LinearLayout
         android:id="@+id/fragmentLeftHome_linearlayout3"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:orientation="vertical"
         android:paddingHorizontal="32dp"
         android:layout_marginTop="16dp"
         android:layout_below="@id/fragmentLeftHome_divider2"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Last 7 days reported potholes"
+            android:text="Last 14 days reported potholes"
             android:textSize="20sp"
             android:fontFamily="sans-serif"
             android:textColor="@color/edit_text_orange"/>
 
+        <FrameLayout
+            android:id="@+id/leftHome_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="16dp"
+            android:layout_gravity="center">
+        </FrameLayout>
+
     </LinearLayout>
+
+
 
 
 </RelativeLayout>
