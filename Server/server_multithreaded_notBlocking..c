@@ -134,9 +134,8 @@ int main(int argc, char *argv[])
             perror("poll");
             break;
         }
-        else if (poll_err == 0)
+        else if (poll_err == 0) //If poll timed out we check whether or not array needs to be compressed to remove unused socket descriptors
         {
-            fprintf(stderr, "***poll() timed out***\n");
 
             if (compress_array == TRUE && num_threads_executing == 0)
             {
@@ -154,7 +153,7 @@ int main(int argc, char *argv[])
                     }
                 }
             }
-            continue;
+            continue; //Jumps back to poll()
         }
 
         // One or more file descriptors are ready
@@ -197,10 +196,9 @@ int main(int argc, char *argv[])
                     }
                     else
                     {
-                        // Put the socket in non-blocking mode:
+                        // Put the socket in non-blocking mode
                         if (fcntl(new_sd, F_SETFL, fcntl(new_sd, F_GETFL) | O_NONBLOCK) < 0)
                         {
-                            // handle error
                         }
                     }
 
@@ -255,7 +253,6 @@ void *threadStarter(void *args)
     printf("***THREAD %ld RUNNING***\n", pthread_self());
     while (1)
     {
-
         Task task;
         pthread_mutex_lock(&thread_pool_mutex);
         while (task_count == 0)
