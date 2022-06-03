@@ -9,6 +9,7 @@ import android.os.Message;
 import android.util.Log;
 
 import com.cindea.pothub.entities.Pothole;
+import com.google.gson.Gson;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -35,11 +36,12 @@ public class CustomHandler extends Handler {
                 Log.e("HANDLER", "Opening");
                 openConnectionWithServer();
                 break;
-            case REPORT_POTHOLE:
+            case REPORT_POTHOLE: {
                 Log.e("HANDLER", "Reporting");
-                reportPotHole();
-                Log.e("POTHOLE REPORTED", String.valueOf(((Pothole)msg.obj)));
+                reportPotHole((Pothole)msg.obj);
+                Log.e("POTHOLE REPORTED", String.valueOf(((Pothole) msg.obj)));
                 break;
+            }
             case CLOSE_CONNECTION_WITH_SERVER:
                 Log.e("HANDLER", "Closing");
                 closeConnectionWithServer();
@@ -67,8 +69,12 @@ public class CustomHandler extends Handler {
 
     }
 
-    public void reportPotHole(){
-
+    public void reportPotHole(Pothole pothole){
+        Gson gson = new Gson();
+        gson.toJson(pothole, Pothole.class);
+        gson.toJsonTree(pothole).getAsJsonObject().addProperty("action", 1);
+        output_stream.print(gson.toString());
+        output_stream.flush();
     }
 
     private void closeConnectionWithServer() {

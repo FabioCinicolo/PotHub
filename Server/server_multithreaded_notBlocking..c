@@ -29,6 +29,16 @@
 
 #define FD_STOP_POLLING -2
 
+
+typedef struct Pothole{
+    double latitude;
+    double longitude;
+    char*address;
+    char*user;
+    char*timestamp;
+    int intensity;
+} Pothole;
+
 typedef struct Task
 {
     int (*work)(void *);
@@ -61,6 +71,9 @@ void initializeThreadPool(pthread_t *threads, int thread_num);
 void joinThreads(pthread_t *threads, int thread_num);
 void addTask(Task task);
 int executeTask(Task *task);
+int reportPothole(Pothole pothole);
+Pothole* getPotholesByRange(double range);
+Pothole* getUserPotholesByDate(char*username, char*timestamp);
 
 int main(int argc, char *argv[])
 {
@@ -124,17 +137,18 @@ int main(int argc, char *argv[])
     do
     {
         printf("\n[-nfds: %d\n-SOCKET DESCRIPTOR ARRAY:", nfds);
-        for (int i = 0; i < nfds; i++){
+        for (int i = 0; i < nfds; i++)
+        {
             printf("    fd_%d = %d", i, fds[i].fd);
         }
         printf("]\n\n***n.%d POLL EXECUTED***\n\n", ++polls);
-        
+
         if ((poll_err = poll(fds, nfds, timeout)) < 0)
         {
             perror("poll");
             break;
         }
-        else if (poll_err == 0) //If poll timed out we check whether or not array needs to be compressed to remove unused socket descriptors
+        else if (poll_err == 0) // If poll timed out we check whether or not array needs to be compressed to remove unused socket descriptors
         {
 
             if (compress_array == TRUE && num_threads_executing == 0)
@@ -153,7 +167,7 @@ int main(int argc, char *argv[])
                     }
                 }
             }
-            continue; //Jumps back to poll()
+            continue; // Jumps back to poll()
         }
 
         // One or more file descriptors are ready
@@ -315,7 +329,8 @@ int doWork(void *args)
     int *old_fd = ((PollInfo *)args)->old_fd;
     int fd = ((PollInfo *)args)->fd;
     struct pollfd *fds = ((PollInfo *)args)->fds;
-    char buffer[80];
+    char buffer[1024];
+    Pothole*potholes;
 
     do
     {
@@ -356,26 +371,55 @@ int doWork(void *args)
     else
         *old_fd = fd;
 
-    // If compress_array flag was set, we are not interested in events on a certain file descriptor, we can then proceed to remove it from pollfd array
-
-    // printf("***THREAD %lu IS EXECUTING TASK***\n", pthread_self());
-    // cJSON *prova = cJSON_Parse("{\"name\":\"fabio\",\"surname\":\"cinicolo\"}");
-    // if(!prova){
-    // printf("%s\n","kitammuo so null");
-    // const char *error_ptr = cJSON_GetErrorPtr();
-    //     if (error_ptr != NULL)
-    //     {
-    //         fprintf(stderr, "Error before: %s\n", error_ptr);
-    //     }
-    // }
-    // else{
-    //       printf("%s\n", cJSON_Print(prova));
-    // cJSON *name = cJSON_GetObjectItemCaseSensitive(prova, "name");
-    // if (cJSON_IsString(name) && (name->valuestring != NULL))
-    // {
-    //     printf("Name is \"%s\"\n", name->valuestring);
-    // }
-
-    // }
+    //PARSING LOGIC
+    cJSON *json = cJSON_Parse(buffer);
+    if (!json)
+    {
+        const char *error_ptr = cJSON_GetErrorPtr();
+        fprintf(stderr, "***Couldn't parse json%s\n", error_ptr != NULL ? "Error before %s", error_ptr : "");
+    }
+    else
+    {
+        cJSON * action = cJSON_GetObjectItemCaseSensitive(json, "action");
+        switch(action->valueint)
+            {
+                case REPORT_POTHOLE:{
+                    Pothole pothole = {
+                        .latitude = cJSON_GetObjectItemCaseSensitive(json, "latitude")->valuedouble,
+                        .longitude = cJSON_GetObjectItemCaseSensitive(json, "longitude")->valuedouble,
+                        .address = cJSON_GetObjectItemCaseSensitive(json, "address")->valuestring,
+                        .user = cJSON_GetObjectItemCaseSensitive(json, "user")->valuestring,
+                        .timestamp = cJSON_GetObjectItemCaseSensitive(json, "timestamp")->valuestring,
+                        .intensity = cJSON_GetObjectItemCaseSensitive(json, "intensity")->valueint
+                    };
+                    reportPothole(pothole);
+                    break;
+                }
+                case GET_POTHOLES_BY_RANGE:{
+                    potholes = getPotholesByRange(cJSON_GetObjectItemCaseSensitive(json, "range")->valuedouble);
+                    //Insert here send potholes to client logic
+                    break;
+                }
+                case GET_USER_POTHOLES_BY_DATE:{
+                    getUserPotholesByDate(cJSON_GetObjectItemCaseSensitive(json, "user")->valuestring, cJSON_GetObjectItemCaseSensitive(json, "timestamp")->valuestring);
+                    //Insert here send potholes to client logic
+                    break;
+                }
+                default:
+                    break;
+            }
+    }
     return 0;
+}
+
+int reportPothole(Pothole pothole){
+    return 0;
+}
+
+Pothole* getPotholesByRange(double range){
+    return NULL;
+}
+
+Pothole* getUserPotholesByDate(char*user, char*timestamp){
+    return NULL;
 }
