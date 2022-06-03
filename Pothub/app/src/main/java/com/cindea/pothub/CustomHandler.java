@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.cindea.pothub.entities.Pothole;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -39,7 +40,6 @@ public class CustomHandler extends Handler {
             case REPORT_POTHOLE: {
                 Log.e("HANDLER", "Reporting");
                 reportPotHole((Pothole)msg.obj);
-                Log.e("POTHOLE REPORTED", String.valueOf(((Pothole) msg.obj)));
                 break;
             }
             case CLOSE_CONNECTION_WITH_SERVER:
@@ -58,7 +58,7 @@ public class CustomHandler extends Handler {
 
             socket = new Socket(server_address, 12345);
 
-            input_stream = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
+            //input_stream = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
             output_stream = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
 
         } catch (UnknownHostException e) {
@@ -66,22 +66,24 @@ public class CustomHandler extends Handler {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        Log.e("HANDLER","Connection with server opened");
     }
 
     public void reportPotHole(Pothole pothole){
+        String json;
         Gson gson = new Gson();
-        gson.toJson(pothole, Pothole.class);
-        gson.toJsonTree(pothole).getAsJsonObject().addProperty("action", 1);
-        output_stream.print(gson.toString());
+        pothole.setAction(REPORT_POTHOLE);
+        json = gson.toJson(pothole, Pothole.class);
+        output_stream.write(json);
         output_stream.flush();
+
     }
 
     private void closeConnectionWithServer() {
         if (socket != null) {
             if (socket.isConnected()) {
                 try {
-                    input_stream.close();
+                    //input_stream.close();
                     output_stream.close();
                     socket.close();
                 } catch (IOException e) {
@@ -89,6 +91,7 @@ public class CustomHandler extends Handler {
                 }
             }
         }
+        Log.e("HANDLER","Connection with server closed");
     }
 
 

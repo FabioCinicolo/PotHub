@@ -6,8 +6,9 @@ public class Pothole {
     private double longitude;
     private String address;
     private String user;
-    private String timestamp;
     private int intensity;
+    private String timestamp;
+    private int action;
 
     public Pothole(double latitude, double longitude, String address, String user, int intensity, String timestamp) {
         this.latitude = latitude;
@@ -74,6 +75,15 @@ public class Pothole {
                 ", address='" + address + '\'' +
                 ", user='" + user + '\'' +
                 ", intensity=" + intensity +
+                ", timestamp='" + timestamp + '\'' +
                 '}';
+    }
+
+    public int getAction() {
+        return action;
+    }
+
+    public void setAction(int action) {
+        this.action = action;
     }
 }

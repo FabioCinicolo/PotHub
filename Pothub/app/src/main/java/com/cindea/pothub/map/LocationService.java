@@ -191,7 +191,7 @@ public class LocationService extends Service implements SensorEventListener {
                         try {
                             //TODO: Prendere indirizzo (Come stringa separata da virgola <Pozzuoli#IT>)
                             addresses = geocoder.getFromLocation(latitude, longitude, 1);
-                            Pothole pothole = new Pothole(current_latitude, current_longitude, null, SigninFragment.username, 2, null);
+                            Pothole pothole = new Pothole(current_latitude, current_longitude, "asd", SigninFragment.username, 2, "as");
                             reportPotHole(pothole);
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -203,7 +203,7 @@ public class LocationService extends Service implements SensorEventListener {
                     //TODO: Prendere indirizzo (Come stringa separata da virgola <Pozzuoli#IT>)
                     try {
                         addresses = geocoder.getFromLocation(latitude, longitude, 1);
-                        Pothole pothole = new Pothole(current_latitude, current_longitude, null, SigninFragment.username, 2, null);
+                        Pothole pothole = new Pothole(current_latitude, current_longitude, "asd", SigninFragment.username, 2, "asd");
                         reportPotHole(pothole);
                     } catch (IOException e) {
                         e.printStackTrace();

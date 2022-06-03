@@ -202,6 +202,7 @@ int main(int argc, char *argv[])
                         }
                         break;
                     }
+                    printf("***New connection accepted. IP: %s***", inet_ntoa(client_addr.sin_addr));
 
                     // Test if the socket is in non-blocking mode:
                     if (fcntl(new_sd, F_GETFL) & O_NONBLOCK)
@@ -376,7 +377,7 @@ int doWork(void *args)
     if (!json)
     {
         const char *error_ptr = cJSON_GetErrorPtr();
-        fprintf(stderr, "***Couldn't parse json%s\n", error_ptr != NULL ? "Error before %s", error_ptr : "");
+        fprintf(stderr, "***Couldn't parse json***\n");
     }
     else
     {
@@ -413,6 +414,7 @@ int doWork(void *args)
 }
 
 int reportPothole(Pothole pothole){
+    printf("%f\n",pothole.latitude);
     return 0;
 }
 
