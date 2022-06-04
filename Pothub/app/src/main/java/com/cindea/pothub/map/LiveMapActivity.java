@@ -9,22 +9,22 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.Loader;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.cindea.pothub.GPSCheck;
 import com.cindea.pothub.R;
 import com.cindea.pothub.databinding.ActivityLiveMapBinding;
+import com.cindea.pothub.networkutil.NetworkUtil;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -40,6 +40,7 @@ public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallb
     private Button button_exit;
     private GPSCheck gps_receiver;
     private BroadcastReceiver mMessageReceiver;
+    private BroadcastReceiver networkReceiver;
     double latitude, longitude;
 
     private static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
@@ -55,6 +56,24 @@ public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallb
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        networkReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                int status = NetworkUtil.getConnectivityStatusString(context);
+                switch (status) {
+
+                    case 0:
+                        stopLocationService();
+                        break;
+                    case 1:
+                        stopLocationService();
+                        startLocationService();
+                        break;
+
+                }
+            }
+        };
+
 
         if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
@@ -62,7 +81,8 @@ public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallb
 
         }
         else {
-            startLocationService();
+
+            registerReceiver(networkReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
         }
 
@@ -97,6 +117,7 @@ public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallb
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(gps_receiver);
+        unregisterReceiver(networkReceiver);
         stopLocationService();
     }
 

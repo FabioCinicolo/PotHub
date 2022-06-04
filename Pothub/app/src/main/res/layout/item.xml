@@ -14,13 +14,13 @@
         android:background="@drawable/rounded_corners_bg"
         android:orientation="horizontal">
 
-        <de.hdodenhof.circleimageview.CircleImageView
+        <ImageView
+            android:id="@+id/item_icon"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_gravity="center_vertical"
-            android:background="@color/edit_text_orange"
+            android:src="@drawable/ic_green_alert"
             android:layout_marginHorizontal="16dp"
-
             />
 
         <LinearLayout

@@ -44,7 +44,7 @@ public class PotholesFragment extends Fragment {
         //TEST
         ArrayList<Pothole> potholes = new ArrayList<>();
         for(int i=0;i<10;i++)
-            potholes.add(new Pothole(5,5,"ciao", "user",5,"15"));
+            potholes.add(new Pothole(5,5,"ciao", "user",2,"15"));
         recyclerViewAdapter = new RecyclerViewAdapter(getActivity(), potholes);
         recyclerView.setAdapter(recyclerViewAdapter);
         //TEST

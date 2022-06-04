@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -38,7 +39,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
 
+        Pothole pothole = potholes.get(position);
 
+        setupItem(pothole, holder);
 
     }
 
@@ -62,6 +65,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         TextView address;
         TextView latlng;
         TextView date;
+        ImageView icon;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -69,8 +73,35 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             address = itemView.findViewById(R.id.item_address);
             latlng = itemView.findViewById(R.id.item_latlng);
             date = itemView.findViewById(R.id.item_date);
+            icon = itemView.findViewById(R.id.item_icon);
 
         }
+    }
+
+    private void setupItem(Pothole pothole, MyViewHolder holder) {
+
+        String latlng = pothole.getLatitude() + ", " +pothole.getLongitude();
+
+        holder.address.setText(pothole.getAddress());
+        holder.latlng.setText(latlng);
+        holder.date.setText(pothole.getTimestamp());
+
+        switch(pothole.getIntensity()) {
+
+            case 1:
+                holder.icon.setImageResource(R.drawable.ic_green_alert);
+                break;
+            case 2:
+                holder.icon.setImageResource(R.drawable.ic_yellow_alert);
+                break;
+            case 3:
+                holder.icon.setImageResource(R.drawable.ic_red_alert);
+                break;
+            default:
+                break;
+
+        }
+
     }
 
 }

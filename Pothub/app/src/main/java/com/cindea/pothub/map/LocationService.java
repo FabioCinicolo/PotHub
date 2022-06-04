@@ -191,7 +191,10 @@ public class LocationService extends Service implements SensorEventListener {
                         try {
                             //TODO: Prendere indirizzo (Come stringa separata da virgola <Pozzuoli#IT>)
                             addresses = geocoder.getFromLocation(latitude, longitude, 1);
-                            Pothole pothole = new Pothole(current_latitude, current_longitude, "asd", SigninFragment.username, 2, "as");
+                            String country_code = addresses.get(0).getCountryCode();
+                            String name2 = addresses.get(0).getLocality();
+                            name2 = name2.replace('\'', ' ');
+                            Pothole pothole = new Pothole(current_latitude, current_longitude, name2+"#"+country_code, SigninFragment.username, 2, "as");
                             reportPotHole(pothole);
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -203,7 +206,10 @@ public class LocationService extends Service implements SensorEventListener {
                     //TODO: Prendere indirizzo (Come stringa separata da virgola <Pozzuoli#IT>)
                     try {
                         addresses = geocoder.getFromLocation(latitude, longitude, 1);
-                        Pothole pothole = new Pothole(current_latitude, current_longitude, "asd", SigninFragment.username, 2, "asd");
+                        String country_code = addresses.get(0).getCountryCode();
+                        String name2 = addresses.get(0).getLocality();
+                        name2 = name2.replace('\'', ' ');
+                        Pothole pothole = new Pothole(current_latitude, current_longitude, name2+"#"+country_code, SigninFragment.username, 2, "asd");
                         reportPotHole(pothole);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -262,5 +268,4 @@ public class LocationService extends Service implements SensorEventListener {
     }
 
 }
-
 
