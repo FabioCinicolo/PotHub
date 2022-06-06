@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#00000000"
-    tools:context=".home.LeftHomeFragment">
+    tools:context=".home.views.LeftHomeFragment">
 
     <LinearLayout
         android:id="@+id/fragmentLeftHome_linearlayout1"

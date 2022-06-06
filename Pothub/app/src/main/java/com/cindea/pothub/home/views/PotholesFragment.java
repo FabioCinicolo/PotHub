@@ -1,23 +1,24 @@
-package com.cindea.pothub.home;
+package com.cindea.pothub.home.views;
 
-import android.graphics.Canvas;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.cindea.pothub.R;
 import com.cindea.pothub.entities.Pothole;
+import com.cindea.pothub.home.RecyclerViewAdapter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class PotholesFragment extends Fragment {
 
@@ -37,14 +38,15 @@ public class PotholesFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+
         recyclerView = view.findViewById(R.id.potholesFragment_recyclerview);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         //TEST
-        ArrayList<Pothole> potholes = new ArrayList<>();
+        List<Pothole> potholes = ((LeftHomeFragment)getParentFragment()).getPotholes_14days();
         for(int i=0;i<10;i++)
-            potholes.add(new Pothole(5,5,"ciao", "user",2,"15"));
+            potholes.add(potholes.get(i));
         recyclerViewAdapter = new RecyclerViewAdapter(getActivity(), potholes);
         recyclerView.setAdapter(recyclerViewAdapter);
         //TEST

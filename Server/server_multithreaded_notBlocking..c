@@ -21,9 +21,9 @@
 #include <math.h>
 
 #define SERVER_PORT 12345
-#define BACKLOG 32
+#define BACKLOG 100
 
-#define THREADS_NUM 4
+#define THREADS_NUM 4 // Setting thread num to max core number because threads will never go in wait queue in this program(sockets are set to non blocking) so adding more threads wouldn't make difference
 #define MAX_TASK_NUM 1000
 #define MAX_MYSQL_CONNECTIONS 30
 
@@ -31,8 +31,8 @@
 #define FALSE 0
 
 #define REPORT_POTHOLE 1
-#define GET_POTHOLES_BY_RANGE 2
-#define GET_USER_POTHOLES_BY_DATE 3
+#define GET_POTHOLES_BY_RANGE 3
+#define GET_USER_POTHOLES_BY_DAYS 2
 
 #define FD_STOP_POLLING -2
 
@@ -82,7 +82,7 @@ void addTask(Task task);
 int executeTask(Task *task);
 int reportPothole(Pothole pothole);
 char *getPotholesByRangeJson(double latitude, double longitude, double range);
-Pothole *getUserPotholesByDate(char *username, char *timestamp);
+char *getUserPotholesByDays(char *username, int days);
 double haversineDistance(double latitude1, double longitude1, double latitude2, double longitude2);
 double toRad(double x);
 
@@ -113,9 +113,7 @@ int main(int argc, char *argv[])
     int flag1;
     socklen_t len = sizeof(flag1);
 
-    // Creating listening socket, set to non block. Incoming connections will also be nonblocking as they inherit properties from listening socket.
-
-    printf("STARTING SERVER..\n\n");
+    printf("Creating listening socket..\n");
     if ((listen_sd = socket(PF_INET, SOCK_STREAM | SOCK_NONBLOCK, IPPROTO_TCP)) < 0)
         perror("socket"), exit(EXIT_FAILURE);
 
@@ -179,13 +177,15 @@ int main(int argc, char *argv[])
     pthread_mutex_init(&global_vars_mutex, NULL);
     initializeThreadPool(threads, THREADS_NUM);
 
-    printf("***SERVER IS RUNNING***\n\n--------------------------------------------------------------------------------------------------------------------------------------\n\n");
+    printf("***SERVER SUCCESSFULLY STARTED***\n\n");
+
+    printf("***SERVER SUCCESSFULLY STARTED***\n\n-----------------------------------------------------------------------------------------------------------\n\n");
 
     usleep(10000);
     // Loop waiting for incoming connections or for incoming data on any of the connected sockets
     do
     {
-        printf("\n[-CLIENTS CONNECTED: %d\n-SOCKET DESCRIPTOR ARRAY:", nfds-1);
+        printf("\n[-CLIENTS CONNECTED: %d\n-SOCKET DESCRIPTOR ARRAY:", nfds - 1);
         for (int i = 0; i < nfds; i++)
         {
             printf("    fd_%d = %d", i, fds[i].fd);
@@ -390,13 +390,13 @@ int doWork(void *args)
 {
 
     int close_conn = FALSE;
-    ssize_t read_bytes, sent_bytes, buff_len, total_bytes_sent;
+    ssize_t read_bytes, sent_bytes = 0, buff_len, total_bytes_sent = 0;
     int *old_fd = ((PollInfo *)args)->old_fd;
     int fd = ((PollInfo *)args)->fd;
     struct pollfd *fds = ((PollInfo *)args)->fds;
     char buffer[1024];
-    Pothole *potholes;
     char *json_message;
+    cJSON *action, *json;
 
     do
     {
@@ -409,33 +409,34 @@ int doWork(void *args)
             {
                 perror("recv");
                 close_conn = TRUE;
+                goto end;
             }
-            goto end;
+
+            break; // If errno = EWOULDBLOCK THEN I CAN PROCEED TO PARSE JSON AND GET THE ACTION
         }
 
         // If connection has been closed by the client then set close_conn flag to true
         if (read_bytes == 0)
         {
+            printf("ciao1\n");
             close_conn = TRUE;
             goto end;
         }
 
-        buffer[read_bytes] = '\0';
-        // Read buffer
-        printf("Buffer content: %s\n", buffer);
-
     } while (TRUE);
 
     // PARSING LOGIC
-    cJSON *json = cJSON_Parse(buffer);
+    printf("%s\n", buffer);
+    json = cJSON_Parse(buffer);
     if (!json)
     {
         const char *error_ptr = cJSON_GetErrorPtr();
         fprintf(stderr, "COULD NOT PARSE JSON\n\n");
+        goto end;
     }
     else
     {
-        cJSON *action = cJSON_GetObjectItemCaseSensitive(json, "action");
+        action = cJSON_GetObjectItemCaseSensitive(json, "action");
         switch (action->valueint)
         {
         case REPORT_POTHOLE:
@@ -457,37 +458,61 @@ int doWork(void *args)
             if (!json_message)
             {
                 fprintf(stderr, "COULD NOT GET JSON\n\n");
-                break;
+                goto end;
             }
             buff_len = strlen(json_message);
+            json_message = realloc(json_message, buff_len + 1);
+            json_message[buff_len] = '\n';
             do
             {
-                if ((sent_bytes = send(fd, json_message, buff_len, 0)) < 0)
+                if ((sent_bytes = send(fd, json_message, buff_len + 1, 0)) < 0)
                 {
                     total_bytes_sent += sent_bytes;
                     if (errno != EWOULDBLOCK)
                     {
-                        perror("recv");
+                        perror("send");
                         close_conn = TRUE;
+                        break;
                     }
-                    break;
                 }
-            } while (total_bytes_sent < buff_len);
-
+            } while (total_bytes_sent <= buff_len); // It can happen that message size is greather than socket buffer, socket will then return with errno = EWOULDBLOCK
             break;
         }
-        case GET_USER_POTHOLES_BY_DATE:
+        case GET_USER_POTHOLES_BY_DAYS:
         {
-            potholes = getUserPotholesByDate(cJSON_GetObjectItemCaseSensitive(json, "user")->valuestring, cJSON_GetObjectItemCaseSensitive(json, "timestamp")->valuestring);
-            // Insert here send potholes to client logic
+            printf("GETTING USER POTHOLES BY %d DAYS...\n\n", cJSON_GetObjectItemCaseSensitive(json, "days")->valueint);
+            json_message = getUserPotholesByDays(cJSON_GetObjectItemCaseSensitive(json, "user")->valuestring, cJSON_GetObjectItemCaseSensitive(json, "days")->valueint);
+            printf("%s\n", json_message);
+            if (!json_message)
+            {
+                fprintf(stderr, "COULD NOT GET JSON\n\n");
+                goto end;
+            }
+            buff_len = strlen(json_message);
+            json_message = realloc(json_message, buff_len + 1);
+            json_message[buff_len] = '\n';
+            do
+            {
+                if ((sent_bytes = send(fd, json_message, buff_len + 1, 0)) < 0)
+                {
+                    total_bytes_sent += sent_bytes;
+                    if (errno != EWOULDBLOCK)
+                    {
+                        perror("send");
+                        close_conn = TRUE;
+                        break;
+                    }
+                }
+            } while (total_bytes_sent <= buff_len); // It can happen that message size is greather than socket buffer, socket will then return with errno = EWOULDBLOCK
             break;
         }
         default:
             fprintf(stderr, "WRONG ACTION\n\n");
         }
     }
-
-    end:
+    free(json_message);
+    cJSON_Delete(json);
+end:
     // If close_conn was set, we set the compress_array flag to true
     if (close_conn)
     {
@@ -631,10 +656,8 @@ char *getPotholesByRangeJson(double latitude, double longitude, double range)
 
     while ((row = mysql_fetch_row(result)))
     {
-        latitude = atof(row[0]);
-        longitude = atof(row[1]);
         // Computing distance between DB pothole and client latitude and longitude
-        distance = haversineDistance(40.0f, 123.0f, latitude, longitude);
+        distance = haversineDistance(atof(row[0]), atof(row[1]), latitude, longitude);
         if (distance <= range)
         {
             pothole = cJSON_CreateObject();
@@ -655,18 +678,79 @@ char *getPotholesByRangeJson(double latitude, double longitude, double range)
             cJSON_AddItemToObject(pothole, "intensity", intensity);
         }
     }
-
-    json_string = cJSON_Print(json);
+    json_string = cJSON_PrintUnformatted(json);
+    cJSON_Delete(json);
 end:
     mysql_free_result(result);
     mysql_close(mysql);
-    cJSON_Delete(json);
     return json_string;
 }
 
-Pothole *getUserPotholesByDate(char *user, char *timestamp)
+char *getUserPotholesByDays(char *username, int days)
 {
-    return NULL;
+    MYSQL *mysql = mysql_init(NULL);
+    MYSQL_RES *result;
+    MYSQL_ROW row;
+    double distance;
+    cJSON *json;
+    cJSON *pothole;
+    cJSON *lat;
+    cJSON *lon;
+    cJSON *address;
+    cJSON *user;
+    cJSON *timestamp;
+    cJSON *intensity;
+
+    char *json_string;
+
+    if (mysql == NULL)
+    {
+        fprintf(stderr, "mysql_init() failed\n\n");
+        return NULL;
+    }
+    if (!mysql_real_connect(mysql, opt_host_name, opt_user_name, opt_password, opt_db_name, opt_port_num, opt_socket_name, opt_flags))
+    {
+        fprintf(stderr, "mysql_real_connect() failed\n\n %s", mysql_error(mysql));
+        mysql_close(mysql);
+        return NULL;
+    }
+    mysql_query(mysql, "SELECT  Latitude, Longitude, Address, User, Timestamp, Intensity FROM PotholeReport");
+    if (!(result = mysql_store_result(mysql)))
+    {
+        fprintf(stderr, "%s\n", mysql_error(mysql));
+        return NULL;
+    }
+
+    json = cJSON_CreateArray();
+
+    if (!json)
+        goto end;
+
+    while ((row = mysql_fetch_row(result)))
+    {
+        pothole = cJSON_CreateObject();
+        cJSON_AddItemToArray(json, pothole);
+        lat = cJSON_CreateNumber(atof(row[0]));
+        lon = cJSON_CreateNumber(atof(row[1]));
+        address = cJSON_CreateString(row[2]);
+        user = cJSON_CreateString(row[3]);
+        timestamp = cJSON_CreateString(row[4]);
+        intensity = cJSON_CreateNumber(atoi(row[5]));
+        if (!pothole || !lat || !lon || !address || !user || !timestamp || !intensity)
+            goto end;
+        cJSON_AddItemToObject(pothole, "latitude", lat);
+        cJSON_AddItemToObject(pothole, "longitude", lon);
+        cJSON_AddItemToObject(pothole, "address", address);
+        cJSON_AddItemToObject(pothole, "user", user);
+        cJSON_AddItemToObject(pothole, "timestamp", timestamp);
+        cJSON_AddItemToObject(pothole, "intensity", intensity);
+    }
+    json_string = cJSON_PrintUnformatted(json);
+    cJSON_Delete(json);
+end:
+    mysql_free_result(result);
+    mysql_close(mysql);
+    return json_string;
 }
 
 double haversineDistance(double latitude1, double longitude1, double latitude2, double longitude2)

@@ -16,15 +16,7 @@ import com.cindea.pothub.authentication.SigninContract;
 import com.cindea.pothub.authentication.models.SigninModel;
 import com.cindea.pothub.authentication.presenters.SigninPresenter;
 import com.cindea.pothub.authentication.views.ResetCredentialsActivity;
-import com.cindea.pothub.home.HomeActivity;
-
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import com.cindea.pothub.home.views.HomeActivity;
 
 public final class SigninFragment extends CustomAuthFragment implements SigninContract.View {
 

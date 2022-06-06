@@ -1,4 +1,4 @@
-package com.cindea.pothub.home;
+package com.cindea.pothub.home.views;
 
 import android.Manifest;
 import android.content.Intent;
@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.cindea.pothub.R;
+import com.cindea.pothub.home.HomeFragmentAdapter;
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator;
 
 public class HomeActivity extends AppCompatActivity {

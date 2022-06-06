@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#00000000"
-    tools:context=".home.RightHomeFragment">
+    tools:context=".home.views.RightHomeFragment">
 
     <LinearLayout
         android:id="@+id/fragmentRightHome_linearlayout1"

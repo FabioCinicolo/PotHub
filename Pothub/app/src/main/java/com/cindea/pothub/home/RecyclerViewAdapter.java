@@ -14,13 +14,14 @@ import com.cindea.pothub.R;
 import com.cindea.pothub.entities.Pothole;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyViewHolder> {
 
     Context context;
-    ArrayList<Pothole> potholes;
+    List<Pothole> potholes;
 
-    public RecyclerViewAdapter(Context context, ArrayList<Pothole> potholes) {
+    public RecyclerViewAdapter(Context context, List<Pothole> potholes) {
 
         this.context = context;
         this.potholes = potholes;

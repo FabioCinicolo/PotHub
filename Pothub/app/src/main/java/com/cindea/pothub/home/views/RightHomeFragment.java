@@ -1,4 +1,4 @@
-package com.cindea.pothub.home;
+package com.cindea.pothub.home.views;
 
 import android.content.Intent;
 import android.os.Bundle;

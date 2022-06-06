@@ -5,6 +5,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+import com.cindea.pothub.home.views.LeftHomeFragment;
+import com.cindea.pothub.home.views.MiddleHomeFragment;
+import com.cindea.pothub.home.views.RightHomeFragment;
+
 public class HomeFragmentAdapter extends FragmentStateAdapter {
 
 

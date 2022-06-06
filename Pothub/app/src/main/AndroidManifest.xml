@@ -45,7 +45,7 @@
             android:name=".map.VisualizePotholesInMapActivity"
             android:exported="false" />
         <activity
-            android:name=".home.HomeActivity"
+            android:name=".home.views.HomeActivity"
             android:exported="false"
             android:launchMode="singleTask" />
         <activity

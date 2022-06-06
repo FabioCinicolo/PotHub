@@ -1,4 +1,4 @@
-package com.cindea.pothub.home;
+package com.cindea.pothub.home.views;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
