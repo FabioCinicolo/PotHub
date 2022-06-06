@@ -13,6 +13,7 @@ public class ResetCRPasswordFragment extends CustomAuthFragment {
 
     private Button buttonContinue;
     private EditText etPassword;
+    private ResetCRFragmentSwitcher resetCRFragmentSwitcher;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -31,6 +32,8 @@ public class ResetCRPasswordFragment extends CustomAuthFragment {
         buttonContinue = fragmentView.findViewById(R.id.fragmentCR3_continue);
         etPassword = fragmentView.findViewById(R.id.fragmentCR3_password);
 
+        resetCRFragmentSwitcher = (ResetCRFragmentSwitcher) getActivity();
+
         setupAnimations(getContext());
 
     }
@@ -45,7 +48,7 @@ public class ResetCRPasswordFragment extends CustomAuthFragment {
                 @Override
                 public void run() {
 
-/*                    resetPwdCallbackListener.switchToResetCRCode(etPassword.getText().toString());*/
+                    resetCRFragmentSwitcher.switchToResetCRCodeFragment(etPassword.getText().toString());
 
                 }
             }, 170);

@@ -36,6 +36,14 @@ public class Cognito {
 
     private String userPassword;                        // Used for Login
 
+    public void setContinuation(ForgotPasswordContinuation continuation) {
+        this.continuation = continuation;
+    }
+
+    public ForgotPasswordContinuation getContinuation() {
+        return continuation;
+    }
+
     private ForgotPasswordContinuation continuation;
 
     public Cognito(Context context) {

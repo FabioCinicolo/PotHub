@@ -1,6 +1,7 @@
 package com.cindea.pothub.authentication.views.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ public class ResetCRUsernameFragment extends CustomAuthFragment {
     private Button buttonContinue;
     private EditText etUsername;
     private TextView tvBack;
+    private ResetCRFragmentSwitcher resetCRFragmentSwitcher;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -34,6 +36,8 @@ public class ResetCRUsernameFragment extends CustomAuthFragment {
         tvBack = fragmentView.findViewById(R.id.fragmentCR1_back);
         etUsername = fragmentView.findViewById(R.id.fragmentCR1_username);
 
+        resetCRFragmentSwitcher = (ResetCRFragmentSwitcher) getActivity();
+
         setupAnimations(getContext());
 
     }
@@ -48,7 +52,7 @@ public class ResetCRUsernameFragment extends CustomAuthFragment {
                 @Override
                 public void run() {
 
-                    //resetPwdCallbackListener.switchToResetCRPassword(etUsername.getText().toString());
+                    resetCRFragmentSwitcher.switchToResetCRPasswordFragment(etUsername.getText().toString());
 
                 }
             }, 170);

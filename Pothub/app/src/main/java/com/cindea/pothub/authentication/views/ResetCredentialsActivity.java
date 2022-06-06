@@ -1,11 +1,13 @@
 package com.cindea.pothub.authentication.views;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.cindea.pothub.MainActivity;
 import com.cindea.pothub.R;
 import com.cindea.pothub.authentication.ResetCredentialsContract;
 import com.cindea.pothub.authentication.models.ResetCredentialsModel;
@@ -61,6 +63,7 @@ public class ResetCredentialsActivity extends AppCompatActivity implements Reset
     }
 
 
+
     @Override
     public void changeFragmentToResetCRPassword() {
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -72,6 +75,10 @@ public class ResetCredentialsActivity extends AppCompatActivity implements Reset
 
     @Override
     public void resetDone(String message) {
+
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
 
     }
 
