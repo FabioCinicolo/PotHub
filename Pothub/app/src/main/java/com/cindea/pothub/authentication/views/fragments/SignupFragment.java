@@ -14,11 +14,13 @@ import com.cindea.pothub.R;
 import com.cindea.pothub.authentication.SignupContract;
 import com.cindea.pothub.authentication.models.SignupModel;
 import com.cindea.pothub.authentication.presenters.SignupPresenter;
+import com.cindea.pothub.authentication.views.ConfirmSignupActivity;
 
 public class SignupFragment extends CustomAuthFragment implements SignupContract.View  {
 
     private Button button_signup;
     private Button button_signin;
+    private String username;
     private SignupContract.Presenter presenter;
     private AuthSwitcher authSwitcher;
 
@@ -58,7 +60,7 @@ public class SignupFragment extends CustomAuthFragment implements SignupContract
 
         button_signup.setOnClickListener(view -> {
 
-            String username = ((EditText)fragmentView.findViewById(R.id.fragmentSignup_username)).getText().toString();
+            username = ((EditText)fragmentView.findViewById(R.id.fragmentSignup_username)).getText().toString();
             String email = ((EditText)fragmentView.findViewById(R.id.fragmentSignup_mail)).getText().toString();
             String password = ((EditText)fragmentView.findViewById(R.id.fragmentSignup_password)).getText().toString();
 
@@ -73,7 +75,10 @@ public class SignupFragment extends CustomAuthFragment implements SignupContract
 
     @Override
     public void signUpSuccess() {
-        button_handler.postDelayed(() -> authSwitcher.onSigninPress(),170);
+        Intent intent = new Intent(getActivity(), ConfirmSignupActivity.class);
+        intent.putExtra("username", username);
+        getActivity().startActivity(intent);
+        authSwitcher.onSigninPress();
     }
 
     @Override

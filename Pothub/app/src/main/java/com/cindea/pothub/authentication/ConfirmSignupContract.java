@@ -11,7 +11,7 @@ public interface ConfirmSignupContract {
 
     interface Presenter {
 
-        void signUpClicked(String username, String password);
+        void confirmSignUpClicked(String username, String code);
 
     }
 

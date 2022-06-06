@@ -9,31 +9,35 @@ import android.util.Log;
 
 
 import com.cindea.pothub.CustomThread;
+import com.cindea.pothub.authentication.views.fragments.OnHandlerReady;
 import com.cindea.pothub.home.LeftHomeContract;
 
 
-public class LeftHomeModel implements LeftHomeContract.Model{
+public class LeftHomeModel implements LeftHomeContract.Model, OnHandlerReady {
 
     private CustomThread thread;
     private Handler handler;
+    private String username;
+    private int days;
+    private OnFinishListener listener;
 
     @Override
     public void getUserPotholesByDays(String username, int days, OnFinishListener listener) {
 
-        Message message = Message.obtain();
+        this.username = username;
+        this.days = days;
+        this.listener = listener;
 
-        thread = new CustomThread();
+        thread = new CustomThread(this);
 
         thread.start();
 
-        try{
-            synchronized (this){
-                wait(1000);
-            }
+    }
 
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    @Override
+    public void onSuccess(Handler handler) {
+
+        Message message = Message.obtain();
 
         handler = thread.getHandler();
 

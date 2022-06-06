@@ -13,13 +13,6 @@ public class ConfirmSignupPresenter implements ConfirmSignupContract.Presenter, 
     }
 
     @Override
-    public void signUpClicked(String username, String code) {
-
-        model.confirmSignUp(username, code, this);
-
-    }
-
-    @Override
     public void onSuccess(String message) {
         view.successSignUp();
     }
@@ -27,5 +20,12 @@ public class ConfirmSignupPresenter implements ConfirmSignupContract.Presenter, 
     @Override
     public void onError(String message) {
         view.displayError(message);
+    }
+
+    @Override
+    public void confirmSignUpClicked(String username, String code) {
+
+        model.confirmSignUp(username, code, this);
+
     }
 }

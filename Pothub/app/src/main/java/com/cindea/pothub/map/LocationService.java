@@ -31,6 +31,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.cindea.pothub.CustomThread;
 import com.cindea.pothub.R;
+import com.cindea.pothub.authentication.views.fragments.OnHandlerReady;
 import com.cindea.pothub.authentication.views.fragments.SigninFragment;
 import com.cindea.pothub.entities.Pothole;
 import com.google.android.gms.location.LocationCallback;
@@ -45,7 +46,7 @@ import java.util.List;
 import java.util.Locale;
 
 
-public class LocationService extends Service implements SensorEventListener {
+public class LocationService extends Service implements SensorEventListener, OnHandlerReady {
 
     double previous_acceleration = -99999999;
     double previous_latitude, previous_longitude;
@@ -119,7 +120,7 @@ public class LocationService extends Service implements SensorEventListener {
         startForeground(Constants.LOCATION_SERVICE_ID, builder.build());
 
         geocoder = new Geocoder(this, Locale.getDefault());
-
+        Log.e("LOG0", "LOG0");
         startBackgroundThread();
     }
 
@@ -240,23 +241,15 @@ public class LocationService extends Service implements SensorEventListener {
     }
 
     public void startBackgroundThread(){
-        thread = new CustomThread();
-
+        thread = new CustomThread(this);
         thread.start();
 
-        try{
-            synchronized (this){
-                wait(2000);
-            }
+    }
 
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        handler = thread.getHandler();
-
-        handler.sendEmptyMessage(OPEN_CONNECTION_WITH_SERVER);
-
+    @Override
+    public void onSuccess(Handler handler) {
+        this.handler = handler;
+        this.handler.sendEmptyMessage(OPEN_CONNECTION_WITH_SERVER);
     }
 
     private void sendMessageToActivity(double latitude, double longitude) {

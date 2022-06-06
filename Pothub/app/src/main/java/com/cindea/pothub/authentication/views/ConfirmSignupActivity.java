@@ -1,6 +1,7 @@
 package com.cindea.pothub.authentication.views;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -9,6 +10,7 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.chaos.view.PinView;
+import com.cindea.pothub.MainActivity;
 import com.cindea.pothub.R;
 import com.cindea.pothub.authentication.ConfirmSignupContract;
 import com.cindea.pothub.authentication.models.ConfirmSignupModel;
@@ -48,6 +50,7 @@ public class ConfirmSignupActivity extends AppCompatActivity implements ConfirmS
             String confirmation_code = ((PinView)findViewById(R.id.activityConfirmSignup_code)).getText().toString();
 
             String username = getIntent().getStringExtra("username");
+            presenter.confirmSignUpClicked(username, confirmation_code);
 
         });
 
@@ -69,6 +72,10 @@ public class ConfirmSignupActivity extends AppCompatActivity implements ConfirmS
 
     @Override
     public void successSignUp() {
+
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
 
     }
 
