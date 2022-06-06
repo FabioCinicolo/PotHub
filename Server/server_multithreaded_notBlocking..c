@@ -453,6 +453,7 @@ int doWork(void *args)
         }
         case GET_POTHOLES_BY_RANGE:
         {
+                close_conn=TRUE;
             printf("GETTING POTHOLES BY RANGE...\n\n");
             json_message = getPotholesByRangeJson(cJSON_GetObjectItemCaseSensitive(json, "latitude")->valuedouble, cJSON_GetObjectItemCaseSensitive(json, "longitude")->valuedouble, cJSON_GetObjectItemCaseSensitive(json, "range")->valuedouble);
             if (!json_message)
@@ -465,21 +466,22 @@ int doWork(void *args)
             json_message[buff_len] = '\n';
             do
             {
-                if ((sent_bytes = send(fd, json_message, buff_len + 1, 0)) < 0)
+                  sent_bytes = send(fd, json_message, buff_len + 1,0);
+                if (sent_bytes < 0)
                 {
-                    total_bytes_sent += sent_bytes;
                     if (errno != EWOULDBLOCK)
                     {
                         perror("send");
-                        close_conn = TRUE;
                         break;
                     }
-                }
+                }else
+                        total_bytes_sent += sent_bytes;
             } while (total_bytes_sent <= buff_len); // It can happen that message size is greather than socket buffer, socket will then return with errno = EWOULDBLOCK
             break;
         }
         case GET_USER_POTHOLES_BY_DAYS:
         {
+                close_conn=TRUE;
             printf("GETTING USER POTHOLES BY %d DAYS...\n\n", cJSON_GetObjectItemCaseSensitive(json, "days")->valueint);
             json_message = getUserPotholesByDays(cJSON_GetObjectItemCaseSensitive(json, "user")->valuestring, cJSON_GetObjectItemCaseSensitive(json, "days")->valueint);
             printf("%s\n", json_message);
@@ -492,17 +494,17 @@ int doWork(void *args)
             json_message = realloc(json_message, buff_len + 1);
             json_message[buff_len] = '\n';
             do
-            {
-                if ((sent_bytes = send(fd, json_message, buff_len + 1, 0)) < 0)
+            {  sent_bytes = send(fd, json_message, buff_len + 1,0);
+                if (sent_bytes < 0)
                 {
-                    total_bytes_sent += sent_bytes;
                     if (errno != EWOULDBLOCK)
                     {
                         perror("send");
-                        close_conn = TRUE;
                         break;
                     }
-                }
+                }else
+                        total_bytes_sent += sent_bytes;
+
             } while (total_bytes_sent <= buff_len); // It can happen that message size is greather than socket buffer, socket will then return with errno = EWOULDBLOCK
             break;
         }
