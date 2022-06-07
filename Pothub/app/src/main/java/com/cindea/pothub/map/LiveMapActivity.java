@@ -8,6 +8,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
@@ -30,8 +33,11 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -41,6 +47,7 @@ public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallb
     private GPSCheck gps_receiver;
     private BroadcastReceiver mMessageReceiver;
     private BroadcastReceiver networkReceiver;
+    private BroadcastReceiver reportedPotholesReceiver;
     double latitude, longitude;
 
     private static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
@@ -100,6 +107,39 @@ public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallb
 
             }
         };
+
+        reportedPotholesReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                latitude = intent.getDoubleExtra("latitude", 0);
+                longitude = intent.getDoubleExtra("longitude", 0);
+                int intensity = intent.getIntExtra("intensity", 1);
+
+                LatLng position = new LatLng(latitude, longitude);
+
+                if(latitude!=0 && longitude!=0) {
+
+                    int customMarker = 1;
+
+                    switch (intensity) {
+
+                        case 1:
+                            customMarker = R.drawable.ic_green_alert;
+                            break;
+                        case 2:
+                            customMarker = R.drawable.ic_yellow_alert;
+                            break;
+                        case 3:
+                            customMarker = R.drawable.ic_red_alert;
+                            break;
+                    }
+
+                    map.addMarker(new MarkerOptions().position(position)
+                            .icon(BitmapFromVector(getApplicationContext(), customMarker)));
+                }
+
+            }
+        };
         button_exit = findViewById(R.id.liveMap_exit);
         listeners();
         checkGPS();
@@ -125,6 +165,7 @@ public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallb
     protected void onResume() {
         super.onResume();
 
+        LocalBroadcastManager.getInstance(this).registerReceiver(reportedPotholesReceiver, new IntentFilter("ReportedLatLng"));
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 mMessageReceiver, new IntentFilter("GPSLocationUpdates"));
     }
@@ -204,5 +245,27 @@ public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallb
 
         registerReceiver(gps_receiver = new GPSCheck(() -> finish()), new IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION));
 
+    }
+
+    private BitmapDescriptor BitmapFromVector(Context context, int drawable) {
+        // below line is use to generate a drawable.
+        Drawable vectorDrawable = ContextCompat.getDrawable(context, drawable);
+
+        // below line is use to set bounds to our vector drawable.
+        vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
+
+        // below line is use to create a bitmap for our
+        // drawable which we have added.
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+
+        // below line is use to add bitmap in our canvas.
+        Canvas canvas = new Canvas(bitmap);
+
+        // below line is use to draw our
+        // vector drawable in canvas.
+        vectorDrawable.draw(canvas);
+
+        // after generating our bitmap we are returning our bitmap.
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
 }

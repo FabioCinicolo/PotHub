@@ -120,7 +120,6 @@ public class LocationService extends Service implements SensorEventListener, OnH
         startForeground(Constants.LOCATION_SERVICE_ID, builder.build());
 
         geocoder = new Geocoder(this, Locale.getDefault());
-        Log.e("LOG0", "LOG0");
         startBackgroundThread();
     }
 
@@ -195,7 +194,9 @@ public class LocationService extends Service implements SensorEventListener, OnH
                             String country_code = addresses.get(0).getCountryCode();
                             String name2 = addresses.get(0).getLocality();
                             name2 = name2.replace('\'', ' ');
-                            Pothole pothole = new Pothole(current_latitude, current_longitude, name2+"#"+country_code, SigninFragment.username, 2, "as");
+                            int intensity = getPotholeIntensity((int)(current_acceleration - previous_acceleration));
+                            sendReportedLatLngToActivity(current_latitude, current_longitude, intensity);
+                            Pothole pothole = new Pothole(current_latitude, current_longitude, name2+"#"+country_code, SigninFragment.username, intensity, "as");
                             reportPotHole(pothole);
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -210,7 +211,9 @@ public class LocationService extends Service implements SensorEventListener, OnH
                         String country_code = addresses.get(0).getCountryCode();
                         String name2 = addresses.get(0).getLocality();
                         name2 = name2.replace('\'', ' ');
-                        Pothole pothole = new Pothole(current_latitude, current_longitude, name2+"#"+country_code, SigninFragment.username, 2, "asd");
+                        int intensity = getPotholeIntensity((int)(current_acceleration - previous_acceleration));
+                        sendReportedLatLngToActivity(current_latitude, current_longitude, intensity);
+                        Pothole pothole = new Pothole(current_latitude, current_longitude, name2+"#"+country_code, SigninFragment.username, intensity, "asd");
                         reportPotHole(pothole);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -258,6 +261,27 @@ public class LocationService extends Service implements SensorEventListener, OnH
         intent.putExtra("latitude", latitude);
         intent.putExtra("longitude", longitude);
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+    }
+
+    private void sendReportedLatLngToActivity(double latitude, double longitude, int intensity) {
+
+        Intent intent = new Intent("ReportedLatLng");
+        intent.putExtra("latitude", latitude);
+        intent.putExtra("longitude", longitude);
+        intent.putExtra("intensity", intensity);
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+
+    }
+
+    private int getPotholeIntensity(int value) {
+
+        if(value>=10 && value<=15)
+            return 1;
+        else if(value>=16 && value <=20)
+            return 2;
+
+        return 3;
+
     }
 
 }

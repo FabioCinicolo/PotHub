@@ -40,9 +40,11 @@
         <activity
             android:name=".map.LiveMapActivity"
             android:exported="false"
+            android:launchMode="singleTask"
             android:label="@string/title_activity_live_map" />
         <activity
             android:name=".map.VisualizePotholesInMapActivity"
+            android:launchMode="singleTask"
             android:exported="false" />
         <activity
             android:name=".home.views.HomeActivity"
