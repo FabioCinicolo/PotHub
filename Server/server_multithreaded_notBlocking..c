@@ -181,22 +181,16 @@ int main(int argc, char *argv[])
     usleep(10000);
     // Loop waiting for incoming connections or for incoming data on any of the connected sockets
     do
-    {                 for (int i = 0; i < 30; i++)
-        printf("%d\n", fds[i].fd);
-        printf("\n[-CLIENTS CONNECTED: %d\n-SOCKET DESCRIPTOR ARRAY:", nfds - 1);
-        for (int i = 0; i < nfds; i++)
-        {
-            printf("    fd_%d = %d", i, fds[i].fd);
-        }
-        printf("]\n\n***n.%d POLL EXECUTED***\n\n", ++polls);
+    {
+
+        printf("***n.%d POLL EXECUTED***\n\n", ++polls);
         if ((poll_err = poll(fds, nfds, timeout)) < 0)
         {
             perror("poll");
             break;
         }
-        else if (poll_err == 0) // If poll timed out we check whether or not array needs to be compressed to remove unused socket descriptors
+        else if (poll_err == 0)
         {
-            printf("Compress array %d num threads executing %d\n", compress_array, num_threads_executing);
             if (compress_array == TRUE && num_threads_executing == 0)
             {
                 compress_array = FALSE;
@@ -213,9 +207,15 @@ int main(int argc, char *argv[])
                         nfds--;
                     }
                 }
+                continue; // Jumps back to poll()
             }
-            continue; // Jumps back to poll()
         }
+        printf("[-CLIENTS CONNECTED: %d -- THREADS EXECUTING TASKS: %d\n-SOCKET DESCRIPTOR ARRAY:\n\n", nfds - 1, num_threads_executing);
+        for (int i = 0; i < nfds; i++)
+        {
+            printf("    fd_%d = %d", i, fds[i].fd);
+        }
+        printf("\n\n");
 
         // One or more file descriptors are ready
         current_size = nfds;
@@ -283,8 +283,13 @@ int main(int argc, char *argv[])
 
                     printf("ACCEPTED SOCKET SET TO NON-BLOCKING AND KEEPALIVE ON\n\n");
                     // Add the file descriptor of the new socket in the pollfd array
-                    if(nfds == 200){ fprintf(stderr, "SERVER IS FULL, CONNECTION WITH IP TERMINATED: %s\n\n", inet_ntoa(client_addr.sin_addr)); close(new_sd); break; }
-                    printf("NEW CONNECTION ACCEPTED IP: %s\n\n", inet_ntoa(client_addr.sin_addr));
+                    if (nfds == 200)
+                    {
+                        fprintf(stderr, "SERVER IS FULL, CONNECTION WITH IP TERMINATED: %s\n\n", inet_ntoa(client_addr.sin_addr));
+                        close(new_sd);
+                        break;
+                    }
+                    printf("NEW CONNECTION ACCEPTED IP: %s  FD: %d\n\n", inet_ntoa(client_addr.sin_addr), new_sd);
                     fds[nfds].fd = new_sd;
                     fds[nfds].events = POLLIN;
                     nfds++;
@@ -304,11 +309,11 @@ int main(int argc, char *argv[])
                     .args = (void *)&info,
                     .work = &doWork};
                 // This temporary disables file descriptor, to avoid poll to return immediately even if a thread is already taking care of the task. Thread will reset the value as soon as everything has been read so that poll can listen to its events again
+                printf("NEW TASK %d\n", fds[i].fd);
                 fds[i].fd = FD_STOP_POLLING;
                 addTask(read_task);
             }
-      }
-
+        }
 
     } while (!end_server);
 
@@ -401,17 +406,20 @@ int doWork(void *args)
     cJSON *action, *json;
     cJSON *latitude, *longitude, *range, *days, *user, *address, *timestamp, *intensity;
 
+    printf("ACCEPTED SOCKET WITH FD %d IS READY TO BE READ ON %ld\n\n", fd, pthread_self());
     do
     {
-        printf("ACCEPTED SOCKET WITH FD %d IS READY TO BE READ ON\n\n", fd);
         // Read data from accepted socket, if EWOULDBLOCK is returned it means that there are no more bytes to read. Any other error code will cause the server to close the connection
         read_bytes = recv(fd, buffer, sizeof(buffer), 0);
         if (read_bytes < 0)
         {
             if (errno != EWOULDBLOCK)
             {
+                if (errno == 9)
+                {
+                    goto end;
+                }
                 perror("recv");
-                close_conn = TRUE;
                 goto end;
             }
 
@@ -450,7 +458,7 @@ int doWork(void *args)
         {
         case REPORT_POTHOLE:
         {
-            printf("REPORTING POTHOLE %s\n\n", cJSON_Print(json));
+            printf("REPORTING POTHOLE\n\n");
             // Those checks allow the server not to crash when the message is in the wrong format
             latitude = cJSON_GetObjectItemCaseSensitive(json, "latitude");
             longitude = cJSON_GetObjectItemCaseSensitive(json, "longitude");
@@ -460,8 +468,8 @@ int doWork(void *args)
             intensity = cJSON_GetObjectItemCaseSensitive(json, "intensity");
             if (!latitude || !longitude || !address || !user || !timestamp || !intensity)
             {
-                goto end;
                 close_conn = TRUE;
+                goto end;
             }
 
             Pothole pothole = {
@@ -476,7 +484,6 @@ int doWork(void *args)
         }
         case GET_POTHOLES_BY_RANGE:
         {
-            close_conn = TRUE;
             printf("GETTING POTHOLES BY RANGE...\n\n");
 
             latitude = cJSON_GetObjectItemCaseSensitive(json, "latitude");
@@ -484,12 +491,17 @@ int doWork(void *args)
             range = cJSON_GetObjectItemCaseSensitive(json, "range");
 
             if (!latitude || !longitude || !range)
+            {
+                close_conn = TRUE;
                 goto end;
+            }
 
             json_message = getPotholesByRangeJson(latitude->valuedouble, longitude->valuedouble, range->valuedouble);
             if (!json_message)
             {
                 fprintf(stderr, "COULD NOT GET JSON\n\n");
+
+                close_conn = TRUE;
                 goto end;
             }
             buff_len = strlen(json_message);
@@ -502,9 +514,13 @@ int doWork(void *args)
                 {
                     if (errno != EWOULDBLOCK)
                     {
+                        if (errno == 9)
+                            goto end;
+
                         perror("send");
                         break;
                     }
+                    sent_bytes = buff_len + 1;
                 }
                 else
                     total_bytes_sent += sent_bytes;
@@ -513,20 +529,22 @@ int doWork(void *args)
         }
         case GET_USER_POTHOLES_BY_DAYS:
         {
-            close_conn = TRUE;
             user = cJSON_GetObjectItemCaseSensitive(json, "user");
             days = cJSON_GetObjectItemCaseSensitive(json, "days");
             printf("GETTING USER POTHOLES BY DAYS...\n\n");
             if (!user || !days)
+            {
+                close_conn = TRUE;
                 goto end;
+            }
 
             json_message = getUserPotholesByDays(user->valuestring, days->valueint);
             if (!json_message)
             {
                 fprintf(stderr, "COULD NOT GET JSON\n\n");
+                close_conn = TRUE;
                 goto end;
             }
-            printf("%s\n", json_message);
             buff_len = strlen(json_message);
             json_message = realloc(json_message, buff_len + 1);
             json_message[buff_len] = '\n';
@@ -537,9 +555,13 @@ int doWork(void *args)
                 {
                     if (errno != EWOULDBLOCK)
                     {
+                        if (errno == 9)
+                            goto end;
+
                         perror("send");
                         break;
                     }
+                    sent_bytes = buff_len + 1;
                 }
                 else
                     total_bytes_sent += sent_bytes;
@@ -548,7 +570,10 @@ int doWork(void *args)
             break;
         }
         default:
+        {
             fprintf(stderr, "WRONG ACTION\n\n");
+            close_conn = TRUE;
+        }
         }
     }
 end:
@@ -579,8 +604,10 @@ end:
     // 2)User closed connection after pothole reporting session terminated
     // 3)Errors in parsing json
     // 4)Errno is not EWOULDBLOCK while reading
-    if (close_conn)
-    {   printf("CLOSING CONNECTION ASSOCIATED WITH FD: %d\n\n", fd);
+
+    if (close_conn == TRUE)
+    {
+        printf("CLOSING CONNECTION ASSOCIATED WITH FD: %d\n\n", fd);
         *old_fd = -1;
         close(fd);
         compress_array = TRUE;
@@ -589,7 +616,7 @@ end:
     {
         *old_fd = fd;
     }
-
+    printf("THREAD %ld FD %d TERMINATED\n", pthread_self(), fd);
     return 0;
 }
 
@@ -602,11 +629,13 @@ int reportPothole(Pothole pothole)
     mysql = mysql_init(NULL);
     if (mysql == NULL)
     {
-        fprintf(stderr, "mysql_init() failed\n\n"), exit(EXIT_FAILURE);
+        fprintf(stderr, "mysql_init() failed\n\n");
+        return 0;
     }
     if (!mysql_real_connect(mysql, opt_host_name, opt_user_name, opt_password, opt_db_name, opt_port_num, opt_socket_name, opt_flags))
     {
-        fprintf(stderr, "mysql_real_connect() failed\n\n %s", mysql_error(mysql)), exit(EXIT_FAILURE);
+        fprintf(stderr, "mysql_real_connect() failed\n\n %s", mysql_error(mysql));
+        return 0;
         mysql_close(mysql);
     }
 
@@ -615,14 +644,20 @@ int reportPothole(Pothole pothole)
 
     if (statement_insert_pothole != NULL)
         if (mysql_stmt_errno(statement_insert_pothole) != 0)
+        {
             fprintf(stderr, "mysql_stmt_bind_param() error: %s\n\n", mysql_stmt_error(statement_insert_pothole)), exit(EXIT_FAILURE);
+            return 0;
+        }
 
     ////Preparing insertPotholeStatement
     mysql_stmt_prepare(statement_insert_pothole, "INSERT INTO PotholeReport (Latitude,Longitude,Address,User,Timestamp,Intensity) VALUES(?,?,?,?,?,?)", 100);
 
     if (statement_insert_pothole != NULL)
         if (mysql_stmt_errno(statement_insert_pothole) != 0)
-            fprintf(stderr, "mysql_stmt_bind_param() error: %s\n\n", mysql_stmt_error(statement_insert_pothole)), exit(EXIT_FAILURE);
+        {
+            fprintf(stderr, "mysql_stmt_bind_param() error: %s\n\n", mysql_stmt_error(statement_insert_pothole));
+            return 0;
+        }
 
     memset(bind_insert_pothole, 0, sizeof(bind_insert_pothole));
 
@@ -666,7 +701,10 @@ int reportPothole(Pothole pothole)
     mysql_stmt_bind_param(statement_insert_pothole, bind_insert_pothole);
     if (statement_insert_pothole != NULL)
         if (mysql_stmt_errno(statement_insert_pothole) != 0)
-            fprintf(stderr, "mysql_stmt_bind_param() error: %s\n\n", mysql_stmt_error(statement_insert_pothole)), exit(EXIT_FAILURE);
+        {
+            fprintf(stderr, "mysql_stmt_bind_param() error: %s\n\n", mysql_stmt_error(statement_insert_pothole));
+            return 0;
+        }
 
     mysql_stmt_execute(statement_insert_pothole);
     if (statement_insert_pothole != NULL)
@@ -674,7 +712,7 @@ int reportPothole(Pothole pothole)
             fprintf(stderr, "mysql_stmt_execute() error: %s\n\n", mysql_stmt_error(statement_insert_pothole));
 
     mysql_close(mysql);
-    return mysql_stmt_affected_rows(statement_insert_pothole) == 1 ? EXIT_SUCCESS : EXIT_FAILURE;
+    return mysql_stmt_affected_rows(statement_insert_pothole) == 1 ? 1 : 0;
 }
 
 char *getPotholesByRangeJson(double latitude, double longitude, double range)
