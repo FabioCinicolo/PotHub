@@ -1,12 +1,11 @@
 package com.cindea.pothub.home.presenters;
 
 import com.cindea.pothub.entities.Pothole;
-import com.cindea.pothub.home.LeftHomeContract;
+import com.cindea.pothub.home.contracts.LeftHomeContract;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class LeftHomePresenter implements LeftHomeContract.Presenter, LeftHomeContract.Model.OnFinishListener{
+public class LeftHomePresenter implements LeftHomeContract.Presenter, LeftHomeContract.Model.OnFinishListener {
 
 
     private final LeftHomeContract.View view;
@@ -18,8 +17,8 @@ public class LeftHomePresenter implements LeftHomeContract.Presenter, LeftHomeCo
     }
 
     @Override
-    public void getUserPotholesByDays(String username, int days) {
-        model.getUserPotholesByDays(username, days, this);
+    public void getUserPotholesByDays(String username, String date) {
+        model.getUserPotholesByDays(username, date, this);
     }
 
     @Override

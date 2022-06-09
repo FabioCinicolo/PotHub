@@ -45,8 +45,8 @@ public class MiddleHomeFragment extends Fragment {
 
             if(isGPSEnabled() && isConnected())
                 getActivity().startActivity(
-                    new Intent(getActivity(), LiveMapActivity.class));
-                     });
+                        new Intent(getActivity(), LiveMapActivity.class));
+        });
 
     }
 
@@ -76,6 +76,9 @@ public class MiddleHomeFragment extends Fragment {
                         Log.e("FALSE2", "FALSE2");
                         is_connected[0] = false;
                     }
+                    synchronized(is_connected) {
+                        is_connected.notifyAll();
+                    }
                 }
             });
             thread.start();
@@ -84,9 +87,9 @@ public class MiddleHomeFragment extends Fragment {
             return false;
         }
 
-        synchronized (this){
+        synchronized (is_connected){
             try {
-                wait(3000);
+                is_connected.wait();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

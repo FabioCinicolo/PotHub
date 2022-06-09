@@ -18,7 +18,7 @@ import com.cindea.pothub.home.RecyclerViewAdapter;
 
 import java.util.List;
 
-public class PotholesFragment extends Fragment {
+public class UserPotholesFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private RecyclerViewAdapter recyclerViewAdapter;
@@ -28,7 +28,8 @@ public class PotholesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_potholes, container, false);
+        view =  inflater.inflate(R.layout.fragment_userpotholes, container, false);
+        return view;
     }
 
     @Override
@@ -41,7 +42,7 @@ public class PotholesFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         //TEST
-        List<Pothole> potholes = ((RightHomeFragment)getParentFragment()).getPotholes();
+        List<Pothole> potholes = ((LeftHomeFragment)getParentFragment()).getPotholes_14days();
         for(int i=0;i<10;i++)
             potholes.add(potholes.get(i));
         recyclerViewAdapter = new RecyclerViewAdapter(getActivity(), potholes);
@@ -49,5 +50,4 @@ public class PotholesFragment extends Fragment {
         //TEST
 
     }
-
 }

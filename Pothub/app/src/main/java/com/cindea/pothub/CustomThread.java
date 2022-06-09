@@ -4,8 +4,6 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Process;
 
-import com.cindea.pothub.authentication.views.fragments.OnHandlerReady;
-
 
 public class CustomThread extends HandlerThread {
 

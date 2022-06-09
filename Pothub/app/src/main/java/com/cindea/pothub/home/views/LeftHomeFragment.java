@@ -13,14 +13,14 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.cindea.pothub.R;
-import com.cindea.pothub.authentication.SignupContract;
 import com.cindea.pothub.authentication.views.fragments.SigninFragment;
 import com.cindea.pothub.entities.Pothole;
-import com.cindea.pothub.home.LeftHomeContract;
+import com.cindea.pothub.home.contracts.LeftHomeContract;
 import com.cindea.pothub.home.models.LeftHomeModel;
 import com.cindea.pothub.home.presenters.LeftHomePresenter;
 
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 
@@ -46,7 +46,9 @@ public class LeftHomeFragment extends Fragment implements LeftHomeContract.View 
         super.onViewCreated(view, savedInstanceState);
 
         presenter = new LeftHomePresenter(this, new LeftHomeModel());
-        presenter.getUserPotholesByDays("fabio", 14);
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        presenter.getUserPotholesByDays(SigninFragment.username, formatter.format(date));
 
     }
 
@@ -58,11 +60,17 @@ public class LeftHomeFragment extends Fragment implements LeftHomeContract.View 
     public void onPotholesLoaded(List<Pothole> potholes) {
         getActivity().runOnUiThread(() -> {
             potholes_14days= potholes;
-            ((TextView)view.findViewById(R.id.leftHome_username)).setText(SigninFragment.username);
-            FragmentManager fragmentManager = getChildFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.leftHome_fragment, new PotholesFragment());
-            fragmentTransaction.commit();
+
+            if(potholes != null) {
+
+                ((TextView) view.findViewById(R.id.leftHome_username)).setText(SigninFragment.username);
+                FragmentManager fragmentManager = getChildFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.leftHome_fragment, new UserPotholesFragment());
+                fragmentTransaction.commit();
+
+            }
+
         });
 
     }

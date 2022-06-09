@@ -22,7 +22,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,7 +30,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.cindea.pothub.CustomThread;
 import com.cindea.pothub.R;
-import com.cindea.pothub.authentication.views.fragments.OnHandlerReady;
+import com.cindea.pothub.OnHandlerReady;
 import com.cindea.pothub.authentication.views.fragments.SigninFragment;
 import com.cindea.pothub.entities.Pothole;
 import com.google.android.gms.location.LocationCallback;
@@ -42,6 +41,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -196,7 +197,9 @@ public class LocationService extends Service implements SensorEventListener, OnH
                             name2 = name2.replace('\'', ' ');
                             int intensity = getPotholeIntensity((int)(current_acceleration - previous_acceleration));
                             sendReportedLatLngToActivity(current_latitude, current_longitude, intensity);
-                            Pothole pothole = new Pothole(current_latitude, current_longitude, name2+"#"+country_code, SigninFragment.username, intensity, "as");
+                            Date date = new Date();
+                            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                            Pothole pothole = new Pothole(current_latitude, current_longitude, name2+"#"+country_code, SigninFragment.username, intensity, formatter.format(date));
                             reportPotHole(pothole);
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -213,7 +216,9 @@ public class LocationService extends Service implements SensorEventListener, OnH
                         name2 = name2.replace('\'', ' ');
                         int intensity = getPotholeIntensity((int)(current_acceleration - previous_acceleration));
                         sendReportedLatLngToActivity(current_latitude, current_longitude, intensity);
-                        Pothole pothole = new Pothole(current_latitude, current_longitude, name2+"#"+country_code, SigninFragment.username, intensity, "asd");
+                        Date date = new Date();
+                        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                        Pothole pothole = new Pothole(current_latitude, current_longitude, name2+"#"+country_code, SigninFragment.username, intensity, formatter.format(date));
                         reportPotHole(pothole);
                     } catch (IOException e) {
                         e.printStackTrace();

@@ -1,10 +1,10 @@
-package com.cindea.pothub.home;
-
+package com.cindea.pothub.home.contracts;
 
 import com.cindea.pothub.entities.Pothole;
+
 import java.util.List;
 
-public interface LeftHomeContract {
+public interface RightHomeContract {
 
     interface View{
         void onPotholesLoaded(List<Pothole> potholes);
@@ -12,17 +12,19 @@ public interface LeftHomeContract {
     }
 
     interface Presenter{
-        void getUserPotholesByDays(String username, int days);
+        void getPotholesByRange(double meters, double latitude, double longitude);
     }
 
     interface Model{
 
         interface OnFinishListener {
+
             void onPotholesLoaded(List<Pothole> potholes);
             void onError(String message);
+
         }
 
-        void getUserPotholesByDays(String username, int days, OnFinishListener listener);
+        void getPotholesByRange(double meters, double latitude, double longitude, RightHomeContract.Model.OnFinishListener listener);
 
     }
 

@@ -1,4 +1,4 @@
-package com.cindea.pothub.authentication.views.fragments;
+package com.cindea.pothub;
 
 import android.os.Handler;
 

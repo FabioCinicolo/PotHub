@@ -1,37 +1,75 @@
 package com.cindea.pothub.home.views;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.cindea.pothub.R;
+import com.cindea.pothub.entities.Pothole;
+import com.cindea.pothub.home.contracts.RightHomeContract;
+import com.cindea.pothub.home.models.RightHomeModel;
+import com.cindea.pothub.home.presenters.RightHomePresenter;
 import com.cindea.pothub.map.LiveMapActivity;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 
-public class RightHomeFragment extends Fragment {
+import java.util.List;
+
+public class RightHomeFragment extends Fragment implements RightHomeContract.View {
 
     private View view;
     private Button button_100mt, button_250mt, button_500mt, button_1km, button_5km;
     private Button position_button;
     private Button button_visualize_in_map;
+    private RightHomeContract.Presenter presenter;
+    private List<Pothole> potholes;
+    private double latitude, longitude;
 
+    private FusedLocationProviderClient fusedLocationClient;
+
+    @SuppressLint("MissingPermission")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         view = inflater.inflate(R.layout.fragment_right_home, container, false);
 
-        setupComponents();
-        listeners();
-        filterListeners();
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(getActivity(), location -> {
+                    // Got last known location. In some rare situations this can be null.
+                    if (location != null) {
+                        latitude = location.getLatitude();
+                        longitude = location.getLongitude();
+                    }
+                });
 
         return view;
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        presenter = new RightHomePresenter(this, new RightHomeModel());
+        setupComponents();
+        listeners();
+        filterListeners();
+
+    }
 
     private void setupComponents() {
 
@@ -72,6 +110,10 @@ public class RightHomeFragment extends Fragment {
                 position_button.setTextColor(getResources().getColor(R.color.text_in_edit));
                 position_button = button_100mt;
 
+
+                presenter.getPotholesByRange(100, latitude, longitude);
+                Log.e("LATLNG", latitude + " " + longitude);
+
             }
 
         });
@@ -83,6 +125,9 @@ public class RightHomeFragment extends Fragment {
                 button_250mt.setTextColor(getResources().getColor(R.color.edit_text_orange));
                 position_button.setTextColor(getResources().getColor(R.color.text_in_edit));
                 position_button = button_250mt;
+
+                presenter.getPotholesByRange(250, latitude, longitude);
+                Log.e("LATLNG", latitude + " " + longitude);
 
             }
 
@@ -96,6 +141,9 @@ public class RightHomeFragment extends Fragment {
                 position_button.setTextColor(getResources().getColor(R.color.text_in_edit));
                 position_button = button_500mt;
 
+                presenter.getPotholesByRange(500, latitude, longitude);
+                Log.e("LATLNG", latitude + " " + longitude);
+
             }
 
         });
@@ -107,6 +155,9 @@ public class RightHomeFragment extends Fragment {
                 button_1km.setTextColor(getResources().getColor(R.color.edit_text_orange));
                 position_button.setTextColor(getResources().getColor(R.color.text_in_edit));
                 position_button = button_1km;
+
+                presenter.getPotholesByRange(1000, latitude, longitude);
+                Log.e("LATLNG", latitude + " " + longitude);
 
             }
 
@@ -120,10 +171,38 @@ public class RightHomeFragment extends Fragment {
                 position_button.setTextColor(getResources().getColor(R.color.text_in_edit));
                 position_button = button_5km;
 
+                presenter.getPotholesByRange(5000, latitude, longitude);
+
             }
 
         });
 
     }
 
+    public List<Pothole> getPotholes() {
+        return potholes;
+    }
+
+    @Override
+    public void onPotholesLoaded(List<Pothole> potholes) {
+        getActivity().runOnUiThread(() -> {
+
+            this.potholes = potholes;
+
+            if(potholes != null) {
+
+                FragmentManager fragmentManager = getChildFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.rightHome_fragment, new UserPotholesFragment());
+                fragmentTransaction.commit();
+
+            }
+
+        });
+    }
+
+    @Override
+    public void onError(String message) {
+
+    }
 }

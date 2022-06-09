@@ -10,7 +10,7 @@ import android.os.Message;
 import android.util.Log;
 
 import com.cindea.pothub.entities.Pothole;
-import com.cindea.pothub.home.LeftHomeContract;
+import com.cindea.pothub.home.contracts.LeftHomeContract;
 import com.cindea.pothub.home.models.LeftHomeModel;
 import com.google.gson.Gson;
 
@@ -34,6 +34,7 @@ public class CustomHandler extends Handler {
     private Socket socket;
     private BufferedReader input_stream;
     private PrintWriter output_stream;
+    private Integer PippoBaudo = new Integer(69);
 
     @Override
     public void handleMessage(Message msg) {
@@ -45,12 +46,16 @@ public class CustomHandler extends Handler {
                 break;
             case REPORT_POTHOLE: {
                 Log.e("HANDLER", "Reporting");
-                reportPotHole((Pothole)msg.obj);
+                try {
+                    reportPotHole((Pothole)msg.obj);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 break;
             }
             case GET_USER_POTHOLES_BY_DAYS: {
                 Log.e("HANDLER", "Getting User Potholes By Days");
-                getUserPotholesByDays(((LeftHomeModel.CustomMessage)msg.obj).username, ((LeftHomeModel.CustomMessage)msg.obj).days, ((LeftHomeModel.CustomMessage)msg.obj).listener);
+                getUserPotholesByDays(((LeftHomeModel.CustomMessage)msg.obj).username, ((LeftHomeModel.CustomMessage)msg.obj).date, ((LeftHomeModel.CustomMessage)msg.obj).listener);
                 break;
             }
             case CLOSE_CONNECTION_WITH_SERVER:
@@ -71,6 +76,11 @@ public class CustomHandler extends Handler {
 
             input_stream = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
             output_stream = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+            synchronized (PippoBaudo) {
+
+                PippoBaudo.notify();
+
+            }
 
         } catch (UnknownHostException e) {
             Log.e("UNKNOWN HOST EXCEPTION", e.getMessage());
@@ -81,11 +91,16 @@ public class CustomHandler extends Handler {
         Log.e("HANDLER","Connection with server opened");
     }
 
-    public void reportPotHole(Pothole pothole){
+    public void reportPotHole(Pothole pothole) throws InterruptedException {
         String json;
         Gson gson = new Gson();
         pothole.setAction(REPORT_POTHOLE);
         json = gson.toJson(pothole, Pothole.class);
+        synchronized (PippoBaudo) {
+
+            PippoBaudo.wait();
+
+        }
         output_stream.write(json);
         output_stream.flush();
     }
@@ -106,11 +121,11 @@ public class CustomHandler extends Handler {
         Log.e("HANDLER","Connection with server closed");
     }
 
-    public void getUserPotholesByDays(String username, int days, LeftHomeContract.Model.OnFinishListener listener){
+    public void getUserPotholesByDays(String username, String date, LeftHomeContract.Model.OnFinishListener listener){
 
         openConnectionWithServer();
         Gson gson;
-        output_stream.write("{\"action\":2,\"user\":\""+username+"\",\"days\":"+days+"}");
+        output_stream.write("{\"action\":2,\"user\":\""+username+"\",\"date\":"+"\""+date+"\"}");
         output_stream.flush();
         try {
             String json = input_stream.readLine();

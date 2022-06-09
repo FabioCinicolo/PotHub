@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#00000000"
+    android:orientation="vertical"
     tools:context=".home.views.RightHomeFragment">
 
     <LinearLayout
@@ -41,6 +42,7 @@
         android:background="@drawable/divider_bar" />
 
     <HorizontalScrollView
+        android:id="@+id/fragmentRightHome_filters"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -126,7 +128,19 @@
 
     </HorizontalScrollView>
 
+    <RelativeLayout
+        android:id="@+id/rightHome_fragment"
+        android:layout_alignTop="@id/fragmentRightHome_filters"
+        android:layout_alignBottom="@id/fragmentRightHome_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="16dp"
+        android:layout_weight="1"
+        android:layout_gravity="center">
+    </RelativeLayout>
+
     <LinearLayout
+        android:id="@+id/fragmentRightHome_bottom"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_alignParentBottom="true"
@@ -153,4 +167,4 @@
 
     </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>
