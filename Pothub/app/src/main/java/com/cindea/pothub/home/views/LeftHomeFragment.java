@@ -61,7 +61,7 @@ public class LeftHomeFragment extends Fragment implements LeftHomeContract.View 
         getActivity().runOnUiThread(() -> {
             potholes_14days= potholes;
 
-            if(potholes != null) {
+            if(!potholes.isEmpty()) {
 
                 ((TextView) view.findViewById(R.id.leftHome_username)).setText(SigninFragment.username);
                 FragmentManager fragmentManager = getChildFragmentManager();

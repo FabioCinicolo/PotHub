@@ -22,6 +22,7 @@ import com.cindea.pothub.home.contracts.RightHomeContract;
 import com.cindea.pothub.home.models.RightHomeModel;
 import com.cindea.pothub.home.presenters.RightHomePresenter;
 import com.cindea.pothub.map.LiveMapActivity;
+import com.cindea.pothub.map.VisualizePotholesInMapActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -88,7 +89,7 @@ public class RightHomeFragment extends Fragment implements RightHomeContract.Vie
         button_visualize_in_map.setOnClickListener(v -> {
 
             getActivity().startActivity(
-                    new Intent(getActivity(), LiveMapActivity.class));
+                    new Intent(getActivity(), VisualizePotholesInMapActivity.class));
 
         });
 
