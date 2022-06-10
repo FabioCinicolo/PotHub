@@ -11,8 +11,6 @@ import com.cindea.pothub.home.contracts.RightHomeContract;
 
 public class RightHomeModel implements RightHomeContract.Model, OnHandlerReady {
 
-
-    private CustomThread thread;
     private double meters;
     private double latitude;
     private double longitude;
@@ -26,9 +24,7 @@ public class RightHomeModel implements RightHomeContract.Model, OnHandlerReady {
         this.longitude = longitude;
         this.listener = listener;
 
-        thread = new CustomThread(this);
-
-        thread.start();
+        new CustomThread(this).start();
 
     }
 

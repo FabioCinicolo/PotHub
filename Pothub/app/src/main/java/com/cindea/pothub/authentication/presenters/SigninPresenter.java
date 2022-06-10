@@ -3,6 +3,7 @@ package com.cindea.pothub.authentication.presenters;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserSession;
 import com.cindea.pothub.authentication.SigninContract;
 
 public class SigninPresenter implements SigninContract.Presenter, SigninContract.Model.OnFinishListener
@@ -22,8 +23,8 @@ public class SigninPresenter implements SigninContract.Presenter, SigninContract
     }
 
     @Override
-    public void onSuccess() {
-        view.signInCompleted();
+    public void onSuccess(CognitoUserSession session) {
+        view.signInCompleted(session);
     }
 
     @Override

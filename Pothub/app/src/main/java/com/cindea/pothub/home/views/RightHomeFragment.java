@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,11 +23,14 @@ import com.cindea.pothub.home.contracts.RightHomeContract;
 import com.cindea.pothub.home.models.RightHomeModel;
 import com.cindea.pothub.home.presenters.RightHomePresenter;
 import com.cindea.pothub.map.LiveMapActivity;
+import com.cindea.pothub.map.MapFragment;
 import com.cindea.pothub.map.VisualizePotholesInMapActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class RightHomeFragment extends Fragment implements RightHomeContract.View {
@@ -38,6 +42,7 @@ public class RightHomeFragment extends Fragment implements RightHomeContract.Vie
     private RightHomeContract.Presenter presenter;
     private List<Pothole> potholes;
     private double latitude, longitude;
+    private boolean first_load = true;
 
     private FusedLocationProviderClient fusedLocationClient;
 
@@ -48,6 +53,11 @@ public class RightHomeFragment extends Fragment implements RightHomeContract.Vie
 
         view = inflater.inflate(R.layout.fragment_right_home, container, false);
 
+        presenter = new RightHomePresenter(this, new RightHomeModel());
+        setupComponents();
+        listeners();
+        filterListeners();
+
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
         fusedLocationClient.getLastLocation()
                 .addOnSuccessListener(getActivity(), location -> {
@@ -55,21 +65,11 @@ public class RightHomeFragment extends Fragment implements RightHomeContract.Vie
                     if (location != null) {
                         latitude = location.getLatitude();
                         longitude = location.getLongitude();
+                        button_100mt.performClick();
                     }
                 });
 
         return view;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        presenter = new RightHomePresenter(this, new RightHomeModel());
-        setupComponents();
-        listeners();
-        filterListeners();
-
     }
 
     private void setupComponents() {
@@ -88,8 +88,11 @@ public class RightHomeFragment extends Fragment implements RightHomeContract.Vie
 
         button_visualize_in_map.setOnClickListener(v -> {
 
-            getActivity().startActivity(
-                    new Intent(getActivity(), VisualizePotholesInMapActivity.class));
+            Intent intent = new Intent(getActivity(), VisualizePotholesInMapActivity.class);
+
+            MapFragment.map_potholes = (ArrayList<Pothole>) potholes;
+
+            getActivity().startActivity(intent);
 
         });
 
@@ -104,6 +107,9 @@ public class RightHomeFragment extends Fragment implements RightHomeContract.Vie
     private void filterListeners() {
 
         button_100mt.setOnClickListener(view -> {
+
+            if(first_load)
+                presenter.getPotholesByRange(100, latitude, longitude);
 
             if(!checkIfSamePosition(button_100mt)) {
 
@@ -190,14 +196,10 @@ public class RightHomeFragment extends Fragment implements RightHomeContract.Vie
 
             this.potholes = potholes;
 
-            if(potholes != null) {
-
                 FragmentManager fragmentManager = getChildFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.rightHome_fragment, new UserPotholesFragment());
+                fragmentTransaction.replace(R.id.rightHome_fragment, new PotholesFragment());
                 fragmentTransaction.commit();
-
-            }
 
         });
     }

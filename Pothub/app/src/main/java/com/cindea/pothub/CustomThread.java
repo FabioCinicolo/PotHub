@@ -22,8 +22,4 @@ public class CustomThread extends HandlerThread {
         onHandlerReady.onSuccess(handler);
     }
 
-    public Handler getHandler() {
-        return handler;
-    }
-
 }

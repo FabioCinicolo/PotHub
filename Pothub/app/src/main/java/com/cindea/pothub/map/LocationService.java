@@ -33,6 +33,7 @@ import com.cindea.pothub.R;
 import com.cindea.pothub.OnHandlerReady;
 import com.cindea.pothub.authentication.views.fragments.SigninFragment;
 import com.cindea.pothub.entities.Pothole;
+import com.cindea.pothub.home.views.HomeActivity;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;

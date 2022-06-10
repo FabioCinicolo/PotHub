@@ -37,4 +37,5 @@ public class HomeFragmentAdapter extends FragmentStateAdapter {
         return new LeftHomeFragment();
 
     }
+
 }

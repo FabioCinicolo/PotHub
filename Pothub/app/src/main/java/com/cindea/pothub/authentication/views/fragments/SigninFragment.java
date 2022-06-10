@@ -1,6 +1,8 @@
 package com.cindea.pothub.authentication.views.fragments;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserSession;
 import com.cindea.pothub.AuthSwitcher;
 import com.cindea.pothub.R;
 import com.cindea.pothub.authentication.SigninContract;
@@ -17,6 +20,7 @@ import com.cindea.pothub.authentication.models.SigninModel;
 import com.cindea.pothub.authentication.presenters.SigninPresenter;
 import com.cindea.pothub.authentication.views.ResetCredentialsActivity;
 import com.cindea.pothub.home.views.HomeActivity;
+import com.google.gson.Gson;
 
 public final class SigninFragment extends CustomAuthFragment implements SigninContract.View {
 
@@ -80,8 +84,18 @@ public final class SigninFragment extends CustomAuthFragment implements SigninCo
 
 
     @Override
-    public void signInCompleted() {
-        startActivity(new Intent(getActivity(), HomeActivity.class));
+    public void signInCompleted(CognitoUserSession session) {
+
+        SharedPreferences pref = getActivity().getSharedPreferences("Cognito", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(session);
+        editor.putString("CognitoUserSession", json);
+        editor.commit();
+
+        Intent intent = new Intent(getActivity(), HomeActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
 
     }
 

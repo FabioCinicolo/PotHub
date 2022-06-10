@@ -20,7 +20,7 @@ public class SigninModel implements SigninContract.Model {
             user.getSessionInBackground(new AuthenticationHandler() {
                 @Override
                 public void onSuccess(CognitoUserSession userSession, CognitoDevice newDevice) {
-                    listener.onSuccess();
+                    listener.onSuccess(userSession);
                 }
 
                 @Override

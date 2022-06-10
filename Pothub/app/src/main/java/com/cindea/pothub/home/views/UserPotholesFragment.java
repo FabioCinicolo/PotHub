@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,11 +41,10 @@ public class UserPotholesFragment extends Fragment {
         recyclerView = view.findViewById(R.id.potholesFragment_recyclerview);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        ((SimpleItemAnimator) recyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
 
         //TEST
         List<Pothole> potholes = ((LeftHomeFragment)getParentFragment()).getPotholes_14days();
-        for(int i=0;i<10;i++)
-            potholes.add(potholes.get(i));
         recyclerViewAdapter = new RecyclerViewAdapter(getActivity(), potholes);
         recyclerView.setAdapter(recyclerViewAdapter);
         //TEST

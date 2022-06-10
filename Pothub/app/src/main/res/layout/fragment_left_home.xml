@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="#00000000"
     tools:context=".home.views.LeftHomeFragment">
 
@@ -112,17 +113,45 @@
             android:fontFamily="sans-serif"
             android:textColor="@color/edit_text_orange"/>
 
-        <FrameLayout
+        <RelativeLayout
             android:id="@+id/leftHome_fragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="16dp"
+            android:layout_weight="1"
             android:layout_gravity="center">
-        </FrameLayout>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/fragmentLeftHome_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/divider_bar" />
+
+            <android.widget.Button
+                android:id="@+id/fragmentLeftHome_VisualizeInMap"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Visualize in map"
+                android:layout_gravity="center"
+                android:textAllCaps="false"
+                android:background="@android:color/transparent"
+                android:textSize="18sp"
+                android:fontFamily="sans-serif"
+                android:textColor="@color/edit_text_orange"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 
 
 
-
-</RelativeLayout>
+</LinearLayout>

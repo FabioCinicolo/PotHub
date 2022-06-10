@@ -18,7 +18,7 @@ import com.tbuonomo.viewpagerdotsindicator.DotsIndicator;
 public class HomeActivity extends AppCompatActivity {
 
     private ViewPager2 viewPager2;
-
+    public static HomeFragmentAdapter homeFragmentAdapter;
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +37,7 @@ public class HomeActivity extends AppCompatActivity {
     private void setupComponents() {
 
         viewPager2 = findViewById(R.id.activityHome_viewpager2);
-        HomeFragmentAdapter homeFragmentAdapter = new HomeFragmentAdapter(this);
+        homeFragmentAdapter = new HomeFragmentAdapter(this);
 
         viewPager2.setAdapter(homeFragmentAdapter);
         DotsIndicator dotsIndicator = findViewById(R.id.activityHome_dotsindicators);

@@ -1,6 +1,7 @@
 package com.cindea.pothub;
 
 import static com.cindea.pothub.map.Constants.CLOSE_CONNECTION_WITH_SERVER;
+import static com.cindea.pothub.map.Constants.GET_POTHOLES_BY_RANGE;
 import static com.cindea.pothub.map.Constants.GET_USER_POTHOLES_BY_DAYS;
 import static com.cindea.pothub.map.Constants.OPEN_CONNECTION_WITH_SERVER;
 import static com.cindea.pothub.map.Constants.REPORT_POTHOLE;
@@ -11,7 +12,9 @@ import android.util.Log;
 
 import com.cindea.pothub.entities.Pothole;
 import com.cindea.pothub.home.contracts.LeftHomeContract;
+import com.cindea.pothub.home.contracts.RightHomeContract;
 import com.cindea.pothub.home.models.LeftHomeModel;
+import com.cindea.pothub.home.models.RightHomeModel;
 import com.google.gson.Gson;
 
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -34,7 +37,7 @@ public class CustomHandler extends Handler {
     private Socket socket;
     private BufferedReader input_stream;
     private PrintWriter output_stream;
-    private Integer PippoBaudo = new Integer(69);
+    private Boolean socket_ready = new Boolean(false);
 
     @Override
     public void handleMessage(Message msg) {
@@ -62,6 +65,11 @@ public class CustomHandler extends Handler {
                 Log.e("HANDLER", "Closing");
                 closeConnectionWithServer();
                 break;
+            case GET_POTHOLES_BY_RANGE: {
+                Log.e("HANDLER", "Getting Potholes by range");
+                getPotholesByRange(((RightHomeModel.CustomMessage)msg.obj).latitude, ((RightHomeModel.CustomMessage)msg.obj).longitude, ((RightHomeModel.CustomMessage)msg.obj).meters, ((RightHomeModel.CustomMessage)msg.obj).listener);
+                break;
+            }
             default:
                 break;
         }
@@ -76,10 +84,9 @@ public class CustomHandler extends Handler {
 
             input_stream = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
             output_stream = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
-            synchronized (PippoBaudo) {
-
-                PippoBaudo.notify();
-
+            socket_ready = true;
+            synchronized (socket_ready) {
+                socket_ready.notify();
             }
 
         } catch (UnknownHostException e) {
@@ -96,10 +103,9 @@ public class CustomHandler extends Handler {
         Gson gson = new Gson();
         pothole.setAction(REPORT_POTHOLE);
         json = gson.toJson(pothole, Pothole.class);
-        synchronized (PippoBaudo) {
-
-            PippoBaudo.wait();
-
+        synchronized (socket_ready) {
+            while(!socket_ready)
+                socket_ready.wait();
         }
         output_stream.write(json);
         output_stream.flush();
@@ -143,10 +149,26 @@ public class CustomHandler extends Handler {
         closeConnectionWithServer();
     }
 
-    public static String removeQuotesAndUnescape(String uncleanJson) {
-        String noQuotes = uncleanJson.replaceAll("^\"|\"$", "");
-        return StringEscapeUtils.unescapeJava(noQuotes);
+    public void getPotholesByRange(double latitude, double longitude, double range, RightHomeContract.Model.OnFinishListener listener){
+        openConnectionWithServer();
+        Gson gson;
+        output_stream.write("{\"action\":3,\"latitude\":"+latitude+",\"longitude\":"+longitude+ ",\"range\":" +range+"}");
+        output_stream.flush();
+        try {
+            String json = input_stream.readLine();
+            gson = new Gson();
+            List<Pothole> potholes = new ArrayList<>();
+            Pothole[] potholes_arr = gson.fromJson(json, Pothole[].class);
+            for(int i = 0; i < potholes_arr.length; i++)
+                potholes.add(potholes_arr[i]);
+            //p è null
+            listener.onPotholesLoaded(potholes);
+        } catch (IOException e) {
+            listener.onError(e.getMessage());
+        }
+        closeConnectionWithServer();
     }
+
 
 }
 

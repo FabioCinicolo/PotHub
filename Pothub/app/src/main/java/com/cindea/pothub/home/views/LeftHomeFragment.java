@@ -1,9 +1,12 @@
 package com.cindea.pothub.home.views;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,8 +21,11 @@ import com.cindea.pothub.entities.Pothole;
 import com.cindea.pothub.home.contracts.LeftHomeContract;
 import com.cindea.pothub.home.models.LeftHomeModel;
 import com.cindea.pothub.home.presenters.LeftHomePresenter;
+import com.cindea.pothub.map.MapFragment;
+import com.cindea.pothub.map.VisualizePotholesInMapActivity;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -29,6 +35,7 @@ public class LeftHomeFragment extends Fragment implements LeftHomeContract.View 
     private List<Pothole> potholes_14days;
     private View view;
     private LeftHomeContract.Presenter presenter;
+    private Button button_visualize_in_map;
 
 
     @Override
@@ -50,6 +57,15 @@ public class LeftHomeFragment extends Fragment implements LeftHomeContract.View 
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         presenter.getUserPotholesByDays(SigninFragment.username, formatter.format(date));
 
+        button_visualize_in_map = view.findViewById(R.id.fragmentLeftHome_VisualizeInMap);
+
+        button_visualize_in_map.setOnClickListener(v -> {
+
+            getActivity().startActivity(
+                    new Intent(getActivity(), VisualizePotholesInMapActivity.class));
+
+        });
+
     }
 
     public List<Pothole> getPotholes_14days() {
@@ -61,18 +77,21 @@ public class LeftHomeFragment extends Fragment implements LeftHomeContract.View 
         getActivity().runOnUiThread(() -> {
             potholes_14days= potholes;
 
-            if(!potholes.isEmpty()) {
-
                 ((TextView) view.findViewById(R.id.leftHome_username)).setText(SigninFragment.username);
                 FragmentManager fragmentManager = getChildFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.replace(R.id.leftHome_fragment, new UserPotholesFragment());
                 fragmentTransaction.commit();
-
-            }
+                MapFragment.map_potholes = (ArrayList<Pothole>) potholes;
 
         });
 
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.e("TEST", "TEST");
     }
 
     @Override

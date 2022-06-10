@@ -3,11 +3,13 @@ package com.cindea.pothub.authentication;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserSession;
+
 public interface SigninContract {
 
     interface View {
 
-        void signInCompleted();
+        void signInCompleted(CognitoUserSession session);
         void displayError(String message);
 
     }
@@ -21,7 +23,7 @@ public interface SigninContract {
 
 
         interface OnFinishListener {
-            void onSuccess();
+            void onSuccess(CognitoUserSession session);
 
             void onError(String message);
         }

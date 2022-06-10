@@ -42,8 +42,6 @@ public class PotholesFragment extends Fragment {
 
         //TEST
         List<Pothole> potholes = ((RightHomeFragment)getParentFragment()).getPotholes();
-        for(int i=0;i<10;i++)
-            potholes.add(potholes.get(i));
         recyclerViewAdapter = new RecyclerViewAdapter(getActivity(), potholes);
         recyclerView.setAdapter(recyclerViewAdapter);
         //TEST

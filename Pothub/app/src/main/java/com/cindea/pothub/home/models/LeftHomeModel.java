@@ -14,7 +14,6 @@ import com.cindea.pothub.home.contracts.LeftHomeContract;
 
 public class LeftHomeModel implements LeftHomeContract.Model, OnHandlerReady {
 
-    private CustomThread thread;
     private String username;
     private String date;
     private OnFinishListener listener;
@@ -26,9 +25,7 @@ public class LeftHomeModel implements LeftHomeContract.Model, OnHandlerReady {
         this.date = date;
         this.listener = listener;
 
-        thread = new CustomThread(this);
-
-        thread.start();
+        new CustomThread(this).start();
 
     }
 
