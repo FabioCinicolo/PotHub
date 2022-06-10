@@ -101,9 +101,8 @@ public class LocationService extends Service implements SensorEventListener, OnH
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), channelId);
         builder.setSmallIcon(R.mipmap.ic_launcher);
-        builder.setContentTitle("Location Service");
+        builder.setContentTitle("Potholes Tracking Session Started");
         builder.setDefaults(NotificationCompat.DEFAULT_ALL);
-        builder.setContentText("Running");
         builder.setContentIntent(pendingIntent);
         builder.setAutoCancel(false);
         builder.setPriority(NotificationCompat.PRIORITY_MAX);
@@ -112,8 +111,8 @@ public class LocationService extends Service implements SensorEventListener, OnH
 
             if(notificationManager!=null && notificationManager.getNotificationChannel(channelId) == null) {
 
-                NotificationChannel notificationChannel = new NotificationChannel(channelId, "Location Service", NotificationManager.IMPORTANCE_HIGH);
-                notificationChannel.setDescription("This channel is used by location service");
+                NotificationChannel notificationChannel = new NotificationChannel(channelId, "Potholes Tracking Session", NotificationManager.IMPORTANCE_HIGH);
+                notificationChannel.setDescription("This channel is used for repoting potholes");
                 notificationManager.createNotificationChannel(notificationChannel);
 
             }
@@ -280,14 +279,11 @@ public class LocationService extends Service implements SensorEventListener, OnH
     }
 
     private int getPotholeIntensity(int value) {
-
         if(value>=10 && value<=15)
             return 1;
         else if(value>=16 && value <=20)
             return 2;
-
         return 3;
-
     }
 
 }

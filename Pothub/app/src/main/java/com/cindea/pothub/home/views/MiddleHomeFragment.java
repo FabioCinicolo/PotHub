@@ -24,7 +24,6 @@ public class MiddleHomeFragment extends Fragment {
     private View view;
     private Button button_start;
 
-    public boolean s;
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -63,30 +62,19 @@ public class MiddleHomeFragment extends Fragment {
         final boolean[] is_connected = {false};
         ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         if(cm.getActiveNetworkInfo() != null) {
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        String command = "ping -c 1 google.com";
-                        Log.e("FALSE1", "FALSE1");
-                        is_connected[0] =  (Runtime.getRuntime().exec(command).waitFor() == 0);
-                        Log.e("INFO", String.valueOf(is_connected[0]));
-                        s = is_connected[0];
-                    } catch (Exception e) {
-                        Log.e("FALSE2", "FALSE2");
-                        is_connected[0] = false;
-                    }
-                    synchronized(is_connected) {
-                        is_connected.notifyAll();
-                    }
+            Thread thread = new Thread(() -> {
+                try {
+                    String command = "ping -c 1 google.com";
+                    is_connected[0] =  (Runtime.getRuntime().exec(command).waitFor() == 0);
+                } catch (Exception e) {
+                    is_connected[0] = false;
+                }
+                synchronized(is_connected) {
+                    is_connected.notifyAll();
                 }
             });
             thread.start();
-        }else {
-            Log.e("FALSE", "FALSE");
-            return false;
         }
-
         synchronized (is_connected){
             try {
                 is_connected.wait();
@@ -94,8 +82,7 @@ public class MiddleHomeFragment extends Fragment {
                 e.printStackTrace();
             }
         }
-        return s;
-
+        return is_connected[0];
     }
 
 }

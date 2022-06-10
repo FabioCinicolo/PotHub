@@ -178,7 +178,7 @@ public class RightHomeFragment extends Fragment implements RightHomeContract.Vie
                 position_button.setTextColor(getResources().getColor(R.color.text_in_edit));
                 position_button = button_5km;
 
-                presenter.getPotholesByRange(5000, latitude, longitude);
+                presenter.getPotholesByRange(200000, latitude, longitude);
 
             }
 
