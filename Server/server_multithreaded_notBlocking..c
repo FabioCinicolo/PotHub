@@ -24,7 +24,7 @@
 #define BACKLOG 100
 
 #define THREADS_NUM 4 // Setting thread num to max core number because threads will never go in wait queue in this program(sockets are set to non blocking) so adding more threads wouldn't make difference
-#define MAX_TASK_NUM 100
+#define MAX_TASK_NUM 100000
 
 #define TRUE 1
 #define FALSE 0
@@ -79,9 +79,12 @@ void addTask(Task task);
 int executeTask(Task *task);
 int reportPothole(Pothole pothole);
 char *getPotholesByRangeJson(double latitude, double longitude, double range);
-char *getUserPotholesByDays(char *username, int days);
+char *getUserPotholesByDays(char *username, char *date);
 double haversineDistance(double latitude1, double longitude1, double latitude2, double longitude2);
 double toRad(double x);
+int valid_date(int day, int mon, int year);
+char *substr(const char *src, int m, int n);
+int getDateDifference(char *date1, char *date2, int *day_difference, int *month_difference, int *year_difference);
 
 static char *opt_host_name = "database-1.cgk0rzhm3j8s.eu-south-1.rds.amazonaws.com"; /* host (default=localhost) */
 static char *opt_user_name = "fab_umb";                                              /* username (default=login name)*/
@@ -174,8 +177,6 @@ int main(int argc, char *argv[])
     pthread_mutex_init(&global_vars_mutex, NULL);
     initializeThreadPool(threads, THREADS_NUM);
 
-    printf("***SERVER SUCCESSFULLY STARTED***\n\n");
-
     printf("***SERVER SUCCESSFULLY STARTED***\n\n-----------------------------------------------------------------------------------------------------------\n\n");
 
     usleep(10000);
@@ -196,7 +197,7 @@ int main(int argc, char *argv[])
                 compress_array = FALSE;
                 for (int i = 0; i < nfds; i++)
                 {
-                    if (fds[i].fd == -1)
+                    if (fds[i].fd == -1 || fds[i].fd == -2)
 
                     {
                         for (int j = i; j < nfds - 1; j++)
@@ -210,7 +211,7 @@ int main(int argc, char *argv[])
                 continue; // Jumps back to poll()
             }
         }
-        printf("[-CLIENTS CONNECTED: %d -- THREADS EXECUTING TASKS: %d\n-SOCKET DESCRIPTOR ARRAY:\n\n", nfds - 1, num_threads_executing);
+        printf("[-CLIENTS CONNECTED: %d -- THREADS EXECUTING TASKS: %d FILE DESCRIPTORS READY: %d\n-SOCKET DESCRIPTOR ARRAY:\n\n", nfds - 1, num_threads_executing, poll_err);
         for (int i = 0; i < nfds; i++)
         {
             printf("    fd_%d = %d", i, fds[i].fd);
@@ -230,13 +231,13 @@ int main(int argc, char *argv[])
             {
                 if (fds[i].revents & POLLHUP) // IF POLLHUP is returned in revents it means that a client has been absent for too long (maybe he has lost connection); server can then proceed to release resources appropriately
                 {
-                    printf("SHUTTING DOWN CONNECTION WITH ABSENT PEER WITH FD: %d\n\n", fds[i].fd);
+                    printf("---------- SHUTTING DOWN CONNECTION WITH ABSENT PEER WITH FD: %d ----------\n\n", fds[i].fd);
                     close(fds[i].fd);
                     fds[i].fd = -1;
-                    // Remove unused file descriptor
+                    // Remove unused file descriptors
                     for (int i = 0; i < nfds; i++)
                     {
-                        if (fds[i].fd == -1)
+                        if (fds[i].fd == -1 || fds[i].fd == -2)
                         {
                             for (int j = i; j < nfds - 1; j++)
                             {
@@ -352,7 +353,6 @@ void *threadStarter(void *args)
         task_count--;
 
         pthread_mutex_unlock(&thread_pool_mutex);
-        printf("THREAD %ld EXECUTING TASK\n\n", pthread_self());
         int ret = executeTask(&task);
     }
 }
@@ -404,9 +404,9 @@ int doWork(void *args)
     char buffer[1024];
     char *json_message;
     cJSON *action, *json;
-    cJSON *latitude, *longitude, *range, *days, *user, *address, *timestamp, *intensity;
+    cJSON *latitude, *longitude, *range, *date, *user, *address, *timestamp, *intensity;
 
-    printf("ACCEPTED SOCKET WITH FD %d IS READY TO BE READ ON %ld\n\n", fd, pthread_self());
+    printf("THREAD %ld DEALING WITH FD %d STARTED EXECUTING\n", pthread_self(), fd);
     do
     {
         // Read data from accepted socket, if EWOULDBLOCK is returned it means that there are no more bytes to read. Any other error code will cause the server to close the connection
@@ -415,15 +415,12 @@ int doWork(void *args)
         {
             if (errno != EWOULDBLOCK)
             {
-                if (errno == 9)
-                {
-                    goto end;
-                }
-                perror("recv");
+                close_conn = TRUE;
+                // Another thread already closed connection with fd, BAD FILE DESCRIPTOR IS SET AS errno, WE THEN STOP THE COMPUTATION AND RELEASE RESOURCES, or another error occurred
                 goto end;
             }
 
-            break; // If errno = EWOULDBLOCK THEN I CAN PROCEED TO PARSE JSON AND GET THE ACTION
+            break; // If errno = EWOULDBLOCK (Message length is fixed, will always be less than 1024 bytes) THEN I CAN PROCEED TO PARSE JSON AND GET THE ACTION
         }
 
         // If connection has been closed by the client then set close_conn flag to true
@@ -439,6 +436,7 @@ int doWork(void *args)
     json = cJSON_Parse(buffer);
     if (!json)
     {
+        printf("%s", buffer);
         const char *error_ptr = cJSON_GetErrorPtr();
         fprintf(stderr, "COULD NOT PARSE JSON\n\n");
         close_conn = TRUE;
@@ -514,13 +512,10 @@ int doWork(void *args)
                 {
                     if (errno != EWOULDBLOCK)
                     {
-                        if (errno == 9)
-                            goto end;
-
-                        perror("send");
-                        break;
+                        // Another thread already closed connection with fd, BAD FILE DESCRIPTOR IS SET AS errno, WE THEN STOP THE COMPUTATION AND RELEASE RESOURCES, or another error occurred
+                        close_conn = TRUE;
+                        goto end;
                     }
-                    sent_bytes = buff_len + 1;
                 }
                 else
                     total_bytes_sent += sent_bytes;
@@ -530,21 +525,22 @@ int doWork(void *args)
         case GET_USER_POTHOLES_BY_DAYS:
         {
             user = cJSON_GetObjectItemCaseSensitive(json, "user");
-            days = cJSON_GetObjectItemCaseSensitive(json, "days");
+            date = cJSON_GetObjectItemCaseSensitive(json, "date");
             printf("GETTING USER POTHOLES BY DAYS...\n\n");
-            if (!user || !days)
+            if (!user || !date)
             {
                 close_conn = TRUE;
                 goto end;
             }
 
-            json_message = getUserPotholesByDays(user->valuestring, days->valueint);
+            json_message = getUserPotholesByDays(user->valuestring, date->valuestring);
             if (!json_message)
             {
                 fprintf(stderr, "COULD NOT GET JSON\n\n");
                 close_conn = TRUE;
                 goto end;
             }
+            printf("%s\n", json_message);
             buff_len = strlen(json_message);
             json_message = realloc(json_message, buff_len + 1);
             json_message[buff_len] = '\n';
@@ -555,13 +551,10 @@ int doWork(void *args)
                 {
                     if (errno != EWOULDBLOCK)
                     {
-                        if (errno == 9)
-                            goto end;
-
-                        perror("send");
-                        break;
+                        // Another thread already closed connection with fd, BAD FILE DESCRIPTOR IS SET AS errno, WE THEN STOP THE COMPUTATION AND RELEASE RESOURCES, or another error occurred
+                        close_conn = TRUE;
+                        goto end;
                     }
-                    sent_bytes = buff_len + 1;
                 }
                 else
                     total_bytes_sent += sent_bytes;
@@ -589,8 +582,8 @@ end:
         cJSON_Delete(longitude);
     if (!range)
         cJSON_Delete(range);
-    if (!days)
-        cJSON_Delete(days);
+    if (!date)
+        cJSON_Delete(date);
     if (!user)
         cJSON_Delete(user);
     if (!address)
@@ -608,15 +601,13 @@ end:
     if (close_conn == TRUE)
     {
         printf("CLOSING CONNECTION ASSOCIATED WITH FD: %d\n\n", fd);
-        *old_fd = -1;
-        close(fd);
+        close(fd);    // This will fail whenever another thread has already closed connection with this file descriptor
+        *old_fd = -1; // Tells program to remove file descriptor from the cell of the poll fd structure
         compress_array = TRUE;
     }
     else
-    {
         *old_fd = fd;
-    }
-    printf("THREAD %ld FD %d TERMINATED\n", pthread_self(), fd);
+    printf("THREAD %ld DEALING WITH FD %d TERMINATED\n", pthread_self(), fd);
     return 0;
 }
 
@@ -645,7 +636,7 @@ int reportPothole(Pothole pothole)
     if (statement_insert_pothole != NULL)
         if (mysql_stmt_errno(statement_insert_pothole) != 0)
         {
-            fprintf(stderr, "mysql_stmt_bind_param() error: %s\n\n", mysql_stmt_error(statement_insert_pothole)), exit(EXIT_FAILURE);
+            fprintf(stderr, "mysql_stmt_bind_param() error: %s\n\n", mysql_stmt_error(statement_insert_pothole));
             return 0;
         }
 
@@ -743,6 +734,7 @@ char *getPotholesByRangeJson(double latitude, double longitude, double range)
         mysql_close(mysql);
         return NULL;
     }
+
     mysql_query(mysql, "SELECT  Latitude, Longitude, Address, User, Timestamp, Intensity FROM PotholeReport");
     if (!(result = mysql_store_result(mysql)))
     {
@@ -788,12 +780,12 @@ end:
     return json_string;
 }
 
-char *getUserPotholesByDays(char *username, int days)
+char *getUserPotholesByDays(char *username, char *date)
 {
     MYSQL *mysql = mysql_init(NULL);
-    MYSQL_RES *result;
-    MYSQL_ROW row;
-    double distance;
+    MYSQL_STMT *statement_potholes_days;
+    MYSQL_BIND bind_user_param[1];
+    MYSQL_BIND bind_columns[6];
     cJSON *json;
     cJSON *pothole;
     cJSON *lat;
@@ -802,6 +794,11 @@ char *getUserPotholesByDays(char *username, int days)
     cJSON *user;
     cJSON *timestamp;
     cJSON *intensity;
+    double latitude, longitude;
+    char address_[128];
+    char username_[64];
+    char timestamp_[32];
+    int intensity_;
 
     char *json_string;
 
@@ -816,43 +813,145 @@ char *getUserPotholesByDays(char *username, int days)
         mysql_close(mysql);
         return NULL;
     }
-    mysql_query(mysql, "SELECT  Latitude, Longitude, Address, User, Timestamp, Intensity FROM PotholeReport");
-    if (!(result = mysql_store_result(mysql)))
-    {
-        fprintf(stderr, "%s\n", mysql_error(mysql));
-        mysql_close(mysql);
-        return NULL;
-    }
+
+    // Initializing statement_potholes_days
+    statement_potholes_days = mysql_stmt_init(mysql);
+
+    if (statement_potholes_days != NULL)
+        if (mysql_stmt_errno(statement_potholes_days) != 0)
+        {
+            fprintf(stderr, "mysql_stmt_bind_param() error: %s\n\n", mysql_stmt_error(statement_potholes_days));
+            return 0;
+        }
+
+    ////Preparing statement_potholes_days
+    mysql_stmt_prepare(statement_potholes_days, "SELECT  Latitude, Longitude, Address, User, Timestamp, Intensity FROM PotholeReport WHERE User = ?", 99);
+
+    if (statement_potholes_days != NULL)
+        if (mysql_stmt_errno(statement_potholes_days) != 0)
+        {
+            fprintf(stderr, "mysql_stmt_bind_param() error: %s\n\n", mysql_stmt_error(statement_potholes_days));
+            return 0;
+        }
+
+    memset(bind_columns, 0, sizeof(bind_columns));
+
+    // Setting latitude column
+    bind_columns[0].buffer_type = MYSQL_TYPE_DOUBLE;
+    bind_columns[0].buffer = &latitude;
+    bind_columns[0].buffer_length = sizeof(double);
+
+    // Setting longitude column
+    bind_columns[1].buffer_type = MYSQL_TYPE_DOUBLE;
+    bind_columns[1].buffer = &longitude;
+    bind_columns[1].buffer_length = sizeof(double);
+
+    // Setting Address column
+    bind_columns[2].buffer_type = MYSQL_TYPE_STRING;
+    bind_columns[2].buffer = address_;
+    bind_columns[2].buffer_length = sizeof(address_);
+    size_t address_length = strlen(address_);
+    bind_columns[2].length = &address_length;
+    
+    // Setting User column
+    bind_columns[3].buffer_type = MYSQL_TYPE_STRING;
+    bind_columns[3].buffer = username_;
+    bind_columns[3].buffer_length = sizeof(username_);
+    size_t user_length = strlen(username_);
+    bind_columns[3].length = &user_length;
+
+    // Setting Timestamp column
+    bind_columns[4].buffer_type = MYSQL_TYPE_STRING;
+    bind_columns[4].buffer = timestamp_;
+    bind_columns[4].buffer_length = sizeof(timestamp_);
+    size_t timestamp_length = strlen(timestamp_);
+    bind_columns[4].length = &timestamp_length;
+
+    // Setting Intensity column
+    bind_columns[5].buffer_type = MYSQL_TYPE_LONG;
+    bind_columns[5].buffer = &intensity_;
+    bind_columns[5].buffer_length = sizeof(intensity_);
+
+    memset(bind_user_param, 0, sizeof(bind_user_param));
+    // Setting User column
+    bind_user_param[0].buffer_type = MYSQL_TYPE_STRING;
+    bind_user_param[0].buffer = username;
+    bind_user_param[0].buffer_length = sizeof(username);
+    size_t user_length_1 = strlen(username);
+    bind_user_param[0].length = &user_length_1;
+
+    // Binding result buffer to statement_potholes_days
+    mysql_stmt_bind_result(statement_potholes_days, bind_columns);
+    if (statement_potholes_days != NULL)
+        if (mysql_stmt_errno(statement_potholes_days) != 0)
+        {
+            fprintf(stderr, "mysql_stmt_bind_result() error: %s\n\n", mysql_stmt_error(statement_potholes_days));
+            return 0;
+        }
+
+    // Binding param to statement_potholes_days
+    mysql_stmt_bind_param(statement_potholes_days, bind_user_param);
+    if (statement_potholes_days != NULL)
+        if (mysql_stmt_errno(statement_potholes_days) != 0)
+        {
+            fprintf(stderr, "mysql_stmt_bind_param() error: %s\n\n", mysql_stmt_error(statement_potholes_days));
+            return 0;
+        }
+
+      // Executing statement_potholes_days
+    mysql_stmt_execute(statement_potholes_days);
+    if (statement_potholes_days != NULL)
+        if (mysql_stmt_errno(statement_potholes_days) != 0)
+        {
+            fprintf(stderr, "mysql_stmt_execute() error: %s\n\n", mysql_stmt_error(statement_potholes_days));
+            return 0;
+        }
 
     json = cJSON_CreateArray();
 
     if (!json)
         goto end;
 
-    while ((row = mysql_fetch_row(result)))
+    while (!mysql_stmt_fetch(statement_potholes_days))
     {
-        pothole = cJSON_CreateObject();
-        cJSON_AddItemToArray(json, pothole);
-        lat = cJSON_CreateNumber(atof(row[0]));
-        lon = cJSON_CreateNumber(atof(row[1]));
-        address = cJSON_CreateString(row[2]);
-        user = cJSON_CreateString(row[3]);
-        timestamp = cJSON_CreateString(row[4]);
-        intensity = cJSON_CreateNumber(atoi(row[5]));
-        if (!pothole || !lat || !lon || !address || !user || !timestamp || !intensity)
-            goto end;
+        timestamp = cJSON_CreateString(timestamp_);
 
-        cJSON_AddItemToObject(pothole, "latitude", lat);
-        cJSON_AddItemToObject(pothole, "longitude", lon);
-        cJSON_AddItemToObject(pothole, "address", address);
-        cJSON_AddItemToObject(pothole, "user", user);
-        cJSON_AddItemToObject(pothole, "timestamp", timestamp);
-        cJSON_AddItemToObject(pothole, "intensity", intensity);
+        if (!timestamp)
+            goto end;
+        int day_diff, mon_diff, year_diff;
+
+        if (getDateDifference(timestamp->valuestring, date, &day_diff, &mon_diff, &year_diff) == 1)
+        {
+            cJSON_Delete(timestamp);
+            goto end;
+        }
+        if (day_diff <= 14 && mon_diff == 0 && year_diff == 0)
+        {
+
+            pothole = cJSON_CreateObject();
+            cJSON_AddItemToArray(json, pothole);
+            lat = cJSON_CreateNumber(latitude);
+            lon = cJSON_CreateNumber(longitude);
+            address = cJSON_CreateString(address_);
+            user = cJSON_CreateString(username_);
+            intensity = cJSON_CreateNumber(intensity_);
+
+            if (!pothole || !lat || !lon || !address || !user || !timestamp || !intensity)
+                goto end;
+
+            cJSON_AddItemToObject(pothole, "latitude", lat);
+            cJSON_AddItemToObject(pothole, "longitude", lon);
+            cJSON_AddItemToObject(pothole, "address", address);
+            cJSON_AddItemToObject(pothole, "user", user);
+            cJSON_AddItemToObject(pothole, "timestamp", timestamp);
+            cJSON_AddItemToObject(pothole, "intensity", intensity);
+        }
     }
+
     json_string = cJSON_PrintUnformatted(json);
 end:
     cJSON_Delete(json);
-    mysql_free_result(result);
+    mysql_stmt_close(statement_potholes_days);
     mysql_close(mysql);
     return json_string;
 }
@@ -870,4 +969,156 @@ double haversineDistance(double latitude1, double longitude1, double latitude2, 
 double toRad(double x)
 {
     return x * M_PI / 180;
+}
+
+char *substr(const char *src, int m, int n)
+{
+    // get the length of the destination string
+    int len = n - m;
+
+    // allocate (len + 1) chars for destination (+1 for extra null character)
+    char *dest = (char *)malloc(sizeof(char) * (len + 1));
+
+    // extracts characters between m'th and n'th index from source string
+    // and copy them into the destination string
+    for (int i = m; i < n && (*(src + i) != '\0'); i++)
+    {
+        *dest = *(src + i);
+        dest++;
+    }
+
+    // null-terminate the destination string
+    *dest = '\0';
+
+    // return the destination string
+    return dest - len;
+}
+
+int valid_date(int day, int mon, int year)
+{
+    int is_valid = 1, is_leap = 0;
+
+    if (year >= 1800 && year <= 9999)
+    {
+
+        //  check whether year is a leap year
+        if ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0))
+        {
+            is_leap = 1;
+        }
+
+        // check whether mon is between 1 and 12
+        if (mon >= 1 && mon <= 12)
+        {
+            // check for days in feb
+            if (mon == 2)
+            {
+                if (is_leap && day == 29)
+                {
+                    is_valid = 1;
+                }
+                else if (day > 28)
+                {
+                    is_valid = 0;
+                }
+            }
+
+            // check for days in April, June, September and November
+            else if (mon == 4 || mon == 6 || mon == 9 || mon == 11)
+            {
+                if (day > 30)
+                {
+                    is_valid = 0;
+                }
+            }
+
+            // check for days in rest of the months
+            // i.e Jan, Mar, May, July, Aug, Oct, Dec
+            else if (day > 31)
+            {
+                is_valid = 0;
+            }
+        }
+
+        else
+        {
+            is_valid = 0;
+        }
+    }
+    else
+    {
+        is_valid = 0;
+    }
+
+    return is_valid;
+}
+
+int getDateDifference(char *date1, char *date2, int *day_difference, int *month_difference, int *year_difference)
+{
+
+    int day1, day2, mon1, mon2, year1, year2;
+
+    day1 = atoi(substr(date1, 0, 2));
+    mon1 = atoi(substr(date1, 3, 5));
+    year1 = atoi(substr(date1, 6, 10));
+
+    day2 = atoi(substr(date2, 0, 2));
+    mon2 = atoi(substr(date2, 3, 5));
+    year2 = atoi(substr(date2, 6, 10));
+
+    if (!valid_date(day1, mon1, year1))
+    {
+        printf("First date is invalid.\n");
+        return 1;
+    }
+
+    if (!valid_date(day2, mon2, year2))
+    {
+        printf("Second date is invalid.\n");
+        return 1;
+    }
+
+    if (day2 < day1)
+    {
+        // borrow days from february
+        if (mon2 == 3)
+        {
+            //  check whether year is a leap year
+            if ((year2 % 4 == 0 && year2 % 100 != 0) || (year2 % 400 == 0))
+            {
+                day2 += 29;
+            }
+
+            else
+            {
+                day2 += 28;
+            }
+        }
+
+        // borrow days from April or June or September or November
+        else if (mon2 == 5 || mon2 == 7 || mon2 == 10 || mon2 == 12)
+        {
+            day2 += 30;
+        }
+
+        // borrow days from Jan or Mar or May or July or Aug or Oct or Dec
+        else
+        {
+            day2 += 31;
+        }
+
+        mon2 = mon2 - 1;
+    }
+
+    if (mon2 < mon1)
+    {
+        mon2 += 12;
+        year2 -= 1;
+    }
+
+    *day_difference = day2 - day1;
+    *month_difference = mon2 - mon1;
+    *year_difference = year2 - year1;
+
+    return 0;
 }
