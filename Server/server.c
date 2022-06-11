@@ -27,6 +27,8 @@ extern int task_count;
 
 int main(int argc, char *argv[])
 {
+    num_threads_executing = 0;
+    task_count = 0;
     compress_array = FALSE;
     int polls = 0;
     int poll_err, read_bytes;
