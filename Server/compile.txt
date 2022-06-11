@@ -1,0 +1,1 @@
+gcc -W  -o server.out $(mysql_config --cflags) server.c thread-pool.c logic.c utilities.c $(mysql_config --libs)
