@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <pthread.h>
-#include "thread-pool.h"
+#include "Headers/thread-pool.h"
 
 void *threadStarter(void *args)
 {
