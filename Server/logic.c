@@ -3,11 +3,11 @@
 #include <string.h>
 #include <unistd.h>
 #include <pthread.h>
-#include "cJSON.h"
-#include "cJSON.c"
+#include "cJSON/cJSON.h"
+#include "cJSON/cJSON.c"
 #include <mysql/mysql.h>
-#include "logic.h"
-#include "utilities.h"
+#include "Headers/logic.h"
+#include "Headers/utilities.h"
 
 int doWork(void *args)
 {
