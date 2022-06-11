@@ -17,6 +17,7 @@ import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -58,29 +59,36 @@ public class MapFragment extends Fragment implements LocationListener {
             map.setMapStyle(MapStyleOptions.loadRawResourceStyle(getActivity(), R.raw.map_style));
             map.getUiSettings().setCompassEnabled(false);
 
-            for(Pothole pothole : map_potholes) {
+            if(map_potholes!=null) {
 
-                LatLng latLng = new LatLng(pothole.getLatitude(), pothole.getLongitude());
-                int customMarker=1;
+                for(Pothole pothole : map_potholes) {
 
-                switch (pothole.getIntensity()) {
+                    LatLng latLng = new LatLng(pothole.getLatitude(), pothole.getLongitude());
+                    int customMarker=1;
 
-                    case 1:
-                        customMarker = R.drawable.ic_green_alert;
-                        break;
-                    case 2:
-                        customMarker = R.drawable.ic_yellow_alert;
-                        break;
-                    case 3:
-                        customMarker = R.drawable.ic_red_alert;
-                        break;
+                    switch (pothole.getIntensity()) {
+
+                        case 1:
+                            customMarker = R.drawable.ic_green_alert;
+                            break;
+                        case 2:
+                            customMarker = R.drawable.ic_yellow_alert;
+                            break;
+                        case 3:
+                            customMarker = R.drawable.ic_red_alert;
+                            break;
+                    }
+
+                    map.addMarker(new MarkerOptions().position(latLng).icon(BitmapFromVector(getContext(), customMarker)));
+
                 }
 
-                map.addMarker(new MarkerOptions().position(latLng).icon(BitmapFromVector(getContext(), customMarker)));
-
             }
+            else Toast.makeText(getContext(), "No potholes available", Toast.LENGTH_SHORT).show();
 
         }
+
+
     };
 
     @Nullable

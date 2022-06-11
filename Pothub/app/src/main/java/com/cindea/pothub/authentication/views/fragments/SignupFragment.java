@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.cindea.pothub.AuthSwitcher;
 import com.cindea.pothub.R;
@@ -83,6 +84,10 @@ public class SignupFragment extends CustomAuthFragment implements SignupContract
 
     @Override
     public void displayError(String message) {
-        Log.e("SignUp", message);
+        getActivity().runOnUiThread(() -> {
+
+            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+
+        });
     }
 }

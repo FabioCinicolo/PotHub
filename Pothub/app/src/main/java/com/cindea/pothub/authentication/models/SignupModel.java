@@ -1,6 +1,5 @@
 package com.cindea.pothub.authentication.models;
 
-import com.amazonaws.cognito.clientcontext.data.UserContextDataProvider;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUser;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserAttributes;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserCodeDeliveryDetails;
@@ -27,7 +26,7 @@ public class SignupModel implements SignupContract.Model{
 
                 @Override
                 public void onFailure(Exception exception) {
-                    listener.onError(exception.getMessage());
+                    listener.onError("Sign up failed");
                 }
             });
 

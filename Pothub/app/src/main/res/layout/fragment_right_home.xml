@@ -133,6 +133,7 @@
         android:layout_alignTop="@id/fragmentRightHome_filters"
         android:layout_alignBottom="@id/fragmentRightHome_bottom"
         android:layout_width="match_parent"
+        android:layout_marginHorizontal="32dp"
         android:layout_height="match_parent"
         android:layout_marginTop="16dp"
         android:layout_weight="1"

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -81,6 +82,12 @@ public class ConfirmSignupActivity extends AppCompatActivity implements ConfirmS
 
     @Override
     public void displayError(String message) {
+
+        runOnUiThread(() -> {
+
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+
+        });
 
     }
 }

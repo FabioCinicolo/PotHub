@@ -2,6 +2,7 @@ package com.cindea.pothub.authentication.views;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
@@ -85,10 +86,20 @@ public class ResetCredentialsActivity extends AppCompatActivity implements Reset
     @Override
     public void displayUsernameNotFoundError(String message) {
 
+        runOnUiThread(() -> {
+
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+
+        });
+
     }
 
     @Override
     public void displayResetError(String message) {
+        runOnUiThread(() -> {
 
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+
+        });
     }
 }

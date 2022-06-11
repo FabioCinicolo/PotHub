@@ -81,10 +81,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     private void setupItem(Pothole pothole, MyViewHolder holder) {
 
-        String latlng = pothole.getLatitude() + ", " +pothole.getLongitude();
-
-        holder.address.setText(pothole.getAddress());
-        holder.latlng.setText(latlng);
+        String lat = String.valueOf(pothole.getLatitude());
+        String lng = String.valueOf(pothole.getLongitude());
+        lat = lat.substring(0,8);
+        lng = lng.substring(0,8);
+        String address = pothole.getAddress().replace("#", ", ");
+        if(address.length()>16)
+            address = address.substring(0,15) + ".";
+        holder.address.setText(address);
+        holder.latlng.setText(lat + ",  " + lng);
         holder.date.setText(pothole.getTimestamp());
 
         switch(pothole.getIntensity()) {

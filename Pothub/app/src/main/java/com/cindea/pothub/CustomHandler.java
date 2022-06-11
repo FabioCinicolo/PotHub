@@ -27,6 +27,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,7 +76,7 @@ public class CustomHandler extends Handler {
         }
     }
 
-    public void openConnectionWithServer(){
+    public boolean openConnectionWithServer(){
 
         try {
             InetAddress server_address = InetAddress.getByName("20.126.123.213");
@@ -84,18 +85,21 @@ public class CustomHandler extends Handler {
 
             input_stream = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
             output_stream = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+
             socket_ready = true;
             synchronized (socket_ready) {
                 socket_ready.notify();
             }
 
         } catch (UnknownHostException e) {
-            Log.e("UNKNOWN HOST EXCEPTION", e.getMessage());
+            return false;
         } catch (IOException e) {
-            e.printStackTrace();
+            return false;
         }
 
         Log.e("HANDLER","Connection with server opened");
+        return true;
+
     }
 
     public void reportPotHole(Pothole pothole) throws InterruptedException {
@@ -129,44 +133,65 @@ public class CustomHandler extends Handler {
 
     public void getUserPotholesByDays(String username, String date, LeftHomeContract.Model.OnFinishListener listener){
 
-        openConnectionWithServer();
-        Gson gson;
-        output_stream.write("{\"action\":2,\"user\":\""+username+"\",\"date\":"+"\""+date+"\"}");
-        output_stream.flush();
-        try {
-            String json = input_stream.readLine();
-            gson = new Gson();
+        if(openConnectionWithServer()) {
 
-            List<Pothole> potholes = new ArrayList<>();
-            Pothole[] potholes_arr = gson.fromJson(json, Pothole[].class);
-            for(int i = 0; i < potholes_arr.length; i++)
-                potholes.add(potholes_arr[i]);
-            //p è null
-            listener.onPotholesLoaded(potholes);
-        } catch (IOException e) {
-            listener.onError(e.getMessage());
+            Gson gson;
+            output_stream.write("{\"action\":2,\"user\":\""+username+"\",\"date\":"+"\""+date+"\"}");
+            output_stream.flush();
+            try {
+                String json = input_stream.readLine();
+                gson = new Gson();
+
+                List<Pothole> potholes = new ArrayList<>();
+                Pothole[] potholes_arr = gson.fromJson(json, Pothole[].class);
+                for(int i = 0; i < potholes_arr.length; i++)
+                    potholes.add(potholes_arr[i]);
+                //p è null
+                listener.onPotholesLoaded(potholes);
+            } catch (IOException e) {
+                listener.onError(e.getMessage());
+            }
+            closeConnectionWithServer();
+
+            return;
+
         }
-        closeConnectionWithServer();
+
+
     }
 
     public void getPotholesByRange(double latitude, double longitude, double range, RightHomeContract.Model.OnFinishListener listener){
-        openConnectionWithServer();
-        Gson gson;
-        output_stream.write("{\"action\":3,\"latitude\":"+latitude+",\"longitude\":"+longitude+ ",\"range\":" +range+"}");
-        output_stream.flush();
-        try {
-            String json = input_stream.readLine();
-            gson = new Gson();
-            List<Pothole> potholes = new ArrayList<>();
-            Pothole[] potholes_arr = gson.fromJson(json, Pothole[].class);
-            for(int i = 0; i < potholes_arr.length; i++)
-                potholes.add(potholes_arr[i]);
-            //p è null
-            listener.onPotholesLoaded(potholes);
-        } catch (IOException e) {
-            listener.onError(e.getMessage());
+
+        if(openConnectionWithServer()) {
+
+            Gson gson;
+            output_stream.write("{\"action\":3,\"latitude\":"+latitude+",\"longitude\":"+longitude+ ",\"range\":" +range+"}");
+            output_stream.flush();
+            try {
+                String json = input_stream.readLine();
+                gson = new Gson();
+                List<Pothole> potholes = new ArrayList<>();
+                Pothole[] potholes_arr = gson.fromJson(json, Pothole[].class);
+                if(potholes_arr != null) {
+
+                    for(int i = 0; i < potholes_arr.length; i++)
+                        potholes.add(potholes_arr[i]);
+                    //p è null
+                    listener.onPotholesLoaded(potholes);
+
+                }else {
+
+                    listener.onError(null);
+
+                }
+
+            } catch (IOException e) {
+                listener.onError(null);
+            }
+            closeConnectionWithServer();
+
         }
-        closeConnectionWithServer();
+
     }
 
 

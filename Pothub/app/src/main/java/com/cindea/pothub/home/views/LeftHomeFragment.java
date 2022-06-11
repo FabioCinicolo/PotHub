@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -96,6 +97,6 @@ public class LeftHomeFragment extends Fragment implements LeftHomeContract.View 
 
     @Override
     public void onError(String message) {
-        //NON SONO RIUSCITO A CARICARE LE POTHOLE
+        Toast.makeText(getContext(), "No potholes reported in the last 14 days", Toast.LENGTH_LONG).show();
     }
 }

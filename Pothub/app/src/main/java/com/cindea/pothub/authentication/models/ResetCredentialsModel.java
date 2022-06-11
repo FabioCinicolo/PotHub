@@ -38,7 +38,7 @@ public class ResetCredentialsModel implements ResetCredentialsContract.Model {
             @Override
             public void onFailure(Exception e) {
 
-                onFinishListener.onError("Errore");
+                onFinishListener.onError("Reset credentials failed");
 
             }
         });

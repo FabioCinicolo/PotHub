@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserSession;
 import com.cindea.pothub.AuthSwitcher;
@@ -101,6 +102,12 @@ public final class SigninFragment extends CustomAuthFragment implements SigninCo
 
     @Override
     public void displayError(String message) {
-        Log.e("SIGNIN", message);
+
+        getActivity().runOnUiThread(() -> {
+
+            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+
+        });
+
     }
 }

@@ -23,7 +23,7 @@ public class ConfirmSignupModel implements ConfirmSignupContract.Model{
 
             @Override
             public void onFailure(Exception exception) {
-                listener.onError("Utente non confermato");
+                listener.onError("Sign up failed");
             }
         });
 

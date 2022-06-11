@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
@@ -42,9 +43,20 @@ public class MiddleHomeFragment extends Fragment {
 
         button_start.setOnClickListener(v -> {
 
-            if(isGPSEnabled() && isConnected())
-                getActivity().startActivity(
-                        new Intent(getActivity(), LiveMapActivity.class));
+            if(isGPSEnabled()) {
+
+                if(isConnected()) {
+
+                    getActivity().startActivity(
+                            new Intent(getActivity(), LiveMapActivity.class));
+
+                }
+                else
+                    Toast.makeText(getContext(), "Connection not available", Toast.LENGTH_SHORT).show();
+            }
+            else
+                Toast.makeText(getContext(), "GPS is not enabled", Toast.LENGTH_SHORT).show();
+
         });
 
     }
@@ -74,14 +86,15 @@ public class MiddleHomeFragment extends Fragment {
                 }
             });
             thread.start();
-        }
-        synchronized (is_connected){
-            try {
-                is_connected.wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            synchronized (is_connected){
+                try {
+                    is_connected.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
+
         return is_connected[0];
     }
 

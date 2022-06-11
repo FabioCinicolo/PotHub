@@ -222,7 +222,6 @@ public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallb
             Intent intent = new Intent(getApplicationContext(), LocationService.class);
             intent.setAction(Constants.ACTION_START_LOCATION_SERVICE);
             startService(intent);
-            Toast.makeText(this, "Location service started", Toast.LENGTH_LONG).show();
 
         }
 
@@ -235,7 +234,6 @@ public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallb
             Intent intent = new Intent(getApplicationContext(), LocationService.class);
             intent.setAction(Constants.ACTION_STP_LOCATION_SERVICE);
             startService(intent);
-            Toast.makeText(this, "Location service stopped", Toast.LENGTH_LONG).show();
 
         }
 

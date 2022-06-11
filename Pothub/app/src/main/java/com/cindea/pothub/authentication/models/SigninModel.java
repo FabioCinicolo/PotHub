@@ -46,7 +46,7 @@ public class SigninModel implements SigninContract.Model {
 
                 @Override
                 public void onFailure(Exception exception) {
-                    listener.onError(exception.getMessage() + " \n" + exception.toString());
+                    listener.onError("Sign in failed");
                 }
             });
     }
