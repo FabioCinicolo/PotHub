@@ -6,9 +6,6 @@
 
 void *threadStarter(void *args)
 {
-    num_threads_executing = 0;
-    task_count = 0;
-
     printf("THREAD %ld RUNNING\n\n", pthread_self());
     while (1)
     {
