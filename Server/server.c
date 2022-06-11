@@ -13,8 +13,8 @@
 #include <sys/socket.h>
 #include <netinet/tcp.h>
 #include <netinet/in.h>
-#include "thread-pool.h"
-#include "logic.h"
+#include "Headers/thread-pool.h"
+#include "Headers/logic.h"
 
 #define SERVER_PORT 12345
 #define BACKLOG 100
