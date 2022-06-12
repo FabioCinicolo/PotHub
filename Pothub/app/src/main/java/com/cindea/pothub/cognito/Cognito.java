@@ -2,6 +2,7 @@ package com.cindea.pothub.cognito;
 
 
 import android.content.Context;
+
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserPool;
 import com.amazonaws.regions.Regions;
 
