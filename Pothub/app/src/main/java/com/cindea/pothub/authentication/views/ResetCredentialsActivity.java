@@ -19,7 +19,7 @@ import com.cindea.pothub.authentication.views.fragments.ResetCRPasswordFragment;
 import com.cindea.pothub.authentication.views.fragments.ResetCRUsernameFragment;
 
 
-public class ResetCredentialsActivity extends AppCompatActivity implements ResetCRFragmentSwitcher, ResetCredentialsContract.View  {
+public class ResetCredentialsActivity extends AppCompatActivity implements ResetCRFragmentSwitcher, ResetCredentialsContract.View {
 
     private String username;
     private String password;
@@ -62,7 +62,6 @@ public class ResetCredentialsActivity extends AppCompatActivity implements Reset
         fragmentTransaction.commit();
 
     }
-
 
 
     @Override

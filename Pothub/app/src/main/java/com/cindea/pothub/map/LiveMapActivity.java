@@ -14,7 +14,6 @@ import android.graphics.drawable.Drawable;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,6 +41,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallback {
 
+    private static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
+    public static int potholesDetected = 0;
+    double latitude, longitude;
     private GoogleMap map;
     private ActivityLiveMapBinding binding;
     private Button button_exit;
@@ -49,11 +51,7 @@ public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallb
     private BroadcastReceiver mMessageReceiver;
     private BroadcastReceiver networkReceiver;
     private BroadcastReceiver reportedPotholesReceiver;
-    public static int potholesDetected = 0;
     private TextView potholes;
-    double latitude, longitude;
-
-    private static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,12 +84,11 @@ public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallb
         };
 
 
-        if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             ActivityCompat.requestPermissions(LiveMapActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE_LOCATION_PERMISSION);
 
-        }
-        else {
+        } else {
 
             registerReceiver(networkReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
@@ -102,7 +99,7 @@ public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallb
             public void onReceive(Context context, Intent intent) {
                 latitude = intent.getDoubleExtra("latitude", 0);
                 longitude = intent.getDoubleExtra("longitude", 0);
-                if(latitude!=0 && longitude!=0) {
+                if (latitude != 0 && longitude != 0) {
                     LatLng latlng = new LatLng(latitude, longitude);
                     CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(
                             latlng, 17f);
@@ -121,7 +118,7 @@ public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallb
 
                 LatLng position = new LatLng(latitude, longitude);
 
-                if(latitude!=0 && longitude!=0) {
+                if (latitude != 0 && longitude != 0) {
 
                     int customMarker = 1;
                     potholes.setText(String.valueOf(potholesDetected));
@@ -151,10 +148,11 @@ public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallb
     }
 
 
-
     private void listeners() {
 
-        button_exit.setOnClickListener(v -> {finish();});
+        button_exit.setOnClickListener(v -> {
+            finish();
+        });
 
     }
 
@@ -191,24 +189,24 @@ public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallb
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if(requestCode == REQUEST_CODE_LOCATION_PERMISSION && grantResults.length > 0) {
+        if (requestCode == REQUEST_CODE_LOCATION_PERMISSION && grantResults.length > 0) {
 
             startLocationService();
 
-        }else Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+        } else Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
 
     }
 
     private boolean isLocationServiceRunning() {
 
         ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        if(activityManager!=null) {
+        if (activityManager != null) {
 
-            for(ActivityManager.RunningServiceInfo service : activityManager.getRunningServices(Integer.MAX_VALUE)) {
+            for (ActivityManager.RunningServiceInfo service : activityManager.getRunningServices(Integer.MAX_VALUE)) {
 
-                if(LocationService.class.getName().equals(service.service.getClassName())) {
+                if (LocationService.class.getName().equals(service.service.getClassName())) {
 
-                    if(service.foreground) return true;
+                    if (service.foreground) return true;
 
                 }
 
@@ -223,7 +221,7 @@ public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallb
 
     private void startLocationService() {
 
-        if(!isLocationServiceRunning()) {
+        if (!isLocationServiceRunning()) {
 
             Intent intent = new Intent(getApplicationContext(), LocationService.class);
             intent.setAction(Constants.ACTION_START_LOCATION_SERVICE);
@@ -235,7 +233,7 @@ public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallb
 
     private void stopLocationService() {
 
-        if(isLocationServiceRunning()) {
+        if (isLocationServiceRunning()) {
 
             Intent intent = new Intent(getApplicationContext(), LocationService.class);
             intent.setAction(Constants.ACTION_STP_LOCATION_SERVICE);

@@ -3,33 +3,33 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="#00000000"
+    android:orientation="vertical"
     tools:context=".home.views.LeftHomeFragment">
 
     <LinearLayout
         android:id="@+id/fragmentLeftHome_linearlayout1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="32dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingHorizontal="32dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hello,"
-            android:textSize="20sp"
             android:fontFamily="sans-serif"
-            android:textColor="@color/text_in_edit"/>
+            android:text="Hello,"
+            android:textColor="@color/text_in_edit"
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/leftHome_username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/Auth_username"
-            android:textSize="24sp"
             android:fontFamily="sans-serif-medium"
-            android:textColor="@color/edit_text_orange"/>
+            android:text="@string/Auth_username"
+            android:textColor="@color/edit_text_orange"
+            android:textSize="24sp" />
 
     </LinearLayout>
 
@@ -37,36 +37,35 @@
         android:id="@+id/fragmentLeftHome_divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginTop="16dp"
-        android:layout_gravity="center"
         android:layout_below="@id/fragmentLeftHome_linearlayout1"
-        android:background="@drawable/divider_bar"/>
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/divider_bar" />
 
     <LinearLayout
         android:id="@+id/fragmentLeftHome_linearlayout3"
         android:layout_width="match_parent"
-        android:orientation="vertical"
+        android:layout_height="match_parent"
         android:layout_marginTop="16dp"
-        android:layout_height="match_parent">
+        android:orientation="vertical">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Last 14 days reported potholes"
-            android:paddingHorizontal="32dp"
-            android:textSize="20sp"
             android:fontFamily="sans-serif"
-            android:textColor="@color/edit_text_orange"/>
+            android:paddingHorizontal="32dp"
+            android:text="Last 14 days reported potholes"
+            android:textColor="@color/edit_text_orange"
+            android:textSize="20sp" />
 
         <RelativeLayout
             android:id="@+id/leftHome_fragment"
             android:layout_width="match_parent"
-            android:layout_marginHorizontal="32dp"
             android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="32dp"
             android:layout_marginTop="16dp"
-            android:layout_weight="1"
-            android:layout_gravity="center">
-        </RelativeLayout>
+            android:layout_weight="1"></RelativeLayout>
 
         <LinearLayout
             android:id="@+id/fragmentLeftHome_bottom"
@@ -86,18 +85,17 @@
                 android:id="@+id/fragmentLeftHome_VisualizeInMap"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="Visualize in map"
                 android:layout_gravity="center"
-                android:textAllCaps="false"
                 android:background="@android:color/transparent"
-                android:textSize="18sp"
                 android:fontFamily="sans-serif"
-                android:textColor="@color/edit_text_orange"/>
+                android:text="Visualize in map"
+                android:textAllCaps="false"
+                android:textColor="@color/edit_text_orange"
+                android:textSize="18sp" />
 
         </LinearLayout>
 
     </LinearLayout>
-
 
 
 </LinearLayout>

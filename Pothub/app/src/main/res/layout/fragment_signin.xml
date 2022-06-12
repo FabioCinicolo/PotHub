@@ -3,27 +3,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".authentication.views.fragments.SigninFragment"
+    android:background="#00000000"
     android:orientation="vertical"
-    android:background="#00000000">
+    tools:context=".authentication.views.fragments.SigninFragment">
 
 
     <EditText
         android:id="@+id/fragmentSignin_username"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:paddingEnd="16dp"
         android:layout_marginHorizontal="32dp"
         android:layout_marginTop="16dp"
-        android:maxLength="32"
         android:background="@drawable/custom_edit_text"
+        android:backgroundTint="@color/edit_text_grey"
         android:drawableStart="@drawable/ic_user"
         android:drawablePadding="16dp"
-        android:backgroundTint="@color/edit_text_grey"
         android:hint="@string/Auth_username"
         android:inputType="text"
+        android:maxLength="32"
         android:minHeight="48dp"
         android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:textColor="@color/text_in_edit"
         android:textColorHint="@color/text_in_edit"
         tools:ignore="TextContrastCheck" />
@@ -32,18 +32,18 @@
         android:id="@+id/fragmentSignin_password"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:paddingEnd="16dp"
         android:layout_marginHorizontal="32dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/custom_edit_text"
+        android:backgroundTint="@color/edit_text_grey"
         android:drawableStart="@drawable/ic_password"
         android:drawablePadding="16dp"
         android:hint="@string/Auth_password"
-        android:maxLength="32"
         android:inputType="textPassword"
-        android:backgroundTint="@color/edit_text_grey"
+        android:maxLength="32"
         android:minHeight="48dp"
         android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:textColor="@color/text_in_edit"
         android:textColorHint="@color/text_in_edit"
         tools:ignore="TextContrastCheck" />
@@ -52,52 +52,50 @@
         android:id="@+id/fragmentSignin_forgotpassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/Auth_forgot"
-        android:clickable="true"
-        android:textAlignment="textEnd"
         android:layout_marginHorizontal="40dp"
-        android:textColor="@color/edit_text_orange"
-        android:layout_marginTop="8dp"/>
+        android:layout_marginTop="8dp"
+        android:clickable="true"
+        android:text="@string/Auth_forgot"
+        android:textAlignment="textEnd"
+        android:textColor="@color/edit_text_orange" />
 
 
     <android.widget.Button
         android:id="@+id/fragmentSignin_signinbtn"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:backgroundTint="@color/edit_text_orange"
-        android:background="@drawable/custom_edit_text"
-        android:text="@string/Auth_signin"
-        android:fontFamily="sans-serif-medium"
-        android:layout_marginTop="40dp"
         android:layout_marginHorizontal="80dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/custom_edit_text"
+        android:backgroundTint="@color/edit_text_orange"
+        android:fontFamily="sans-serif-medium"
+        android:text="@string/Auth_signin"
         android:textAllCaps="false"
-        android:textSize="20sp"
         android:textColor="@color/white"
-        />
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/fragmentSignin_donthaveaccount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:text="@string/Auth_donthaveaccount"
         android:textAlignment="center"
-        android:textColor="@color/text_in_edit"
-        android:layout_marginTop="16dp"/>
+        android:textColor="@color/text_in_edit" />
 
     <android.widget.Button
         android:id="@+id/fragmentSignin_signupbtn"
         android:layout_width="match_parent"
-        android:layout_height= "60dp"
-        android:backgroundTint="#3F3F3F"
-        android:background="@drawable/custom_edit_text"
-        android:text="@string/Auth_signup"
-        android:fontFamily="sans-serif-medium"
-        android:layout_marginTop="16dp"
+        android:layout_height="60dp"
         android:layout_marginHorizontal="80dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/custom_edit_text"
+        android:backgroundTint="#3F3F3F"
+        android:fontFamily="sans-serif-medium"
+        android:text="@string/Auth_signup"
         android:textAllCaps="false"
-        android:textSize="20sp"
         android:textColor="@color/text_in_edit"
-        />
+        android:textSize="20sp" />
 
 
 </LinearLayout>

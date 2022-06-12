@@ -17,37 +17,37 @@ public class SigninModel implements SigninContract.Model {
 
         CognitoUser user = MainActivity.getCognito().getUser_pool().getUser(username);
 
-            user.getSessionInBackground(new AuthenticationHandler() {
-                @Override
-                public void onSuccess(CognitoUserSession userSession, CognitoDevice newDevice) {
-                    listener.onSuccess(userSession);
-                }
+        user.getSessionInBackground(new AuthenticationHandler() {
+            @Override
+            public void onSuccess(CognitoUserSession userSession, CognitoDevice newDevice) {
+                listener.onSuccess(userSession);
+            }
 
-                @Override
-                public void getAuthenticationDetails(AuthenticationContinuation auth_continuation, String userId) {
+            @Override
+            public void getAuthenticationDetails(AuthenticationContinuation auth_continuation, String userId) {
 
-                    // The API needs user sign-in credentials to continue
-                    AuthenticationDetails authenticationDetails = new AuthenticationDetails(userId, password, null);
-                    // Pass the user sign-in credentials to the continuation
-                    auth_continuation.setAuthenticationDetails(authenticationDetails);
-                    // Allow the sign-in to continue
-                    auth_continuation.continueTask();
-                }
+                // The API needs user sign-in credentials to continue
+                AuthenticationDetails authenticationDetails = new AuthenticationDetails(userId, password, null);
+                // Pass the user sign-in credentials to the continuation
+                auth_continuation.setAuthenticationDetails(authenticationDetails);
+                // Allow the sign-in to continue
+                auth_continuation.continueTask();
+            }
 
-                @Override
-                public void getMFACode(MultiFactorAuthenticationContinuation continuation) {
+            @Override
+            public void getMFACode(MultiFactorAuthenticationContinuation continuation) {
 
-                }
+            }
 
-                @Override
-                public void authenticationChallenge(ChallengeContinuation continuation) {
+            @Override
+            public void authenticationChallenge(ChallengeContinuation continuation) {
 
-                }
+            }
 
-                @Override
-                public void onFailure(Exception exception) {
-                    listener.onError("Sign in failed");
-                }
-            });
+            @Override
+            public void onFailure(Exception exception) {
+                listener.onError("Sign in failed");
+            }
+        });
     }
 }

@@ -6,18 +6,18 @@
     tools:context=".home.views.UserPotholesFragment">
 
 
-<!--    <ProgressBar-->
-<!--        android:id="@+id/fragmentPreferredRoads_progress"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_centerInParent="true"-->
-<!--        android:indeterminateTint="@color/natour_green"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:indeterminate="true" />-->
+    <!--    <ProgressBar-->
+    <!--        android:id="@+id/fragmentPreferredRoads_progress"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_centerInParent="true"-->
+    <!--        android:indeterminateTint="@color/natour_green"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:indeterminate="true" />-->
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/potholesFragment_recyclerview"
         android:layout_width="match_parent"
-        android:divider="@null"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:divider="@null" />
 
 </RelativeLayout>

@@ -1,16 +1,15 @@
 package com.cindea.pothub.home.views;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.cindea.pothub.R;
 import com.cindea.pothub.entities.Pothole;
@@ -41,7 +40,7 @@ public class PotholesFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         //TEST
-        List<Pothole> potholes = ((RightHomeFragment)getParentFragment()).getPotholes();
+        List<Pothole> potholes = ((RightHomeFragment) getParentFragment()).getPotholes();
         recyclerViewAdapter = new RecyclerViewAdapter(getActivity(), potholes);
         recyclerView.setAdapter(recyclerViewAdapter);
         //TEST

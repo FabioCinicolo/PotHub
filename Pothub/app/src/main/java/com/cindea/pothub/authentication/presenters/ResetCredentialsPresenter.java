@@ -1,4 +1,5 @@
 package com.cindea.pothub.authentication.presenters;
+
 import com.cindea.pothub.authentication.ResetCredentialsContract;
 
 public class ResetCredentialsPresenter implements ResetCredentialsContract.Presenter {

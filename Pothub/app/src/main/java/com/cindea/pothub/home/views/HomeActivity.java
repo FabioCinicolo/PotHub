@@ -1,7 +1,6 @@
 package com.cindea.pothub.home.views;
 
 import android.Manifest;
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -17,8 +16,9 @@ import com.tbuonomo.viewpagerdotsindicator.DotsIndicator;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private ViewPager2 viewPager2;
     public static HomeFragmentAdapter homeFragmentAdapter;
+    private ViewPager2 viewPager2;
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +31,6 @@ public class HomeActivity extends AppCompatActivity {
         requestLocation();
 
     }
-
 
 
     private void setupComponents() {
@@ -54,7 +53,7 @@ public class HomeActivity extends AppCompatActivity {
                             Boolean fineLocationGranted = result.getOrDefault(
                                     Manifest.permission.ACCESS_FINE_LOCATION, false);
                             Boolean coarseLocationGranted = result.getOrDefault(
-                                    Manifest.permission.ACCESS_COARSE_LOCATION,false);
+                                    Manifest.permission.ACCESS_COARSE_LOCATION, false);
                             if (fineLocationGranted != null && fineLocationGranted) {
                                 // Precise location access granted.
                             } else if (coarseLocationGranted != null && coarseLocationGranted) {
@@ -65,7 +64,7 @@ public class HomeActivity extends AppCompatActivity {
                         }
                 );
 
-        locationPermissionRequest.launch(new String[] {
+        locationPermissionRequest.launch(new String[]{
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION
         });

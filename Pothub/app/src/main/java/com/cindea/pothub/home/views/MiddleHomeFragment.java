@@ -7,7 +7,6 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,18 +42,16 @@ public class MiddleHomeFragment extends Fragment {
 
         button_start.setOnClickListener(v -> {
 
-            if(isGPSEnabled()) {
+            if (isGPSEnabled()) {
 
-                if(isConnected()) {
+                if (isConnected()) {
 
                     getActivity().startActivity(
                             new Intent(getActivity(), LiveMapActivity.class));
 
-                }
-                else
+                } else
                     Toast.makeText(getContext(), "Connection not available", Toast.LENGTH_SHORT).show();
-            }
-            else
+            } else
                 Toast.makeText(getContext(), "GPS is not enabled", Toast.LENGTH_SHORT).show();
 
         });
@@ -73,20 +70,20 @@ public class MiddleHomeFragment extends Fragment {
     public boolean isConnected() {
         final boolean[] is_connected = {false};
         ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        if(cm.getActiveNetworkInfo() != null) {
+        if (cm.getActiveNetworkInfo() != null) {
             Thread thread = new Thread(() -> {
                 try {
                     String command = "ping -c 1 google.com";
-                    is_connected[0] =  (Runtime.getRuntime().exec(command).waitFor() == 0);
+                    is_connected[0] = (Runtime.getRuntime().exec(command).waitFor() == 0);
                 } catch (Exception e) {
                     is_connected[0] = false;
                 }
-                synchronized(is_connected) {
+                synchronized (is_connected) {
                     is_connected.notifyAll();
                 }
             });
             thread.start();
-            synchronized (is_connected){
+            synchronized (is_connected) {
                 try {
                     is_connected.wait();
                 } catch (InterruptedException e) {

@@ -39,7 +39,7 @@ public class RightHomeModel implements RightHomeContract.Model, OnHandlerReady {
 
     }
 
-    public class CustomMessage{
+    public class CustomMessage {
 
         public double meters;
         public double latitude;

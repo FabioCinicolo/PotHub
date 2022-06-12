@@ -17,7 +17,7 @@ import com.cindea.pothub.authentication.ConfirmSignupContract;
 import com.cindea.pothub.authentication.models.ConfirmSignupModel;
 import com.cindea.pothub.authentication.presenters.ConfirmSignupPresenter;
 
-public class ConfirmSignupActivity extends AppCompatActivity implements ConfirmSignupContract.View{
+public class ConfirmSignupActivity extends AppCompatActivity implements ConfirmSignupContract.View {
 
     private Animation anim_scale_up;
     private ConfirmSignupContract.Presenter presenter;
@@ -48,7 +48,7 @@ public class ConfirmSignupActivity extends AppCompatActivity implements ConfirmS
         button_confirm.setOnClickListener(view -> {
 
             runButtonAnimation(button_confirm);
-            String confirmation_code = ((PinView)findViewById(R.id.activityConfirmSignup_code)).getText().toString();
+            String confirmation_code = ((PinView) findViewById(R.id.activityConfirmSignup_code)).getText().toString();
 
             String username = getIntent().getStringExtra("username");
             presenter.confirmSignUpClicked(username, confirmation_code);

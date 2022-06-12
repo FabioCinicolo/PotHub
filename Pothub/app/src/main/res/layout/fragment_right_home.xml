@@ -11,24 +11,24 @@
         android:id="@+id/fragmentRightHome_linearlayout1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="32dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingHorizontal="32dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="There are all your nearby potholes,"
-            android:textSize="20sp"
             android:fontFamily="sans-serif"
-            android:textColor="@color/text_in_edit"/>
+            android:text="There are all your nearby potholes,"
+            android:textColor="@color/text_in_edit"
+            android:textSize="20sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Watch out!"
-            android:textSize="24sp"
             android:fontFamily="sans-serif-medium"
-            android:textColor="@color/edit_text_orange"/>
+            android:text="Watch out!"
+            android:textColor="@color/edit_text_orange"
+            android:textSize="24sp" />
 
     </LinearLayout>
 
@@ -45,11 +45,11 @@
         android:id="@+id/fragmentRightHome_filters"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:paddingHorizontal="8dp"
         android:layout_below="@id/fragmentRightHome_divider"
-        android:scrollbarThumbHorizontal="@null"
-        android:overScrollMode="never">
+        android:layout_marginTop="16dp"
+        android:overScrollMode="never"
+        android:paddingHorizontal="8dp"
+        android:scrollbarThumbHorizontal="@null">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -62,8 +62,8 @@
                 android:background="@drawable/custom_edit_text"
                 android:backgroundTint="#3F3F3F"
                 android:fontFamily="sans-serif"
-                android:text="100 mt"
                 android:stateListAnimator="@null"
+                android:text="100 mt"
                 android:textAllCaps="false"
                 android:textColor="@color/edit_text_orange"
                 android:textSize="16sp" />
@@ -76,8 +76,8 @@
                 android:background="@drawable/custom_edit_text"
                 android:backgroundTint="#3F3F3F"
                 android:fontFamily="sans-serif"
-                android:text="250 mt"
                 android:stateListAnimator="@null"
+                android:text="250 mt"
                 android:textAllCaps="false"
                 android:textColor="@color/text_in_edit"
                 android:textSize="16sp" />
@@ -90,8 +90,8 @@
                 android:background="@drawable/custom_edit_text"
                 android:backgroundTint="#3F3F3F"
                 android:fontFamily="sans-serif"
-                android:text="500 mt"
                 android:stateListAnimator="@null"
+                android:text="500 mt"
                 android:textAllCaps="false"
                 android:textColor="@color/text_in_edit"
                 android:textSize="16sp" />
@@ -104,8 +104,8 @@
                 android:background="@drawable/custom_edit_text"
                 android:backgroundTint="#3F3F3F"
                 android:fontFamily="sans-serif"
-                android:text="1 km"
                 android:stateListAnimator="@null"
+                android:text="1 km"
                 android:textAllCaps="false"
                 android:textColor="@color/text_in_edit"
                 android:textSize="16sp" />
@@ -118,8 +118,8 @@
                 android:background="@drawable/custom_edit_text"
                 android:backgroundTint="#3F3F3F"
                 android:fontFamily="sans-serif"
-                android:text="5 km"
                 android:stateListAnimator="@null"
+                android:text="5 km"
                 android:textAllCaps="false"
                 android:textColor="@color/text_in_edit"
                 android:textSize="16sp" />
@@ -130,15 +130,14 @@
 
     <RelativeLayout
         android:id="@+id/rightHome_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_alignTop="@id/fragmentRightHome_filters"
         android:layout_alignBottom="@id/fragmentRightHome_bottom"
-        android:layout_width="match_parent"
+        android:layout_gravity="center"
         android:layout_marginHorizontal="32dp"
-        android:layout_height="match_parent"
         android:layout_marginTop="16dp"
-        android:layout_weight="1"
-        android:layout_gravity="center">
-    </RelativeLayout>
+        android:layout_weight="1"></RelativeLayout>
 
     <LinearLayout
         android:id="@+id/fragmentRightHome_bottom"
@@ -158,13 +157,13 @@
             android:id="@+id/fragmentRightHome_VisualizeInMap"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Visualize in map"
             android:layout_gravity="center"
-            android:textAllCaps="false"
             android:background="@android:color/transparent"
-            android:textSize="18sp"
             android:fontFamily="sans-serif"
-            android:textColor="@color/edit_text_orange"/>
+            android:text="Visualize in map"
+            android:textAllCaps="false"
+            android:textColor="@color/edit_text_orange"
+            android:textSize="18sp" />
 
     </LinearLayout>
 

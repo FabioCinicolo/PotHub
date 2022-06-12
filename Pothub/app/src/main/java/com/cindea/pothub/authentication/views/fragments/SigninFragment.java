@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,11 +24,11 @@ import com.google.gson.Gson;
 
 public final class SigninFragment extends CustomAuthFragment implements SigninContract.View {
 
+    public static String username;
     private Button button_signup;
     private Button button_signin;
     private SigninContract.Presenter presenter;
     private AuthSwitcher authSwitcher;
-    public static String username;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -61,8 +60,8 @@ public final class SigninFragment extends CustomAuthFragment implements SigninCo
 
             runButtonAnimation(button_signin);
 
-            username = ((EditText)fragmentView.findViewById(R.id.fragmentSignin_username)).getText().toString();
-            String password = ((EditText)fragmentView.findViewById(R.id.fragmentSignin_password)).getText().toString();
+            username = ((EditText) fragmentView.findViewById(R.id.fragmentSignin_username)).getText().toString();
+            String password = ((EditText) fragmentView.findViewById(R.id.fragmentSignin_password)).getText().toString();
 
             presenter.cognitoSignInButtonClicked(username, password);
 
@@ -71,11 +70,11 @@ public final class SigninFragment extends CustomAuthFragment implements SigninCo
         button_signup.setOnClickListener(view -> {
 
             runButtonAnimation(button_signup);
-            button_handler.postDelayed(() -> authSwitcher.onSignupPress(),170);
+            button_handler.postDelayed(() -> authSwitcher.onSignupPress(), 170);
 
         });
 
-        ((TextView)fragmentView.findViewById(R.id.fragmentSignin_forgotpassword)).setOnClickListener(view -> {
+        ((TextView) fragmentView.findViewById(R.id.fragmentSignin_forgotpassword)).setOnClickListener(view -> {
 
             getActivity().startActivity(new Intent(getActivity(), ResetCredentialsActivity.class));
 

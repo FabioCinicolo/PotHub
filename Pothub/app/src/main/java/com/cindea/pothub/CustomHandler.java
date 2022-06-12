@@ -18,8 +18,6 @@ import com.cindea.pothub.home.models.RightHomeModel;
 import com.cindea.pothub.map.LiveMapActivity;
 import com.google.gson.Gson;
 
-import org.apache.commons.lang3.StringEscapeUtils;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -28,8 +26,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,28 +35,23 @@ public class CustomHandler extends Handler {
     private Socket socket;
     private BufferedReader input_stream;
     private PrintWriter output_stream;
-    private Boolean socket_ready = new Boolean(false);
 
     @Override
     public void handleMessage(Message msg) {
 
-        switch(msg.what){
+        switch (msg.what) {
             case OPEN_CONNECTION_WITH_SERVER:
                 Log.e("HANDLER", "Opening");
                 openConnectionWithServer();
                 break;
             case REPORT_POTHOLE: {
                 Log.e("HANDLER", "Reporting");
-                try {
-                    reportPotHole((Pothole)msg.obj);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                    reportPotHole((Pothole) msg.obj);
                 break;
             }
             case GET_USER_POTHOLES_BY_DAYS: {
                 Log.e("HANDLER", "Getting User Potholes By Days");
-                getUserPotholesByDays(((LeftHomeModel.CustomMessage)msg.obj).username, ((LeftHomeModel.CustomMessage)msg.obj).date, ((LeftHomeModel.CustomMessage)msg.obj).listener);
+                dispatchUserPotholesByDays(((LeftHomeModel.CustomMessage) msg.obj).username, ((LeftHomeModel.CustomMessage) msg.obj).date, ((LeftHomeModel.CustomMessage) msg.obj).listener);
                 break;
             }
             case CLOSE_CONNECTION_WITH_SERVER:
@@ -69,7 +60,7 @@ public class CustomHandler extends Handler {
                 break;
             case GET_POTHOLES_BY_RANGE: {
                 Log.e("HANDLER", "Getting Potholes by range");
-                getPotholesByRange(((RightHomeModel.CustomMessage)msg.obj).latitude, ((RightHomeModel.CustomMessage)msg.obj).longitude, ((RightHomeModel.CustomMessage)msg.obj).meters, ((RightHomeModel.CustomMessage)msg.obj).listener);
+                dispatchPotholesByRange(((RightHomeModel.CustomMessage) msg.obj).latitude, ((RightHomeModel.CustomMessage) msg.obj).longitude, ((RightHomeModel.CustomMessage) msg.obj).meters, ((RightHomeModel.CustomMessage) msg.obj).listener);
                 break;
             }
             default:
@@ -77,7 +68,7 @@ public class CustomHandler extends Handler {
         }
     }
 
-    public boolean openConnectionWithServer(){
+    public boolean openConnectionWithServer() {
 
         try {
             InetAddress server_address = InetAddress.getByName("20.126.123.213");
@@ -87,32 +78,21 @@ public class CustomHandler extends Handler {
             input_stream = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
             output_stream = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
 
-            socket_ready = true;
-            synchronized (socket_ready) {
-                socket_ready.notify();
-            }
-
-        } catch (UnknownHostException e) {
-            return false;
         } catch (IOException e) {
             return false;
         }
 
-        Log.e("HANDLER","Connection with server opened");
+        Log.e("HANDLER", "Connection with server opened");
         return true;
 
     }
 
-    public void reportPotHole(Pothole pothole) throws InterruptedException {
+    public void reportPotHole(Pothole pothole) {
         String json;
         Gson gson = new Gson();
         pothole.setAction(REPORT_POTHOLE);
         LiveMapActivity.potholesDetected++;
         json = gson.toJson(pothole, Pothole.class);
-        synchronized (socket_ready) {
-            while(!socket_ready)
-                socket_ready.wait();
-        }
         output_stream.write(json);
         output_stream.flush();
     }
@@ -130,15 +110,15 @@ public class CustomHandler extends Handler {
                 }
             }
         }
-        Log.e("HANDLER","Connection with server closed");
+        Log.e("HANDLER", "Connection with server closed");
     }
 
-    public void getUserPotholesByDays(String username, String date, LeftHomeContract.Model.OnFinishListener listener){
+    public void dispatchUserPotholesByDays(String username, String date, LeftHomeContract.Model.OnFinishListener listener) {
 
-        if(openConnectionWithServer()) {
+        if (openConnectionWithServer()) {
 
             Gson gson;
-            output_stream.write("{\"action\":2,\"user\":\""+username+"\",\"date\":"+"\""+date+"\"}");
+            output_stream.write("{\"action\":2,\"user\":\"" + username + "\",\"date\":" + "\"" + date + "\"}");
             output_stream.flush();
             try {
                 String json = input_stream.readLine();
@@ -146,7 +126,7 @@ public class CustomHandler extends Handler {
 
                 List<Pothole> potholes = new ArrayList<>();
                 Pothole[] potholes_arr = gson.fromJson(json, Pothole[].class);
-                for(int i = 0; i < potholes_arr.length; i++)
+                for (int i = 0; i < potholes_arr.length; i++)
                     potholes.add(potholes_arr[i]);
                 //p è null
                 listener.onPotholesLoaded(potholes);
@@ -162,26 +142,26 @@ public class CustomHandler extends Handler {
 
     }
 
-    public void getPotholesByRange(double latitude, double longitude, double range, RightHomeContract.Model.OnFinishListener listener){
+    public void dispatchPotholesByRange(double latitude, double longitude, double range, RightHomeContract.Model.OnFinishListener listener) {
 
-        if(openConnectionWithServer()) {
+        if (openConnectionWithServer()) {
 
             Gson gson;
-            output_stream.write("{\"action\":3,\"latitude\":"+latitude+",\"longitude\":"+longitude+ ",\"range\":" +range+"}");
+            output_stream.write("{\"action\":3,\"latitude\":" + latitude + ",\"longitude\":" + longitude + ",\"range\":" + range + "}");
             output_stream.flush();
             try {
                 String json = input_stream.readLine();
                 gson = new Gson();
                 List<Pothole> potholes = new ArrayList<>();
                 Pothole[] potholes_arr = gson.fromJson(json, Pothole[].class);
-                if(potholes_arr != null) {
+                if (potholes_arr != null) {
 
-                    for(int i = 0; i < potholes_arr.length; i++)
+                    for (int i = 0; i < potholes_arr.length; i++)
                         potholes.add(potholes_arr[i]);
                     //p è null
                     listener.onPotholesLoaded(potholes);
 
-                }else {
+                } else {
 
                     listener.onError(null);
 

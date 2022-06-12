@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.cindea.pothub.R;
 import com.cindea.pothub.entities.Pothole;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyViewHolder> {
@@ -61,6 +60,37 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         return potholes.size();
     }
 
+    private void setupItem(Pothole pothole, MyViewHolder holder) {
+
+        String lat = String.valueOf(pothole.getLatitude());
+        String lng = String.valueOf(pothole.getLongitude());
+        lat = lat.substring(0, 8);
+        lng = lng.substring(0, 8);
+        String address = pothole.getAddress().replace("#", ", ");
+        if (address.length() > 16)
+            address = address.substring(0, 15) + ".";
+        holder.address.setText(address);
+        holder.latlng.setText(lat + ",  " + lng);
+        holder.date.setText(pothole.getTimestamp());
+
+        switch (pothole.getIntensity()) {
+
+            case 1:
+                holder.icon.setImageResource(R.drawable.ic_green_alert);
+                break;
+            case 2:
+                holder.icon.setImageResource(R.drawable.ic_yellow_alert);
+                break;
+            case 3:
+                holder.icon.setImageResource(R.drawable.ic_red_alert);
+                break;
+            default:
+                break;
+
+        }
+
+    }
+
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView address;
@@ -77,37 +107,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             icon = itemView.findViewById(R.id.item_icon);
 
         }
-    }
-
-    private void setupItem(Pothole pothole, MyViewHolder holder) {
-
-        String lat = String.valueOf(pothole.getLatitude());
-        String lng = String.valueOf(pothole.getLongitude());
-        lat = lat.substring(0,8);
-        lng = lng.substring(0,8);
-        String address = pothole.getAddress().replace("#", ", ");
-        if(address.length()>16)
-            address = address.substring(0,15) + ".";
-        holder.address.setText(address);
-        holder.latlng.setText(lat + ",  " + lng);
-        holder.date.setText(pothole.getTimestamp());
-
-        switch(pothole.getIntensity()) {
-
-            case 1:
-                holder.icon.setImageResource(R.drawable.ic_green_alert);
-                break;
-            case 2:
-                holder.icon.setImageResource(R.drawable.ic_yellow_alert);
-                break;
-            case 3:
-                holder.icon.setImageResource(R.drawable.ic_red_alert);
-                break;
-            default:
-                break;
-
-        }
-
     }
 
 }

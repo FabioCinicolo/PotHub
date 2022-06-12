@@ -15,10 +15,9 @@
         android:id="@+id/activityVisualizePotholesInMap_back"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:src="@drawable/ic_back"
-        android:background="@android:color/transparent"
-        android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
-        />
+        android:layout_marginTop="16dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_back" />
 
 </RelativeLayout>

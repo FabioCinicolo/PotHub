@@ -17,7 +17,7 @@ public class RightHomePresenter implements RightHomeContract.Presenter, RightHom
 
     @Override
     public void getPotholesByRange(double meters, double latitude, double longitude) {
-        model.getPotholesByRange(meters,latitude,longitude, this);
+        model.getPotholesByRange(meters, latitude, longitude, this);
     }
 
     @Override

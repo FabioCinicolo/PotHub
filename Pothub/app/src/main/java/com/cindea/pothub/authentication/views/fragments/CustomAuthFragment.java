@@ -38,7 +38,7 @@ public abstract class CustomAuthFragment extends Fragment {
 
     protected void runHandledIntent(Intent intent) {
 
-        button_handler.postDelayed(() -> startActivity(intent),170);
+        button_handler.postDelayed(() -> startActivity(intent), 170);
 
     }
 
@@ -50,7 +50,7 @@ public abstract class CustomAuthFragment extends Fragment {
             startActivity(intent);
             getActivity().overridePendingTransition(enter_animation, exit_animation);
 
-        },170);
+        }, 170);
 
     }
 

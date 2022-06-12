@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.cindea.pothub" >
+    package="com.cindea.pothub">
 
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -13,7 +13,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
@@ -24,14 +24,14 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/logoapp_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Pothub" >
+        android:theme="@style/Theme.Pothub">
 
         <service
             android:name=".map.LocationService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="location">
-        <!-- Any inner elements would go here. -->
+            <!-- Any inner elements would go here. -->
         </service>
 
         <meta-data
@@ -41,12 +41,12 @@
         <activity
             android:name=".map.LiveMapActivity"
             android:exported="false"
-            android:launchMode="singleTask"
-            android:label="@string/title_activity_live_map" />
+            android:label="@string/title_activity_live_map"
+            android:launchMode="singleTask" />
         <activity
             android:name=".map.VisualizePotholesInMapActivity"
-            android:launchMode="singleTask"
-            android:exported="false" />
+            android:exported="false"
+            android:launchMode="singleTask" />
         <activity
             android:name=".home.views.HomeActivity"
             android:exported="false"
@@ -62,7 +62,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:launchMode="singleTask" >
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

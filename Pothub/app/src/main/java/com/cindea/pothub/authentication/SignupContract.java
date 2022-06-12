@@ -2,22 +2,25 @@ package com.cindea.pothub.authentication;
 
 public interface SignupContract {
 
-    interface View{
+    interface View {
         void signUpSuccess();
+
         void displayError(String message);
     }
 
-    interface Presenter{
+    interface Presenter {
         void signUpButtonPressed(String username, String email, String password);
     }
 
-    interface Model{
+    interface Model {
+
+        void signUp(String username, String email, String password, OnFinishListener listener);
 
         interface OnFinishListener {
             void onSuccess(String message);
+
             void onError(String message);
         }
-        void signUp(String username, String email, String password, OnFinishListener listener);
 
     }
 

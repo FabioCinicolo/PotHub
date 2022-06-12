@@ -5,6 +5,7 @@ public interface ConfirmSignupContract {
     interface View {
 
         void successSignUp();
+
         void displayError(String message);
 
     }
@@ -17,14 +18,15 @@ public interface ConfirmSignupContract {
 
     interface Model {
 
+        void confirmSignUp(String username, String code, OnFinishListener listener);
+
         interface OnFinishListener {
 
             void onSuccess(String message);
+
             void onError(String message);
 
         }
-
-        void confirmSignUp(String username, String code, OnFinishListener listener);
 
     }
 

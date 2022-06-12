@@ -2,7 +2,6 @@ package com.cindea.pothub.authentication.views.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,7 @@ import com.cindea.pothub.authentication.models.SignupModel;
 import com.cindea.pothub.authentication.presenters.SignupPresenter;
 import com.cindea.pothub.authentication.views.ConfirmSignupActivity;
 
-public class SignupFragment extends CustomAuthFragment implements SignupContract.View  {
+public class SignupFragment extends CustomAuthFragment implements SignupContract.View {
 
     private Button button_signup;
     private Button button_signin;
@@ -55,15 +54,15 @@ public class SignupFragment extends CustomAuthFragment implements SignupContract
 
             runButtonAnimation(button_signin);
 
-            button_handler.postDelayed(() -> authSwitcher.onSigninPress(),170);
+            button_handler.postDelayed(() -> authSwitcher.onSigninPress(), 170);
 
         });
 
         button_signup.setOnClickListener(view -> {
 
-            username = ((EditText)fragmentView.findViewById(R.id.fragmentSignup_username)).getText().toString();
-            String email = ((EditText)fragmentView.findViewById(R.id.fragmentSignup_mail)).getText().toString();
-            String password = ((EditText)fragmentView.findViewById(R.id.fragmentSignup_password)).getText().toString();
+            username = ((EditText) fragmentView.findViewById(R.id.fragmentSignup_username)).getText().toString();
+            String email = ((EditText) fragmentView.findViewById(R.id.fragmentSignup_mail)).getText().toString();
+            String password = ((EditText) fragmentView.findViewById(R.id.fragmentSignup_password)).getText().toString();
 
             runButtonAnimation(button_signup);
 

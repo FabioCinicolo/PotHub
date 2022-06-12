@@ -4,6 +4,7 @@ package com.cindea.pothub;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -15,23 +16,25 @@ import com.cindea.pothub.authentication.views.fragments.SigninFragment;
 import com.cindea.pothub.authentication.views.fragments.SignupFragment;
 import com.cindea.pothub.cognito.Cognito;
 import com.cindea.pothub.home.views.HomeActivity;
-import com.cindea.pothub.home.views.LeftHomeFragment;
 import com.google.gson.Gson;
 
 
 public class MainActivity extends AppCompatActivity implements AuthSwitcher {
 
+    private static Cognito cognito;
     Fragment signinFragment = new SigninFragment();
     Fragment signupFragment = new SignupFragment();
-    private static Cognito cognito;
 
+    public static Cognito getCognito() {
+        return cognito;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         cognito = new Cognito(this);
-        if(isSessionValid()) {
+        if (isSessionValid()) {
 
             Intent intent = new Intent(this, HomeActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -41,11 +44,11 @@ public class MainActivity extends AppCompatActivity implements AuthSwitcher {
         replaceFragment(signinFragment);
     }
 
-    public boolean isSessionValid(){
+    public boolean isSessionValid() {
         SharedPreferences pref = getSharedPreferences("Cognito", MODE_PRIVATE);
         Gson gson = new Gson();
         String json = pref.getString("CognitoUserSession", null);
-        if(json!=null) {
+        if (json != null) {
             CognitoUserSession session = gson.fromJson(json, CognitoUserSession.class);
             SigninFragment.username = session.getUsername();
             return session.isValid();
@@ -59,7 +62,6 @@ public class MainActivity extends AppCompatActivity implements AuthSwitcher {
 
     }
 
-
     private void replaceFragment(Fragment fragment) {
 
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -68,7 +70,6 @@ public class MainActivity extends AppCompatActivity implements AuthSwitcher {
         fragmentTransaction.commit();
 
     }
-
 
     @Override
     public void onSigninPress() {
@@ -91,10 +92,6 @@ public class MainActivity extends AppCompatActivity implements AuthSwitcher {
         Intent intent = new Intent(MainActivity.this, ResetCredentialsActivity.class);
         startActivity(intent);
 
-    }
-
-    public static Cognito getCognito() {
-        return cognito;
     }
 
 }

@@ -7,7 +7,7 @@ import com.cindea.pothub.MainActivity;
 import com.cindea.pothub.authentication.ConfirmSignupContract;
 import com.cindea.pothub.cognito.Cognito;
 
-public class ConfirmSignupModel implements ConfirmSignupContract.Model{
+public class ConfirmSignupModel implements ConfirmSignupContract.Model {
 
     @Override
     public void confirmSignUp(String username, String confirmation_code, OnFinishListener listener) {

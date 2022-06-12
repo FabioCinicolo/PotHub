@@ -29,11 +29,10 @@ import androidx.core.app.NotificationCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.cindea.pothub.CustomThread;
-import com.cindea.pothub.R;
 import com.cindea.pothub.OnHandlerReady;
+import com.cindea.pothub.R;
 import com.cindea.pothub.authentication.views.fragments.SigninFragment;
 import com.cindea.pothub.entities.Pothole;
-import com.cindea.pothub.home.views.HomeActivity;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
@@ -53,25 +52,21 @@ public class LocationService extends Service implements SensorEventListener, OnH
     double previous_acceleration = -99999999;
     double previous_latitude, previous_longitude;
     double threshold = 10;
-    private SensorManager sensor_manager;
     double latitude, longitude;
     boolean is_first_pothole = true;
-
+    List<Address> addresses;
+    private SensorManager sensor_manager;
     private CustomThread thread;
     private Handler handler;
-
     private Geocoder geocoder;
-    List<Address> addresses;
-
-
     private LocationCallback locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(@NonNull LocationResult locationResult) {
             super.onLocationResult(locationResult);
-            if(locationResult!=null && locationResult.getLastLocation()!=null) {
+            if (locationResult != null && locationResult.getLastLocation() != null) {
                 latitude = locationResult.getLastLocation().getLatitude();
                 longitude = locationResult.getLastLocation().getLongitude();
-                sendMessageToActivity(latitude,longitude);
+                sendMessageToActivity(latitude, longitude);
             }
         }
     };
@@ -94,7 +89,7 @@ public class LocationService extends Service implements SensorEventListener, OnH
 
     private void startService() {
 
-        String channelId= "location_notification_channel";
+        String channelId = "location_notification_channel";
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         Intent resultIntent = new Intent();
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -107,9 +102,9 @@ public class LocationService extends Service implements SensorEventListener, OnH
         builder.setAutoCancel(false);
         builder.setPriority(NotificationCompat.PRIORITY_MAX);
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
-            if(notificationManager!=null && notificationManager.getNotificationChannel(channelId) == null) {
+            if (notificationManager != null && notificationManager.getNotificationChannel(channelId) == null) {
 
                 NotificationChannel notificationChannel = new NotificationChannel(channelId, "Potholes Tracking Session", NotificationManager.IMPORTANCE_HIGH);
                 notificationChannel.setDescription("This channel is used for repoting potholes");
@@ -137,12 +132,12 @@ public class LocationService extends Service implements SensorEventListener, OnH
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        if(intent != null) {
+        if (intent != null) {
 
             String action = intent.getAction();
             if (action != null) {
 
-                if(action.equals(Constants.ACTION_START_LOCATION_SERVICE)) {
+                if (action.equals(Constants.ACTION_START_LOCATION_SERVICE)) {
                     //Get Location Updates
                     LocationRequest locationRequest = new LocationRequest();
                     locationRequest.setInterval(4000);
@@ -156,8 +151,7 @@ public class LocationService extends Service implements SensorEventListener, OnH
                             SensorManager.SENSOR_DELAY_NORMAL);
 
                     startService();
-                }
-                else if(action.equals(Constants.ACTION_STP_LOCATION_SERVICE)) stopService();
+                } else if (action.equals(Constants.ACTION_STP_LOCATION_SERVICE)) stopService();
 
             }
 
@@ -183,11 +177,10 @@ public class LocationService extends Service implements SensorEventListener, OnH
             //SE PRENDO UNA BUCA
             if (current_acceleration - previous_acceleration >= threshold) {
 
-                if(!is_first_pothole)
-                {
+                if (!is_first_pothole) {
                     //Se la distanza tra l ultima buca e la recente è abbastanza grande allora la segnaliamo
                     distance = SphericalUtil.computeDistanceBetween(new LatLng(previous_latitude, previous_longitude), new LatLng(current_latitude, current_longitude));
-                    if(distance > 75){
+                    if (distance > 30) {
                         try {
                             addresses = geocoder.getFromLocation(latitude, longitude, 1);
                             setupReport(current_acceleration, current_latitude, current_longitude);
@@ -195,8 +188,7 @@ public class LocationService extends Service implements SensorEventListener, OnH
                             e.printStackTrace();
                         }
                     }
-                }
-                else if(current_latitude!=0){
+                } else if (current_latitude != 0) {
                     try {
                         addresses = geocoder.getFromLocation(latitude, longitude, 1);
                         setupReport(current_acceleration, current_latitude, current_longitude);
@@ -220,7 +212,7 @@ public class LocationService extends Service implements SensorEventListener, OnH
 
     }
 
-    public void reportPotHole(Pothole pothole){
+    public void reportPotHole(Pothole pothole) {
         Message message;
         message = Message.obtain();
         message.obj = pothole;
@@ -228,7 +220,7 @@ public class LocationService extends Service implements SensorEventListener, OnH
         handler.sendMessage(message);
     }
 
-    public void startBackgroundThread(){
+    public void startBackgroundThread() {
         thread = new CustomThread(this);
         thread.start();
 
@@ -259,9 +251,9 @@ public class LocationService extends Service implements SensorEventListener, OnH
     }
 
     private int getPotholeIntensity(int value) {
-        if(value>=10 && value<=15)
+        if (value >= 10 && value <= 15)
             return 1;
-        else if(value>=16 && value <=20)
+        else if (value >= 16 && value <= 20)
             return 2;
         return 3;
     }
@@ -271,11 +263,11 @@ public class LocationService extends Service implements SensorEventListener, OnH
         String country_code = addresses.get(0).getCountryCode();
         String name2 = addresses.get(0).getLocality();
         name2 = name2.replace('\'', ' ');
-        int intensity = getPotholeIntensity((int)(current_acceleration - previous_acceleration));
+        int intensity = getPotholeIntensity((int) (current_acceleration - previous_acceleration));
         sendReportedLatLngToActivity(current_latitude, current_longitude, intensity);
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        Pothole pothole = new Pothole(current_latitude, current_longitude, name2+"#"+country_code, SigninFragment.username, intensity, formatter.format(date));
+        Pothole pothole = new Pothole(current_latitude, current_longitude, name2 + "#" + country_code, SigninFragment.username, intensity, formatter.format(date));
         reportPotHole(pothole);
 
     }

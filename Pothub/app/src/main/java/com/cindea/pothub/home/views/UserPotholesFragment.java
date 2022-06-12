@@ -1,6 +1,9 @@
 package com.cindea.pothub.home.views;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -8,10 +11,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.cindea.pothub.R;
 import com.cindea.pothub.entities.Pothole;
@@ -29,7 +28,7 @@ public class UserPotholesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view =  inflater.inflate(R.layout.fragment_userpotholes, container, false);
+        view = inflater.inflate(R.layout.fragment_userpotholes, container, false);
         return view;
     }
 
@@ -44,7 +43,7 @@ public class UserPotholesFragment extends Fragment {
         ((SimpleItemAnimator) recyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
 
         //TEST
-        List<Pothole> potholes = ((LeftHomeFragment)getParentFragment()).getPotholes_14days();
+        List<Pothole> potholes = ((LeftHomeFragment) getParentFragment()).getPotholes_14days();
         recyclerViewAdapter = new RecyclerViewAdapter(getActivity(), potholes);
         recyclerView.setAdapter(recyclerViewAdapter);
         //TEST

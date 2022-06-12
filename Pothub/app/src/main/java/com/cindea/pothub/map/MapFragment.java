@@ -43,14 +43,8 @@ import java.util.ArrayList;
 
 public class MapFragment extends Fragment implements LocationListener {
 
-    private GoogleMap map;
     public static ArrayList<Pothole> map_potholes = new ArrayList<>();
-
-    // The entry point to the Fused Location Provider.
-    private FusedLocationProviderClient fusedLocationProviderClient;
-
-    private LocationManager locationManager;
-
+    private GoogleMap map;
     private final OnMapReadyCallback callback = new OnMapReadyCallback() {
 
         @Override
@@ -59,12 +53,12 @@ public class MapFragment extends Fragment implements LocationListener {
             map.setMapStyle(MapStyleOptions.loadRawResourceStyle(getActivity(), R.raw.map_style));
             map.getUiSettings().setCompassEnabled(false);
 
-            if(map_potholes!=null) {
+            if (map_potholes != null) {
 
-                for(Pothole pothole : map_potholes) {
+                for (Pothole pothole : map_potholes) {
 
                     LatLng latLng = new LatLng(pothole.getLatitude(), pothole.getLongitude());
-                    int customMarker=1;
+                    int customMarker = 1;
 
                     switch (pothole.getIntensity()) {
 
@@ -83,13 +77,15 @@ public class MapFragment extends Fragment implements LocationListener {
 
                 }
 
-            }
-            else Toast.makeText(getContext(), "No potholes available", Toast.LENGTH_SHORT).show();
+            } else Toast.makeText(getContext(), "No potholes available", Toast.LENGTH_SHORT).show();
 
         }
 
 
     };
+    // The entry point to the Fused Location Provider.
+    private FusedLocationProviderClient fusedLocationProviderClient;
+    private LocationManager locationManager;
 
     @Nullable
     @Override

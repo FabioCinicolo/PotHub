@@ -43,7 +43,7 @@ public class LeftHomeFragment extends Fragment implements LeftHomeContract.View 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view =  inflater.inflate(R.layout.fragment_left_home, container, false);
+        view = inflater.inflate(R.layout.fragment_left_home, container, false);
 
         return view;
     }
@@ -76,14 +76,14 @@ public class LeftHomeFragment extends Fragment implements LeftHomeContract.View 
     @Override
     public void onPotholesLoaded(List<Pothole> potholes) {
         getActivity().runOnUiThread(() -> {
-            potholes_14days= potholes;
+            potholes_14days = potholes;
 
-                ((TextView) view.findViewById(R.id.leftHome_username)).setText(SigninFragment.username);
-                FragmentManager fragmentManager = getChildFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.leftHome_fragment, new UserPotholesFragment());
-                fragmentTransaction.commit();
-                MapFragment.map_potholes = (ArrayList<Pothole>) potholes;
+            ((TextView) view.findViewById(R.id.leftHome_username)).setText(SigninFragment.username);
+            FragmentManager fragmentManager = getChildFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.leftHome_fragment, new UserPotholesFragment());
+            fragmentTransaction.commit();
+            MapFragment.map_potholes = (ArrayList<Pothole>) potholes;
 
         });
 

@@ -2,9 +2,7 @@ package com.cindea.pothub.home.views;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,8 +10,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -23,14 +19,11 @@ import com.cindea.pothub.entities.Pothole;
 import com.cindea.pothub.home.contracts.RightHomeContract;
 import com.cindea.pothub.home.models.RightHomeModel;
 import com.cindea.pothub.home.presenters.RightHomePresenter;
-import com.cindea.pothub.map.LiveMapActivity;
 import com.cindea.pothub.map.MapFragment;
 import com.cindea.pothub.map.VisualizePotholesInMapActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,8 +70,8 @@ public class RightHomeFragment extends Fragment implements RightHomeContract.Vie
 
         button_100mt = view.findViewById(R.id.fragmentRightHome_100mt);
         position_button = button_100mt;
-        button_250mt  = view.findViewById(R.id.fragmentRightHome_250mt);
-        button_500mt  = view.findViewById(R.id.fragmentRightHome_500mt);
+        button_250mt = view.findViewById(R.id.fragmentRightHome_250mt);
+        button_500mt = view.findViewById(R.id.fragmentRightHome_500mt);
         button_1km = view.findViewById(R.id.fragmentRightHome_1km);
         button_5km = view.findViewById(R.id.fragmentRightHome_5km);
         button_visualize_in_map = view.findViewById(R.id.fragmentRightHome_VisualizeInMap);
@@ -109,10 +102,10 @@ public class RightHomeFragment extends Fragment implements RightHomeContract.Vie
 
         button_100mt.setOnClickListener(view -> {
 
-            if(first_load)
+            if (first_load)
                 presenter.getPotholesByRange(100, latitude, longitude);
 
-            if(!checkIfSamePosition(button_100mt)) {
+            if (!checkIfSamePosition(button_100mt)) {
 
                 button_100mt.setTextColor(getResources().getColor(R.color.edit_text_orange));
                 position_button.setTextColor(getResources().getColor(R.color.text_in_edit));
@@ -128,7 +121,7 @@ public class RightHomeFragment extends Fragment implements RightHomeContract.Vie
 
         button_250mt.setOnClickListener(view -> {
 
-            if(!checkIfSamePosition(button_250mt)) {
+            if (!checkIfSamePosition(button_250mt)) {
 
                 button_250mt.setTextColor(getResources().getColor(R.color.edit_text_orange));
                 position_button.setTextColor(getResources().getColor(R.color.text_in_edit));
@@ -143,7 +136,7 @@ public class RightHomeFragment extends Fragment implements RightHomeContract.Vie
 
         button_500mt.setOnClickListener(view -> {
 
-            if(!checkIfSamePosition(button_500mt)) {
+            if (!checkIfSamePosition(button_500mt)) {
 
                 button_500mt.setTextColor(getResources().getColor(R.color.edit_text_orange));
                 position_button.setTextColor(getResources().getColor(R.color.text_in_edit));
@@ -158,7 +151,7 @@ public class RightHomeFragment extends Fragment implements RightHomeContract.Vie
 
         button_1km.setOnClickListener(view -> {
 
-            if(!checkIfSamePosition(button_1km)) {
+            if (!checkIfSamePosition(button_1km)) {
 
                 button_1km.setTextColor(getResources().getColor(R.color.edit_text_orange));
                 position_button.setTextColor(getResources().getColor(R.color.text_in_edit));
@@ -173,7 +166,7 @@ public class RightHomeFragment extends Fragment implements RightHomeContract.Vie
 
         button_5km.setOnClickListener(view -> {
 
-            if(!checkIfSamePosition(button_5km)) {
+            if (!checkIfSamePosition(button_5km)) {
 
                 button_5km.setTextColor(getResources().getColor(R.color.edit_text_orange));
                 position_button.setTextColor(getResources().getColor(R.color.text_in_edit));
@@ -197,10 +190,10 @@ public class RightHomeFragment extends Fragment implements RightHomeContract.Vie
 
             this.potholes = potholes;
 
-                FragmentManager fragmentManager = getChildFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.rightHome_fragment, new PotholesFragment());
-                fragmentTransaction.commit();
+            FragmentManager fragmentManager = getChildFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.rightHome_fragment, new PotholesFragment());
+            fragmentTransaction.commit();
 
         });
     }
