@@ -103,8 +103,8 @@ int main(int argc, char *argv[])
     fds[0].fd = listen_sd;
     fds[0].events = POLLIN;
 
-    // Set up timeout to 12 seconds, after that, poll returns even if no file descriptor is ready
-    timeout = (0.2 * 60 * 1000);
+    // Set up timeout to 6 seconds, after that, poll returns even if no file descriptor is ready
+    timeout = (0.1 * 60 * 1000);
 
     // Inizializing Mutexes, Condition Variables and thread pool
     printf("INITIALIZING THREAD POOL AND GLOBAL VARIABLES...\n\n");
