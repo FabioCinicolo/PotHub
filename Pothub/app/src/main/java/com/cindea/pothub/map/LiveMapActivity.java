@@ -16,6 +16,7 @@ import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -48,6 +49,8 @@ public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallb
     private BroadcastReceiver mMessageReceiver;
     private BroadcastReceiver networkReceiver;
     private BroadcastReceiver reportedPotholesReceiver;
+    public static int potholesDetected = 0;
+    private TextView potholes;
     double latitude, longitude;
 
     private static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
@@ -63,6 +66,7 @@ public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallb
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        potholes = findViewById(R.id.liveMap_npotholes);
         networkReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -120,6 +124,7 @@ public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallb
                 if(latitude!=0 && longitude!=0) {
 
                     int customMarker = 1;
+                    potholes.setText(String.valueOf(potholesDetected));
 
                     switch (intensity) {
 
@@ -159,6 +164,7 @@ public class LiveMapActivity extends FragmentActivity implements OnMapReadyCallb
         unregisterReceiver(gps_receiver);
         unregisterReceiver(networkReceiver);
         stopLocationService();
+        potholesDetected = 0;
     }
 
     @Override

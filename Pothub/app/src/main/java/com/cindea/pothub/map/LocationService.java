@@ -188,38 +188,18 @@ public class LocationService extends Service implements SensorEventListener, OnH
                     //Se la distanza tra l ultima buca e la recente è abbastanza grande allora la segnaliamo
                     distance = SphericalUtil.computeDistanceBetween(new LatLng(previous_latitude, previous_longitude), new LatLng(current_latitude, current_longitude));
                     if(distance > 75){
-                        //INSERT GEOCODING + CALCULATE INTENSITY
                         try {
-                            //TODO: Prendere indirizzo (Come stringa separata da virgola <Pozzuoli#IT>)
                             addresses = geocoder.getFromLocation(latitude, longitude, 1);
-                            String country_code = addresses.get(0).getCountryCode();
-                            String name2 = addresses.get(0).getLocality();
-                            name2 = name2.replace('\'', ' ');
-                            int intensity = getPotholeIntensity((int)(current_acceleration - previous_acceleration));
-                            sendReportedLatLngToActivity(current_latitude, current_longitude, intensity);
-                            Date date = new Date();
-                            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-                            Pothole pothole = new Pothole(current_latitude, current_longitude, name2+"#"+country_code, SigninFragment.username, intensity, formatter.format(date));
-                            reportPotHole(pothole);
+                            setupReport(current_acceleration, current_latitude, current_longitude);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
                 }
                 else if(current_latitude!=0){
-                    //INSERT GEOCODING + CALCULATE INTENSITY
-                    //TODO: Prendere indirizzo (Come stringa separata da virgola <Pozzuoli#IT>)
                     try {
                         addresses = geocoder.getFromLocation(latitude, longitude, 1);
-                        String country_code = addresses.get(0).getCountryCode();
-                        String name2 = addresses.get(0).getLocality();
-                        name2 = name2.replace('\'', ' ');
-                        int intensity = getPotholeIntensity((int)(current_acceleration - previous_acceleration));
-                        sendReportedLatLngToActivity(current_latitude, current_longitude, intensity);
-                        Date date = new Date();
-                        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-                        Pothole pothole = new Pothole(current_latitude, current_longitude, name2+"#"+country_code, SigninFragment.username, intensity, formatter.format(date));
-                        reportPotHole(pothole);
+                        setupReport(current_acceleration, current_latitude, current_longitude);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -284,6 +264,20 @@ public class LocationService extends Service implements SensorEventListener, OnH
         else if(value>=16 && value <=20)
             return 2;
         return 3;
+    }
+
+    private void setupReport(double current_acceleration, double current_latitude, double current_longitude) {
+
+        String country_code = addresses.get(0).getCountryCode();
+        String name2 = addresses.get(0).getLocality();
+        name2 = name2.replace('\'', ' ');
+        int intensity = getPotholeIntensity((int)(current_acceleration - previous_acceleration));
+        sendReportedLatLngToActivity(current_latitude, current_longitude, intensity);
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        Pothole pothole = new Pothole(current_latitude, current_longitude, name2+"#"+country_code, SigninFragment.username, intensity, formatter.format(date));
+        reportPotHole(pothole);
+
     }
 
 }

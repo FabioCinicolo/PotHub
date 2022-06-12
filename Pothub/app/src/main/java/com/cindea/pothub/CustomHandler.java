@@ -15,6 +15,7 @@ import com.cindea.pothub.home.contracts.LeftHomeContract;
 import com.cindea.pothub.home.contracts.RightHomeContract;
 import com.cindea.pothub.home.models.LeftHomeModel;
 import com.cindea.pothub.home.models.RightHomeModel;
+import com.cindea.pothub.map.LiveMapActivity;
 import com.google.gson.Gson;
 
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -106,6 +107,7 @@ public class CustomHandler extends Handler {
         String json;
         Gson gson = new Gson();
         pothole.setAction(REPORT_POTHOLE);
+        LiveMapActivity.potholesDetected++;
         json = gson.toJson(pothole, Pothole.class);
         synchronized (socket_ready) {
             while(!socket_ready)

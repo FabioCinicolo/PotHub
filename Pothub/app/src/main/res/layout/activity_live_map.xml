@@ -53,9 +53,10 @@
             android:textSize="18sp" />
 
         <TextView
+            android:id="@+id/liveMap_npotholes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="10"
+            android:text="0"
             android:textSize="18sp"
             android:gravity="center"
             android:textColor="@color/text_in_edit"/>
