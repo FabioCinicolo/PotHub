@@ -13,8 +13,8 @@ int doWork(void *args)
 {
 
     int close_conn = FALSE; // Close connection flag
-    ssize_t read_bytes, sent_bytes = 0, buff_len, total_bytes_sent = 0;
-    int *old_fd = ((PollInfo *)args)->old_fd;     // We do not need a mutex to protect this variable as only one thread at a time will use it. We need this reference to restore the old value of the file descriptor
+    ssize_t read_bytes, sent_bytes = 0, buff_len, bytes_remaining = 0;
+    int *old_fd = ((PollInfo *)args)->old_fd;     // We need this reference to restore the old value of the file descriptor
     int fd = ((PollInfo *)args)->fd;              // Current file descriptor
     struct pollfd *fds = ((PollInfo *)args)->fds; // Reference to the pollfd struct array
     char buffer[1024];                            // Buffer
@@ -25,14 +25,15 @@ int doWork(void *args)
     printf("THREAD %ld DEALING WITH FD %d STARTED EXECUTING\n", pthread_self(), fd);
     do
     {
-        // Read data from accepted socket, if EWOULDBLOCK is returned it means that there are no more bytes to read. Any other error code will cause the server to close the connection
+        // Read data from accepted socket, if EWOULDBLOCK is returned it means that there are no more bytes to read.
         read_bytes = recv(fd, buffer, sizeof(buffer), 0);
         if (read_bytes < 0)
         {
             if (errno != EWOULDBLOCK)
             {
+                // Another thread already closed connection with fd, BAD FILE DESCRIPTOR IS SET AS errno,
+                // WE THEN STOP THE COMPUTATION AND RELEASE RESOURCES, or another error occurred
                 close_conn = TRUE;
-                // Another thread already closed connection with fd, BAD FILE DESCRIPTOR IS SET AS errno, WE THEN STOP THE COMPUTATION AND RELEASE RESOURCES, or another error occurred
                 goto end;
             }
 
@@ -120,9 +121,10 @@ int doWork(void *args)
             buff_len = strlen(json_message);
             json_message = realloc(json_message, buff_len + 1);
             json_message[buff_len] = '\n'; // Endline will be message termination character
+            bytes_remaining = buff_len + 1;
             do
             {
-                sent_bytes = send(fd, json_message, buff_len + 1, 0);
+                sent_bytes = send(fd, json_message, bytes_remaining, 0);
                 if (sent_bytes < 0)
                 {
                     if (errno != EWOULDBLOCK)
@@ -131,10 +133,14 @@ int doWork(void *args)
                         close_conn = TRUE;
                         goto end;
                     }
+                    // Socket buffer is full, could not send any bytes
                 }
-                else
-                    total_bytes_sent += sent_bytes;
-            } while (total_bytes_sent <= buff_len); // It can happen that message size is greather than socket buffer, send() will then return with errno = EWOULDBLOCK, WE THEN KEEP SENDING BYTES UNTIL EVERYTHING IS SENT
+                else // A portion of the buffer has been sent
+                {
+                    bytes_remaining -= sent_bytes;
+                    json_message += sent_bytes;
+                }
+            } while (bytes_remaining > 0);
             break;
         }
         case GET_USER_POTHOLES_BY_DAYS:
@@ -155,13 +161,13 @@ int doWork(void *args)
                 close_conn = TRUE;
                 goto end;
             }
-            printf("%s\n", json_message);
             buff_len = strlen(json_message);
             json_message = realloc(json_message, buff_len + 1);
-            json_message[buff_len] = '\n';
+            json_message[buff_len] = '\n'; // Endline will be message termination character
+            bytes_remaining = buff_len + 1;
             do
             {
-                sent_bytes = send(fd, json_message, buff_len + 1, 0);
+                sent_bytes = send(fd, json_message, bytes_remaining, 0);
                 if (sent_bytes < 0)
                 {
                     if (errno != EWOULDBLOCK)
@@ -170,11 +176,14 @@ int doWork(void *args)
                         close_conn = TRUE;
                         goto end;
                     }
+                    // Socket buffer is full, could not send any bytes
                 }
-                else
-                    total_bytes_sent += sent_bytes;
-
-            } while (total_bytes_sent <= buff_len); // It can happen that message size is greather than socket buffer, send() will then return with errno = EWOULDBLOCK, WE THEN KEEP SENDING BYTES
+                else // A portion of the buffer has been sent
+                {
+                    bytes_remaining -= sent_bytes;
+                    json_message += sent_bytes;
+                }
+            } while (bytes_remaining > 0);
             break;
         }
         default:
@@ -364,7 +373,7 @@ char *getPotholesByRangeJson(double latitude, double longitude, double range)
     {
         // Computing distance between DB pothole and client latitude and longitude
         distance = haversineDistance(atof(row[0]), atof(row[1]), latitude, longitude);
-        //We only take potholes which are in the range of a point specified by user
+        // We only take potholes which are in the range of a point specified by user
         if (distance <= range)
         {
             pothole = cJSON_CreateObject();
@@ -525,7 +534,7 @@ char *getUserPotholesBy14DaysJson(char *username, char *date)
     if (!json)
         goto end;
 
-    //For each pothole in database
+    // For each pothole in database
     while (!mysql_stmt_fetch(statement_potholes_days))
     {
         timestamp = cJSON_CreateString(timestamp_);
