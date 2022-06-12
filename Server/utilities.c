@@ -8,7 +8,8 @@ double toRad(double x)
     return x * M_PI / 180;
 }
 
-double haversineDistance(double latitude1, double longitude1, double latitude2, double longitude2)
+//Calculates distance between two point on the earth by using Haversine formula
+double haversineDistance(double latitude1, double longitude1, double latitude2, double longitude2) 
 {
     double earth_radius = 6378137.0;
     double d_lat = toRad(latitude2 - latitude1);
@@ -17,7 +18,6 @@ double haversineDistance(double latitude1, double longitude1, double latitude2, 
     double c = 2 * atan2(sqrt(a), sqrt(1 - a));
     return earth_radius * c;
 }
-
 
 char *substr(const char *src, int m, int n)
 {
@@ -42,6 +42,7 @@ char *substr(const char *src, int m, int n)
     return dest - len;
 }
 
+//Checks date validity
 int valid_date(int day, int mon, int year)
 {
     int is_valid = 1, is_leap = 0;
@@ -101,6 +102,7 @@ int valid_date(int day, int mon, int year)
     return is_valid;
 }
 
+//Calculates date difference, in terms of day, month and year difference
 int getDateDifference(char *date1, char *date2, int *day_difference, int *month_difference, int *year_difference)
 {
 

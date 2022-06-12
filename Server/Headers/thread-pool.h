@@ -1,9 +1,8 @@
 #ifndef THREAD_POOL_h
 #define THREAD_POOL_h
 
-#define THREADS_NUM 4
-#define MAX_TASK_NUM 100000
-
+#define THREADS_NUM 20
+#define MAX_TASK_NUM 1000
 
 typedef struct Task
 {
@@ -11,12 +10,12 @@ typedef struct Task
     void *args;
 } Task;
 
-
 Task task_queue[MAX_TASK_NUM];
 pthread_mutex_t thread_pool_mutex;
+pthread_mutex_t num_threads_executing_mutex;
 pthread_cond_t thread_pool_cond_empty;
+pthread_cond_t thread_pool_cond_full;
 
-pthread_mutex_t global_vars_mutex;
 int num_threads_executing;
 int task_count;
 
@@ -24,7 +23,11 @@ void *threadStarter(void *args);
 
 void initializeThreadPool(pthread_t *threads, int thread_num);
 
+void initThreadPoolVariables();
+
 void joinThreads(pthread_t *threads, int thread_num);
+
+void freeThreadPoolVariables();
 
 void addTask(Task);
 

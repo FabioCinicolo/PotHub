@@ -43,7 +43,7 @@ import java.util.ArrayList;
 
 public class MapFragment extends Fragment implements LocationListener {
 
-    GoogleMap map;
+    private GoogleMap map;
     public static ArrayList<Pothole> map_potholes = new ArrayList<>();
 
     // The entry point to the Fused Location Provider.

@@ -12,12 +12,12 @@
 int doWork(void *args)
 {
 
-    int close_conn = FALSE;
+    int close_conn = FALSE; // Close connection flag
     ssize_t read_bytes, sent_bytes = 0, buff_len, total_bytes_sent = 0;
-    int *old_fd = ((PollInfo *)args)->old_fd;
-    int fd = ((PollInfo *)args)->fd;
-    struct pollfd *fds = ((PollInfo *)args)->fds;
-    char buffer[1024];
+    int *old_fd = ((PollInfo *)args)->old_fd;     // We do not need a mutex to protect this variable as only one thread at a time will use it. We need this reference to restore the old value of the file descriptor
+    int fd = ((PollInfo *)args)->fd;              // Current file descriptor
+    struct pollfd *fds = ((PollInfo *)args)->fds; // Reference to the pollfd struct array
+    char buffer[1024];                            // Buffer
     char *json_message;
     cJSON *action, *json;
     cJSON *latitude, *longitude, *range, *date, *user, *address, *timestamp, *intensity;
@@ -49,10 +49,9 @@ int doWork(void *args)
     } while (TRUE);
 
     // PARSING LOGIC
-    json = cJSON_Parse(buffer);
-    if (!json)
+    json = cJSON_Parse(buffer); // Parsing client message
+    if (!json)                  // If message cannot be parsed as json
     {
-        printf("%s", buffer);
         const char *error_ptr = cJSON_GetErrorPtr();
         fprintf(stderr, "COULD NOT PARSE JSON\n\n");
         close_conn = TRUE;
@@ -135,7 +134,7 @@ int doWork(void *args)
                 }
                 else
                     total_bytes_sent += sent_bytes;
-            } while (total_bytes_sent <= buff_len); // It can happen that message size is greather than socket buffer, socket will then return with errno = EWOULDBLOCK, WE THEN KEEP SENDING BYTES
+            } while (total_bytes_sent <= buff_len); // It can happen that message size is greather than socket buffer, send() will then return with errno = EWOULDBLOCK, WE THEN KEEP SENDING BYTES UNTIL EVERYTHING IS SENT
             break;
         }
         case GET_USER_POTHOLES_BY_DAYS:
@@ -175,7 +174,7 @@ int doWork(void *args)
                 else
                     total_bytes_sent += sent_bytes;
 
-            } while (total_bytes_sent <= buff_len); // It can happen that message size is greather than socket buffer, socket will then return with errno = EWOULDBLOCK, WE THEN KEEP SENDING BYTES
+            } while (total_bytes_sent <= buff_len); // It can happen that message size is greather than socket buffer, send() will then return with errno = EWOULDBLOCK, WE THEN KEEP SENDING BYTES
             break;
         }
         default:
@@ -208,11 +207,6 @@ end:
         cJSON_Delete(timestamp);
     if (!intensity)
         cJSON_Delete(intensity);
-    // If close_conn was set, we set the compress_array flag to true, this happens when:
-    // 1)If action =  GET_USER_POTHOLES_BY_DAYS or GET_POTHOLES_BY_RANGE
-    // 2)User closed connection after pothole reporting session terminated
-    // 3)Errors in parsing json
-    // 4)Errno is not EWOULDBLOCK while reading
 
     if (close_conn == TRUE)
     {
@@ -222,7 +216,8 @@ end:
         compress_array = TRUE;
     }
     else
-        *old_fd = fd;
+        *old_fd = fd; // Restoring old file descriptor value in the pollfd struct, so that poll, at the next iteration, can listen to its events again
+
     printf("THREAD %ld DEALING WITH FD %d TERMINATED\n", pthread_self(), fd);
     return 0;
 }
@@ -313,6 +308,7 @@ int reportPothole(Pothole pothole)
             return 0;
         }
 
+    // Executing statement
     mysql_stmt_execute(statement_insert_pothole);
     if (statement_insert_pothole != NULL)
         if (mysql_stmt_errno(statement_insert_pothole) != 0)
@@ -368,6 +364,7 @@ char *getPotholesByRangeJson(double latitude, double longitude, double range)
     {
         // Computing distance between DB pothole and client latitude and longitude
         distance = haversineDistance(atof(row[0]), atof(row[1]), latitude, longitude);
+        //We only take potholes which are in the range of a point specified by user
         if (distance <= range)
         {
             pothole = cJSON_CreateObject();
@@ -504,6 +501,7 @@ char *getUserPotholesBy14DaysJson(char *username, char *date)
             return 0;
         }
 
+    // Binding user parameter to statement_potholes_days
     mysql_stmt_bind_param(statement_potholes_days, bind_user_param);
     if (statement_potholes_days != NULL)
         if (mysql_stmt_errno(statement_potholes_days) != 0)
@@ -512,6 +510,7 @@ char *getUserPotholesBy14DaysJson(char *username, char *date)
             return 0;
         }
 
+    // Executing statement
     mysql_stmt_execute(statement_potholes_days);
     if (statement_potholes_days != NULL)
         if (mysql_stmt_errno(statement_potholes_days) != 0)
@@ -520,11 +519,13 @@ char *getUserPotholesBy14DaysJson(char *username, char *date)
             return 0;
         }
 
+    // Creates array containing potholes
     json = cJSON_CreateArray();
 
     if (!json)
         goto end;
 
+    //For each pothole in database
     while (!mysql_stmt_fetch(statement_potholes_days))
     {
         timestamp = cJSON_CreateString(timestamp_);
@@ -533,11 +534,13 @@ char *getUserPotholesBy14DaysJson(char *username, char *date)
             goto end;
         int day_diff, mon_diff, year_diff;
 
+        //
         if (getDateDifference(timestamp->valuestring, date, &day_diff, &mon_diff, &year_diff) == 1)
         {
             cJSON_Delete(timestamp);
             goto end;
         }
+        // We only take potholes which have been reported in the last 14 days
         if (day_diff <= 14 && mon_diff == 0 && year_diff == 0)
         {
 

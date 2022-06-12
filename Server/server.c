@@ -18,6 +18,7 @@
 
 #define SERVER_PORT 12345
 #define BACKLOG 100
+#define MAX_CONNECTIONS 200
 
 #define FD_STOP_POLLING -2
 
@@ -27,9 +28,11 @@ extern int task_count;
 
 int main(int argc, char *argv[])
 {
+    // extern variables, defined in thread-pool.h and logic.h headers
     num_threads_executing = 0;
     task_count = 0;
     compress_array = FALSE;
+
     int polls = 0;
     int poll_err, read_bytes;
     int listen_sd = -1, new_sd = -1;
@@ -39,13 +42,13 @@ int main(int argc, char *argv[])
     int timeout;
     int current_size = 0;
     pthread_t threads[THREADS_NUM];
-    struct pollfd fds[200];
+    struct pollfd fds[MAX_CONNECTIONS];
     int nfds = 1;
     int flag1;
     socklen_t len = sizeof(flag1);
 
     printf("Creating listening socket..\n");
-    if ((listen_sd = socket(PF_INET, SOCK_STREAM | SOCK_NONBLOCK, IPPROTO_TCP)) < 0)
+    if ((listen_sd = socket(PF_INET, SOCK_STREAM | SOCK_NONBLOCK, IPPROTO_TCP)) < 0) // Setting listening TCP ipv4 socket to non blocking
         perror("socket"), exit(EXIT_FAILURE);
 
     server_addr.sin_family = PF_INET;
@@ -70,7 +73,8 @@ int main(int argc, char *argv[])
     printf("LISTENING SOCKET CREATED\n\n");
 
     flag1 = 1800;
-    printf("Setting TCP_KEEPIDLE TO %d seconds\n\n", flag1);
+    printf("Setting TCP_KEEPIDLE TO %d seconds\n\n", flag1); // Setting TCP_KEEPIDLE TO 1800 seconds, time in which the server doesn't actually take any action to investigate on the possible dead peer.
+    // After that time it sends an empty ack packet with ack flag set to 1
     if (setsockopt(listen_sd, SOL_TCP, TCP_KEEPIDLE, (void *)&flag1, len))
     {
         perror("ERROR: setsocketopt(), SO_KEEPIDLE");
@@ -78,14 +82,15 @@ int main(int argc, char *argv[])
     }
 
     flag1 = 5;
-    printf("Setting TCP_KEEPCNT TO %d seconds\n\n", flag1);
+    printf("Setting TCP_KEEPCNT TO %d\n\n", flag1); // Setting TCP_KEEPCNT TO 5. This number indicates the maximum acks number that server can send to client without receiving response,
+    // every TCP_KEEPCNT seconds and after TCP_KEEPIDLE. If the number of the acks sent without any response is 5 then client is considered to be dead and network resources can be freed.
     if (setsockopt(listen_sd, SOL_TCP, TCP_KEEPCNT, (void *)&flag1, len))
     {
         perror("ERROR: setsocketopt(), SO_KEEPCNT");
         close(listen_sd), exit(EXIT_FAILURE);
     }
     flag1 = 30;
-    printf("Setting TCP_KEEPINTVL TO %d seconds\n\n", flag1);
+    printf("Setting TCP_KEEPINTVL TO %d seconds\n\n", flag1); // Setting TCP_KEEPINTVL TO 30 seconds. If client didn't respond with an ack, then send another ack. This is done every 30 seconds for at most TCP_KEEPCNT times.
     if (setsockopt(listen_sd, SOL_TCP, TCP_KEEPINTVL, (void *)&flag1, len))
     {
         perror("ERROR: setsocketopt(), SO_KEEPINTVL");
@@ -98,14 +103,12 @@ int main(int argc, char *argv[])
     fds[0].fd = listen_sd;
     fds[0].events = POLLIN;
 
-    // Set up timeout to 10 minutes, after that, poll returns even if no file descriptor is ready
-    timeout = (0.1 * 60 * 1000);
+    // Set up timeout to 12 seconds, after that, poll returns even if no file descriptor is ready
+    timeout = (0.2 * 60 * 1000);
 
-    // Inizializing Mutex, Condition Variable and thread pool
+    // Inizializing Mutexes, Condition Variables and thread pool
     printf("INITIALIZING THREAD POOL AND GLOBAL VARIABLES...\n\n");
-    pthread_mutex_init(&thread_pool_mutex, NULL);
-    pthread_cond_init(&thread_pool_cond_empty, NULL);
-    pthread_mutex_init(&global_vars_mutex, NULL);
+    initThreadPoolVariables();
     initializeThreadPool(threads, THREADS_NUM);
 
     printf("***SERVER SUCCESSFULLY STARTED***\n\n-----------------------------------------------------------------------------------------------------------\n\n");
@@ -121,9 +124,9 @@ int main(int argc, char *argv[])
             perror("poll");
             break;
         }
-        else if (poll_err == 0)
+        else if (poll_err == 0) // If poll timed out
         {
-            if (compress_array == TRUE && num_threads_executing == 0)
+            if (compress_array == TRUE && num_threads_executing == 0) // If there are unused file descriptors we can shrink the pollfd struct array
             {
                 compress_array = FALSE;
                 for (int i = 0; i < nfds; i++)
@@ -178,9 +181,9 @@ int main(int argc, char *argv[])
                             nfds--;
                         }
                     }
-                    break;
+                    continue;
                 }
-                end_server = TRUE;
+                end_server = TRUE; // If an unexpected event happened then we shut down server
                 break;
             }
             if (fds[i].fd == listen_sd)
@@ -214,13 +217,16 @@ int main(int argc, char *argv[])
                         perror("fcntl"), exit(EXIT_FAILURE);
 
                     printf("ACCEPTED SOCKET SET TO NON-BLOCKING AND KEEPALIVE ON\n\n");
-                    // Add the file descriptor of the new socket in the pollfd array
+
+                    // If server is full we stop accepting new connections
                     if (nfds == 200)
                     {
                         fprintf(stderr, "SERVER IS FULL, CONNECTION WITH IP TERMINATED: %s\n\n", inet_ntoa(client_addr.sin_addr));
                         close(new_sd);
                         break;
                     }
+
+                    // Add the file descriptor of the new socket in the pollfd array
                     printf("NEW CONNECTION ACCEPTED IP: %s  FD: %d\n\n", inet_ntoa(client_addr.sin_addr), new_sd);
                     fds[nfds].fd = new_sd;
                     fds[nfds].events = POLLIN;
@@ -241,7 +247,6 @@ int main(int argc, char *argv[])
                     .args = (void *)&info,
                     .work = &doWork};
                 // This temporary disables file descriptor, to avoid poll to return immediately even if a thread is already taking care of the task. Thread will reset the value as soon as everything has been read so that poll can listen to its events again
-                printf("NEW TASK %d\n", fds[i].fd);
                 fds[i].fd = FD_STOP_POLLING;
                 addTask(read_task);
             }
@@ -258,11 +263,11 @@ int main(int argc, char *argv[])
                 perror("close");
     }
 
-    joinThreads(threads, THREADS_NUM);
+    // Releasing thread pool resources
+    freeThreadPoolVariables();
 
-    pthread_mutex_destroy(&global_vars_mutex);
-    pthread_mutex_destroy(&thread_pool_mutex);
-    pthread_cond_destroy(&thread_pool_cond_empty);
+    if (end_server)
+        exit(EXIT_FAILURE);
 
-    return 0;
+    exit(EXIT_SUCCESS);
 }
