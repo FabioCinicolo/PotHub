@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.cindea.pothub.R;
 import com.cindea.pothub.entities.Pothole;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyViewHolder> {
@@ -62,10 +64,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     private void setupItem(Pothole pothole, MyViewHolder holder) {
 
-        String lat = String.valueOf(pothole.getLatitude());
-        String lng = String.valueOf(pothole.getLongitude());
-        lat = lat.substring(0, 8);
-        lng = lng.substring(0, 8);
+        double lat = round(pothole.getLatitude(), 5);
+        double lng = round(pothole.getLongitude(), 5);
+
+
         String address = pothole.getAddress().replace("#", ", ");
         if (address.length() > 16)
             address = address.substring(0, 15) + ".";
@@ -107,6 +109,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             icon = itemView.findViewById(R.id.item_icon);
 
         }
+    }
+
+    private static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = new BigDecimal(Double.toString(value));
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 
 }
