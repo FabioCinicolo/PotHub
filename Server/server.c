@@ -124,8 +124,6 @@ int main(int argc, char *argv[])
             perror("poll");
             break;
         }
-        else if (poll_err == 0) // If poll timed out
-        {
             if (compress_array == TRUE && num_threads_executing == 0) // If there are unused file descriptors we can shrink the pollfd struct array
             {
                 compress_array = FALSE;
@@ -144,7 +142,6 @@ int main(int argc, char *argv[])
                 }
                 continue; // Jumps back to poll()
             }
-        }
         printf("[-CLIENTS CONNECTED: %d -- THREADS EXECUTING TASKS: %d FILE DESCRIPTORS READY: %d\n-SOCKET DESCRIPTOR ARRAY:\n\n", nfds - 1, num_threads_executing, poll_err);
         for (int i = 0; i < nfds; i++)
         {
