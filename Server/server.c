@@ -140,8 +140,10 @@ int main(int argc, char *argv[])
                         nfds--;
                     }
                 }
-                continue; // Jumps back to poll()
             }
+        if(poll_err == 0)
+               continue; // Jumps back to poll()
+        
         printf("[-CLIENTS CONNECTED: %d -- THREADS EXECUTING TASKS: %d FILE DESCRIPTORS READY: %d\n-SOCKET DESCRIPTOR ARRAY:\n\n", nfds - 1, num_threads_executing, poll_err);
         for (int i = 0; i < nfds; i++)
         {
@@ -151,8 +153,8 @@ int main(int argc, char *argv[])
 
         // One or more file descriptors are ready
         current_size = nfds;
-        for (int i = 0; i < current_size; i++)
-        {
+        for (int i = 0; i < current_size && poll_err > 0; i++, poll_err--)
+        {   
             // If no events occurred for a file descriptor then we can directly jump to the next for-cycle iteration
             if (fds[i].revents == 0)
                 continue;
