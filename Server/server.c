@@ -126,7 +126,6 @@ int main(int argc, char *argv[])
           }
           if (compress_array == TRUE && num_threads_executing == 0) // If there are unused file descriptors we can shrink the pollfd struct array
           {
-               printf("hello brother \n");
                compress_array = FALSE;
                for (int i = 0; i < nfds; i++)
                {
