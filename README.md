@@ -8,6 +8,19 @@ In the future the C server will be replaced by a SpringBoot Web App, providing a
 
 ## Screenshots
 
+### Login:
+
+### Register:
+
+### Registration code:
+
+### Forgot password:
+
+### Create new password:
+
+
+
+
 ### Start a potholes registering session:
 
 ![Screenshot](./Pothub/screenshots/e.png)
