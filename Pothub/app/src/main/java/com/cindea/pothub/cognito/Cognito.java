@@ -8,9 +8,9 @@ import com.amazonaws.regions.Regions;
 
 public class Cognito {
 
-    private String USER_POOL_ID = "eu-central-1_1QYsCdYWB";
-    private String CLIENT_ID = "7krigpkagkcuph3r4li6f8qkk2";
-    private String CLIENT_SECRET = "10lt8rrlbauglu4cuc2magjp4tpe62ufek7m8bkl98pce09ca5dk";
+    private String USER_POOL_ID = "";
+    private String CLIENT_ID = "";
+    private String CLIENT_SECRET = "";
     private Regions AWS_REGION = Regions.EU_CENTRAL_1;
 
     private CognitoUserPool user_pool;
